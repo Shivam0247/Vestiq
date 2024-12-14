@@ -15,6 +15,9 @@ const port = 4000;
 app.use(cors(corsConfig));
 app.use(express.json());
 
+app.use("/", (req, res) => {
+  res.send("server is running.");
+});
 // Import the routes
 app.use("/api/auth", require("./routes/User"));
 
