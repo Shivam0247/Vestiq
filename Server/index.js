@@ -5,21 +5,24 @@ const app = express();
 
 const corsConfig = {
   origin: "*",
-  Credential: true,
+  credentials: true, // Corrected the spelling of 'credentials'
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
-app.options("", cors(corsConfig));
+app.options("*", cors(corsConfig)); // Allowing preflight requests globally
+
 const port = 4000;
 
-app.use(cors(corsConfig));
+app.use(cors(corsConfig)); // Enable CORS for all routes
 app.use(express.json());
 
-app.use("/", (req, res) => {
-  res.send("server is running.");
-});
 // Import the routes
 app.use("/api/auth", require("./routes/User"));
+
+// Add the default route last so it doesn't conflict with other routes
+app.use("/", (req, res) => {
+  res.send("Server is running.");
+});
 
 // Set up server and listen on the port
 const server = app.listen(port, () => {
