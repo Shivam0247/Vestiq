@@ -84,7 +84,7 @@ const NewArrivals = () => {
         {newArrivals.map((product) => (
           <Product
             _id={product._id}
-            img={newArrOne} // Assuming the first image is the main image
+            img={`/images/${product.Images[0]}`}
             productName={product.ProductName}
             price={product.Price}
             color={product.Colors.join(", ")} // Joining multiple colors into a single string
