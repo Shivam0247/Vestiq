@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
 import Product from "../../home/Products/Product";
+import AddToCart from "../../home/Products/AddToCart";
 
 const Pagination = ({ itemsPerPage }) => {
   const [items, setItems] = useState([]); // State to hold fetched items
   const [loading, setLoading] = useState(true); // Loading state
   const [itemOffset, setItemOffset] = useState(0); // Offset for pagination
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const handleCartClick = (product) => {
+    setSelectedProduct(product); // Set the selected product
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
 
   // Fetch items dynamically from the API
   useEffect(() => {
@@ -43,18 +56,23 @@ const Pagination = ({ itemsPerPage }) => {
   }
 
   return (
-    <div>
+    <>
+      {isModalOpen && (
+        <AddToCart product={selectedProduct} onClose={handleCloseModal} />
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mdl:gap-4 lg:gap-10">
         {currentItems.map((product) => (
           <div key={product._id} className="w-full">
             <Product
               _id={product._id}
-              img={`/images/${product.Images[0]}`}
+              img1={`/images/${product.Images[0]}`}
+              img2={`/images/${product.Images[1]}`}
               productName={product.ProductName}
               price={product.Price}
               color={product.Colors.join(", ")} // Joining multiple colors into a single string
               badge={product.New}
               des={product.Description}
+              onCartClick={handleCartClick}
             />
           </div>
         ))}
@@ -76,7 +94,7 @@ const Pagination = ({ itemsPerPage }) => {
           Products from {itemOffset + 1} to {endOffset} of {items.length}
         </p>
       </div>
-    </div>
+    </>
   );
 };
 
