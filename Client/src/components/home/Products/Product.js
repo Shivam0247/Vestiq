@@ -1,17 +1,17 @@
-import React from "react";
-import { BsSuitHeartFill } from "react-icons/bs";
-import { GiReturnArrow } from "react-icons/gi";
+import React, { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
-import { MdOutlineLabelImportant } from "react-icons/md";
 import Image from "../../designLayouts/Image";
-import Badge from "./Badge";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
 
 const Product = (props) => {
+  // State to manage hover
+  const [hover, setHover] = useState(false);
   const dispatch = useDispatch();
   const _id = props.productName;
+
+  // Function to create a URL-friendly ID string
   const idString = (_id) => {
     return String(_id).toLowerCase().split(" ").join("");
   };
@@ -19,6 +19,8 @@ const Product = (props) => {
 
   const navigate = useNavigate();
   const productItem = props;
+
+  // Function to navigate to product details page
   const handleProductDetails = () => {
     navigate(`/product/${rootId}`, {
       state: {
@@ -26,59 +28,60 @@ const Product = (props) => {
       },
     });
   };
+
   return (
-    <div className="w-full relative group">
-      <div className="max-w-80 max-h-80 relative overflow-y-hidden ">
+    <div
+      className="w-full relative group cursor-pointer" // Outer wrapper for the product card
+      onMouseEnter={() => setHover(true)} // Set hover state to true on mouse enter
+      onMouseLeave={() => setHover(false)} // Reset hover state to false on mouse leave
+    >
+      {/* Product Image */}
+      <div
+        className="max-w-80 max-h-100 relative overflow-hidden transition-transform duration-500 transform group-hover:scale-105 group-hover:shadow-[0px_0px_15px_5px_rgba(255,255,255,0.5)]" // Scale and glow effect on hover
+      >
         <div>
-          <Image className="w-full h-full" imgSrc={props.img} />
-        </div>
-        <div className="absolute top-6 left-8">
-          {props.badge && <Badge text="New" />}
-        </div>
-        <div className="w-full h-32 absolute bg-white -bottom-[130px] group-hover:bottom-0 duration-700">
-          <ul className="w-full h-full flex flex-col items-end justify-center gap-2 font-titleFont px-2 border-l border-r">
-            <li
-              onClick={() =>
-                dispatch(
-                  addToCart({
-                    _id: props._id,
-                    name: props.productName,
-                    quantity: 1,
-                    image: props.img,
-                    badge: props.badge,
-                    price: props.price,
-                    colors: props.color,
-                  })
-                )
-              }
-              className="text-[#767676] hover:text-primeColor text-sm font-normal border-b-[1px] border-b-gray-200 hover:border-b-primeColor flex items-center justify-end gap-2 hover:cursor-pointer pb-1 duration-300 w-full"
-            >
-              Add to Cart
-              <span>
-                <FaShoppingCart />
-              </span>
-            </li>
-            <li
-              onClick={handleProductDetails}
-              className="text-[#767676] hover:text-primeColor text-sm font-normal border-b-[1px] border-b-gray-200 hover:border-b-primeColor flex items-center justify-end gap-2 hover:cursor-pointer pb-1 duration-300 w-full"
-            >
-              View Details
-              <span className="text-lg">
-                <MdOutlineLabelImportant />
-              </span>
-            </li>
-          </ul>
+          {/* Toggle between img1 and img2 based on hover state */}
+          <Image
+            className="w-full h-full transition-transform duration-500 ease-in-out"
+            imgSrc={hover ? props.img2 : props.img1} // Change image on hover
+          />
         </div>
       </div>
-      <div className="max-w-80 py-6 flex flex-col gap-1 border-[1px] border-t-0 px-4">
-        <div className="flex items-center justify-between font-titleFont">
-          <h2 className="text-lg text-primeColor font-bold">
-            {props.productName}
-          </h2>
-          <p className="text-[#767676] text-[14px]">${props.price}</p>
+
+      {/* Product Details */}
+      <div className="max-w-80 justify-between items-center border-[1px] border-t-0 px-4 py-6 gap-1 flex">
+        <div className="flex flex-col">
+          {/* Product Title */}
+          <div className="flex items-center justify-between font-titleFont">
+            <h2 className="text-lg text-primeColor font-bold">
+              {props.productName}
+            </h2>
+          </div>
+
+          {/* Product Price */}
+          <div className="flex items-center justify-between font-titleFont">
+            <p className="text-[#767676] text-[14px]">${props.price}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-[#767676] text-[14px]">{props.color}</p>
+
+        {/* Cart Icon: Visible only on hover and includes scaling effect */}
+        <div className="opacity-0 group-hover:opacity-100 duration-300 transform group-hover:translate-y-0 translate-y-3">
+          <i
+            className="fa-solid fa-cart-shopping text-2xl hover:scale-110 transform duration-300 hover:text-primeColor" // Scale and color effect on hover
+            onClick={() =>
+              dispatch(
+                addToCart({
+                  _id: props._id,
+                  name: props.productName,
+                  quantity: 1,
+                  image: props.img1,
+                  badge: props.badge,
+                  price: props.price,
+                  colors: props.color,
+                })
+              )
+            }
+          ></i>
         </div>
       </div>
     </div>
