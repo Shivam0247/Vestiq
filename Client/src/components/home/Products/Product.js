@@ -34,6 +34,7 @@ const Product = (props) => {
       className="w-full relative group cursor-pointer" // Outer wrapper for the product card
       onMouseEnter={() => setHover(true)} // Set hover state to true on mouse enter
       onMouseLeave={() => setHover(false)} // Reset hover state to false on mouse leave
+      onClick={handleProductDetails}
     >
       {/* Product Image */}
       <div
@@ -60,7 +61,9 @@ const Product = (props) => {
 
           {/* Product Price */}
           <div className="flex items-center justify-between font-titleFont">
-            <p className="text-[#767676] text-[14px]">${props.price}</p>
+            <p className="text-[#767676] text-[14px]">
+              INR {parseFloat(props.price).toFixed(2)}
+            </p>
           </div>
         </div>
 
@@ -68,7 +71,8 @@ const Product = (props) => {
         <div className="opacity-0 group-hover:opacity-100 duration-300 transform group-hover:translate-y-0 translate-y-3">
           <i
             className="fa-solid fa-cart-shopping text-2xl hover:scale-110 transform duration-300 hover:text-primeColor" // Scale and color effect on hover
-            onClick={() =>
+            onClick={(event) => {
+              event.stopPropagation(); // Prevent click from propagating to parent
               dispatch(
                 addToCart({
                   _id: props._id,
@@ -79,8 +83,8 @@ const Product = (props) => {
                   price: props.price,
                   colors: props.color,
                 })
-              )
-            }
+              );
+            }}
           ></i>
         </div>
       </div>
