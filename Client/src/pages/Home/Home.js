@@ -6,19 +6,20 @@ import NewArrivals from "../../components/home/NewArrivals/NewArrivals";
 import Sale from "../../components/home/Sale/Sale";
 import SpecialOffers from "../../components/home/SpecialOffers/SpecialOffers";
 import YearProduct from "../../components/home/YearProduct/YearProduct";
-
+import HomeDisplay from "../../components/homeDisplay/homeDisplay";
 const Home = () => {
   return (
     <div className="w-full mx-auto">
       {/* <Banner /> */}
       {/* <BannerBottom /> */}
-      <div className="max-w-container mx-auto px-4 mt-5">
-        {/* <Sale /> */}
-        <NewArrivals />
-        <BestSellers />
-        {/* <YearProduct /> */}
-        <SpecialOffers />
-      </div>
+      {/* <div className="max-w-container mx-auto px-4 mt-5"> */}
+      <HomeDisplay />
+      {/* <Sale /> */}
+      <NewArrivals />
+      {/* <BestSellers />  */}
+      {/* <YearProduct /> */}
+      {/* <SpecialOffers /> */}
+      {/* </div> */}
     </div>
   );
 };

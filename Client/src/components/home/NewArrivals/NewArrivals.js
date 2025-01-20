@@ -25,10 +25,7 @@ const NewArrivals = () => {
           "https://vestiq-server.vercel.app/api/Product/ProductDisplay"
         );
         const data = await response.json();
-        const filteredProducts = data.filter(
-          (product) => product.ProductCategory === "New Arrivals"
-        );
-        setNewArrivals(filteredProducts);
+        setNewArrivals(data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -48,9 +45,9 @@ const NewArrivals = () => {
       {isModalOpen && (
         <AddToCart product={selectedProduct} onClose={handleCloseModal} />
       )}
-      <div className="w-full pb-16">
-        <Heading heading="New Arrivals" />
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 lgl:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="w-full pb-16 pt-5 px-4">
+        {/* <Heading heading="New Arrivals" /> */}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lgl:grid-cols-3 xl:grid-cols-4 gap-4">
           {newArrivals.map((product) => (
             <Product
               key={product._id}
