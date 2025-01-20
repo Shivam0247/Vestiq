@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Button,
-  useDraggable,
 } from "@heroui/react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
 
 export default function AddToCart({ onClose, product }) {
-  const targetRef = React.useRef(null);
   const dispatch = useDispatch();
 
-  // State to manage selected size
+  // Sizes array
+  const sizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+  // State to manage selected size, defaulting to the first size
   const [selectedSize, setSelectedSize] = useState("");
+
+  useEffect(() => {
+    // Set the default size to the first element in the sizes array only once
+    if (sizes.length > 0 && !selectedSize) {
+      setSelectedSize(sizes[0]);
+    }
+  }, [sizes, selectedSize]);
 
   const handleSizeChange = (event) => {
     setSelectedSize(event.target.value); // Update selected size
@@ -24,7 +31,6 @@ export default function AddToCart({ onClose, product }) {
 
   return (
     <Modal
-      ref={targetRef}
       isOpen={true}
       onOpenChange={onClose}
       className="lg:min-w-[55rem] lg:h-[30rem] md:min-w-[90%] md:h-[80%] sm:min-w-[90%] sm:h-[90%] overflow-y-scroll xs:h-[83%]"
@@ -60,12 +66,12 @@ export default function AddToCart({ onClose, product }) {
             )}
 
             {/* Interactive options */}
-            <div className="buttons lg:ml-7 lg:w-[50%] ">
+            <div className="buttons lg:ml-7 lg:w-[50%]">
               <h5 className="mb-5 text-medium font-medium text-gray-900">
                 Select Size
               </h5>
               <ul className="grid gap-3 grid-cols-2 md:grid-cols-7 lg:grid-cols-4 sm:grid-cols-4 xs:grid-cols-3">
-                {["XS", "S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                {sizes.map((size) => (
                   <li key={size}>
                     <input
                       type="radio"
@@ -74,6 +80,7 @@ export default function AddToCart({ onClose, product }) {
                       value={size}
                       className="hidden peer"
                       onChange={handleSizeChange} // Update selected size
+                      checked={selectedSize === size} // Check if this size is selected
                       required
                     />
                     <label
@@ -109,6 +116,7 @@ export default function AddToCart({ onClose, product }) {
                       size: selectedSize, // Use selected size
                     })
                   );
+                  onClose(); // Close the modal after adding the item to the cart
                 }}
               >
                 Add To Cart

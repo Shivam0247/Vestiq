@@ -95,7 +95,7 @@ const Product = (props) => {
       <CardFooter className="text-small justify-between">
         <div className="flex flex-col items-start">
           <b>{props.productName}</b>
-          <p className="text-default-500">{props.price}</p>
+          <p className="text-default-500">INR {props.price}</p>
         </div>
 
         {/* Cart Icon with Hover Effect */}
