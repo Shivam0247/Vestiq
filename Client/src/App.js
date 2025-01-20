@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -9,7 +10,6 @@ import {
 import Footer from "./components/home/Footer/Footer";
 import FooterBottom from "./components/home/Footer/FooterBottom";
 import Header from "./components/home/Header/Header";
-import HeaderBottom from "./components/home/Header/HeaderBottom";
 import SpecialCase from "./components/SpecialCase/SpecialCase";
 import About from "./pages/About/About";
 import SignIn from "./pages/Account/SignIn";
@@ -22,12 +22,13 @@ import Offer from "./pages/Offer/Offer";
 import Payment from "./pages/payment/Payment";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
 import Shop from "./pages/Shop/Shop";
+import Sidebar from "./components/Sidebar/Sidebar";
 
-const Layout = () => {
+const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
   return (
     <div>
-      <Header />
-      {/* <HeaderBottom /> */}
+      <Header onSidebarOpen={onSidebarOpen} />
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
       <SpecialCase />
       <ScrollRestoration />
       <Outlet />
@@ -36,34 +37,50 @@ const Layout = () => {
     </div>
   );
 };
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route>
-      <Route path="/" element={<Layout />}>
-        {/* ==================== Header Navlink Start here =================== */}
-        <Route index element={<Home />}></Route>
-        <Route path="/shop" element={<Shop />}></Route>
-        <Route path="/about" element={<About />}></Route>
-        <Route path="/contact" element={<Contact />}></Route>
-        <Route path="/journal" element={<Journal />}></Route>
-        {/* ==================== Header Navlink End here ===================== */}
-        <Route path="/offer" element={<Offer />}></Route>
-        <Route path="/product/:_id" element={<ProductDetails />}></Route>
-        <Route path="/cart" element={<Cart />}></Route>
-        <Route path="/paymentgateway" element={<Payment />}></Route>
-      </Route>
-      <Route path="/signup" element={<SignUp />}></Route>
-      <Route path="/signin" element={<SignIn />}></Route>
-    </Route>
-  )
-);
 
-function App() {
+const App = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  // Handlers for opening and closing the sidebar
+  const openSidebar = () => setSidebarOpen(true);
+  const closeSidebar = () => setSidebarOpen(false);
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route>
+        <Route
+          path="/"
+          element={
+            <Layout
+              onSidebarOpen={openSidebar}
+              isSidebarOpen={isSidebarOpen}
+              closeSidebar={closeSidebar}
+            />
+          }
+        >
+          {/* Header Navigation Routes */}
+          <Route index element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/journal" element={<Journal />} />
+          {/* Product and Cart Routes */}
+          <Route path="/offer" element={<Offer />} />
+          <Route path="/product/:_id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/paymentgateway" element={<Payment />} />
+        </Route>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+      </Route>
+    )
+  );
+
   return (
     <div className="font-bodyFont">
       <RouterProvider router={router} />
     </div>
   );
-}
+};
 
 export default App;
