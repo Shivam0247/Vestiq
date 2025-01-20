@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Open+Sans");
+// @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 
 $buttonRadius: 24px;
 $labelPaddingX: $buttonRadius * 1;
@@ -84,22 +84,28 @@ body {
     animation: button-pulse 7s ease-in-out infinite;
     cursor: pointer;
 
-    &:after {
+  &:after {
     position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      content: "";
-      display: block;
-      height: 16.8px;
-      width: 16.8px;
-      border-radius: 100%;
-      border: 3px solid #000000ab;
-      background-color: #ffffff;
-      transition: border-color 1s linear;
-    }
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    content: "";
+    display: block;
+    height: 16.8px;
+    width: 16.8px;
+    border-radius: 100%;
+    border: 3px solid #000000ab;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    /* Added transition for smooth scaling */
   }
+    
+  &:hover::after {
+    transform: translate(-50%, -50%) scale(1.4);
+   
+  }
+}
 
   &__label {
     position: absolute;
@@ -139,21 +145,29 @@ body {
 .lg-hotspot--top-left .lg-hotspot__label {
   top: $buttonRadius;
   left: $buttonRadius;
+  border-radius: 10px;
+  padding: 0;
 }
 
 .lg-hotspot--top-right .lg-hotspot__label {
   top: $buttonRadius;
   right: $buttonRadius;
+  border-radius: 10px;
+  padding: 0;
 }
 
 .lg-hotspot--bottom-right .lg-hotspot__label {
   right: $buttonRadius;
   bottom: $buttonRadius;
+  border-radius: 10px;
+  padding: 0;
 }
 
 .lg-hotspot--bottom-left .lg-hotspot__label {
   bottom: $buttonRadius;
   left: $buttonRadius;
+  border-radius: 10px;
+  padding: 0;
 }
 
 @keyframes button-pulse {
@@ -172,3 +186,4 @@ body {
     opacity: 1;
   }
 }
+

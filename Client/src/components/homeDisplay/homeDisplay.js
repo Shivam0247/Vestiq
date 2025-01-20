@@ -3,18 +3,20 @@ import "./homeDisplay.scss";
 
 function HomeDisplay() {
   const containerRefs = useRef([]); // Ref array to store container references
+  const hotspotRefs = useRef([]); // Ref array to store individual hotspot references
 
   useEffect(() => {
     const selectHotspot = (e) => {
-      const clickedHotspot = e.target.parentElement;
-      const container = clickedHotspot.parentElement;
+      const clickedHotspot = e.target.closest(".lg-hotspot");
 
-      // Only include hotspots within the same container (image)
-      const hotspots = container.querySelectorAll(".lg-hotspot");
-      hotspots.forEach((hotspot) => {
-        if (hotspot === clickedHotspot) {
-          hotspot.classList.toggle("lg-hotspot--selected");
-        } else {
+      // Toggle the selected class on the clicked hotspot
+      if (clickedHotspot) {
+        clickedHotspot.classList.toggle("lg-hotspot--selected");
+      }
+
+      // Remove the selected class from all other hotspots
+      hotspotRefs.current.forEach((hotspot) => {
+        if (hotspot !== clickedHotspot) {
           hotspot.classList.remove("lg-hotspot--selected");
         }
       });
@@ -26,11 +28,26 @@ function HomeDisplay() {
       button.addEventListener("click", selectHotspot);
     });
 
+    // Close the card if clicked outside the hotspot container
+    const handleOutsideClick = (e) => {
+      // Check if click is outside any hotspot
+      if (!e.target.closest(".lg-hotspot")) {
+        // Remove 'lg-hotspot--selected' class from all hotspots
+        hotspotRefs.current.forEach((hotspot) => {
+          hotspot.classList.remove("lg-hotspot--selected");
+        });
+      }
+    };
+
+    // Attach event listener for outside click
+    document.addEventListener("click", handleOutsideClick);
+
     // Cleanup event listeners on unmount
     return () => {
       buttons.forEach((button) => {
         button.removeEventListener("click", selectHotspot);
       });
+      document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
 
@@ -45,66 +62,98 @@ function HomeDisplay() {
           <img className="" src="/images/FrontImg.png" alt="Coffee Desk" />
 
           <div
+            ref={(el) => (hotspotRefs.current[0] = el)}
             style={{ top: "60%", left: "19.9%" }}
             className="lg-hotspot lg-hotspot--top-left"
           >
             <div className="lg-hotspot__button"></div>
-            <div className="lg-hotspot__label">
-              <h4>This is the title</h4>
-              <p>
-                This is some text that goes in the label. It describes the item.
-                Here is a{" "}
-                <a
-                  href="/abcretrograde/pens/showcase"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  link
-                </a>{" "}
-                to another page.
-              </p>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
             </div>
           </div>
 
           <div
+            ref={(el) => (hotspotRefs.current[1] = el)}
             style={{ top: "16%", left: "90%" }}
             className="lg-hotspot lg-hotspot--top-right"
           >
             <div className="lg-hotspot__button"></div>
-            <div className="lg-hotspot__label">
-              <h4>Keyboard</h4>
-              <p>
-                A keyboard has letters, and it can write letters. Let's say some
-                more things about keyboards so the text wraps to multiple lines.
-              </p>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
             </div>
           </div>
 
           <div
+            ref={(el) => (hotspotRefs.current[2] = el)}
             style={{ top: "16%", left: "75%" }}
             className="lg-hotspot lg-hotspot--top-right"
           >
             <div className="lg-hotspot__button"></div>
-            <div className="lg-hotspot__label">
-              <h4>Keyboard</h4>
-              <p>
-                A keyboard has letters, and it can write letters. Let's say some
-                more things about keyboards so the text wraps to multiple lines.
-              </p>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
             </div>
           </div>
 
           <div
+            ref={(el) => (hotspotRefs.current[3] = el)}
             style={{ top: "20%", left: "62%" }}
             className="lg-hotspot lg-hotspot--top-right"
           >
             <div className="lg-hotspot__button"></div>
-            <div className="lg-hotspot__label">
-              <h4>Keyboard</h4>
-              <p>
-                A keyboard has letters, and it can write letters. Let's say some
-                more things about keyboards so the text wraps to multiple lines.
-              </p>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
             </div>
           </div>
         </div>
