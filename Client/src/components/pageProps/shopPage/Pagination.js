@@ -25,7 +25,7 @@ const Pagination = ({ itemsPerPage }) => {
     const fetchItems = async () => {
       try {
         const response = await fetch(
-          "https://vestiq-server.vercel.app/api/Product/ProductDisplay"
+          "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         ); // Replace with your API URL
         const data = await response.json();
         setItems(data); // Set fetched items in state

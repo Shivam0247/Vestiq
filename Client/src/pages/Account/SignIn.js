@@ -38,7 +38,7 @@ const SignIn = () => {
 
     try {
       const response = await fetch(
-        "https://vestiq-server.vercel.app/api/auth/login",
+        "https://upstrides-server.vercel.app/api/auth/login",
         {
           method: "POST",
           headers: {
