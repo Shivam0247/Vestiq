@@ -1,6 +1,6 @@
 // @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 
-$buttonRadius: 24px;
+$buttonRadius: 20px;
 $labelPaddingX: $buttonRadius * 1;
 $labelBorderRadius: 2px;
 $labelFade: 0.1s;
@@ -70,6 +70,7 @@ body {
 
     .lg-hotspot__label {
       opacity: 1;
+      display: flex
     }
   }
 
@@ -121,6 +122,7 @@ body {
     border-radius: $labelBorderRadius;
     user-select: none;
     opacity: 0;
+    display: none;
     transition: all $labelFade linear;
 
     h4 {

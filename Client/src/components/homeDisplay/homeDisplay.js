@@ -88,7 +88,7 @@ function HomeDisplay() {
           <div
             ref={(el) => (hotspotRefs.current[1] = el)}
             style={{ top: "16%", left: "90%" }}
-            className="lg-hotspot lg-hotspot--top-right"
+            className="lg-hotspot lg-hotspot--bottom-right"
           >
             <div className="lg-hotspot__button"></div>
             <div className="lg-hotspot__label flex justify-center items-center">
@@ -112,7 +112,7 @@ function HomeDisplay() {
           <div
             ref={(el) => (hotspotRefs.current[2] = el)}
             style={{ top: "16%", left: "75%" }}
-            className="lg-hotspot lg-hotspot--top-right"
+            className="lg-hotspot lg-hotspot--bottom-right"
           >
             <div className="lg-hotspot__button"></div>
             <div className="lg-hotspot__label flex justify-center items-center">
@@ -136,7 +136,127 @@ function HomeDisplay() {
           <div
             ref={(el) => (hotspotRefs.current[3] = el)}
             style={{ top: "20%", left: "62%" }}
-            className="lg-hotspot lg-hotspot--top-right"
+            className="lg-hotspot lg-hotspot--bottom-right"
+          >
+            <div className="lg-hotspot__button"></div>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
+            </div>
+          </div>
+
+          <div
+            ref={(el) => (hotspotRefs.current[4] = el)}
+            style={{ top: "80%", left: "62%" }}
+            className="lg-hotspot lg-hotspot--bottom-right"
+          >
+            <div className="lg-hotspot__button"></div>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
+            </div>
+          </div>
+
+          <div
+            ref={(el) => (hotspotRefs.current[5] = el)}
+            style={{ top: "50%", left: "75%" }}
+            className="lg-hotspot lg-hotspot--bottom-right"
+          >
+            <div className="lg-hotspot__button"></div>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
+            </div>
+          </div>
+
+          <div
+            ref={(el) => (hotspotRefs.current[6] = el)}
+            style={{ top: "50%", left: "90%" }}
+            className="lg-hotspot lg-hotspot--bottom-right"
+          >
+            <div className="lg-hotspot__button"></div>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
+            </div>
+          </div>
+
+          <div
+            ref={(el) => (hotspotRefs.current[7] = el)}
+            style={{ top: "75%", left: "77%" }}
+            className="lg-hotspot lg-hotspot--bottom-right"
+          >
+            <div className="lg-hotspot__button"></div>
+            <div className="lg-hotspot__label flex justify-center items-center">
+              <img
+                src="/images/image1.jpg"
+                alt="Coffee Desk"
+                className="w-24 h-24"
+              />
+              <div>
+                <a href="#">
+                  <b className="font-bold text-black text-medium hover:underline hover:transition-all duration-300">
+                    The Celestial Kingdom
+                  </b>
+                </a>
+                <br />
+                <label className="text-sm">INR 600.00</label>
+              </div>
+            </div>
+          </div>
+
+          <div
+            ref={(el) => (hotspotRefs.current[8] = el)}
+            style={{ top: "80%", left: "90%" }}
+            className="lg-hotspot lg-hotspot--bottom-right"
           >
             <div className="lg-hotspot__button"></div>
             <div className="lg-hotspot__label flex justify-center items-center">
