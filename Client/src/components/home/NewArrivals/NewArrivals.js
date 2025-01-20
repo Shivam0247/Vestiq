@@ -22,7 +22,7 @@ const NewArrivals = () => {
     const fetchNewArrivals = async () => {
       try {
         const response = await fetch(
-          "https://vestiq-server.vercel.app/api/Product/ProductDisplay"
+          "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         );
         const data = await response.json();
         setNewArrivals(data);
