@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -8,9 +8,19 @@ import {
   Button,
   useDraggable,
 } from "@heroui/react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/orebiSlice";
 
 export default function AddToCart({ onClose, product }) {
   const targetRef = React.useRef(null);
+  const dispatch = useDispatch();
+
+  // State to manage selected size
+  const [selectedSize, setSelectedSize] = useState("");
+
+  const handleSizeChange = (event) => {
+    setSelectedSize(event.target.value); // Update selected size
+  };
 
   return (
     <Modal
@@ -55,117 +65,25 @@ export default function AddToCart({ onClose, product }) {
                 Select Size
               </h5>
               <ul className="grid gap-3 grid-cols-2 md:grid-cols-7 lg:grid-cols-4 sm:grid-cols-4 xs:grid-cols-3">
-                <li>
-                  <input
-                    type="radio"
-                    id="XS"
-                    name="hosting"
-                    value="XS"
-                    className="hidden peer"
-                    required
-                  />
-                  <label
-                    htmlFor="XS"
-                    className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
-                  >
-                    <div className="block text-lg font-semibold">XS</div>
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    id="S"
-                    name="hosting"
-                    value="S"
-                    className="hidden peer"
-                  />
-                  <label
-                    htmlFor="S"
-                    className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
-                  >
-                    <div className="block text-lg font-semibold">S</div>
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    id="M"
-                    name="hosting"
-                    value="M"
-                    className="hidden peer"
-                    required
-                  />
-                  <label
-                    htmlFor="M"
-                    className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
-                  >
-                    <div className="block text-lg font-semibold">M</div>
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    id="L"
-                    name="hosting"
-                    value="L"
-                    className="hidden peer"
-                    required
-                  />
-                  <label
-                    htmlFor="L"
-                    className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
-                  >
-                    <div className="block text-lg font-semibold">L</div>
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    id="XL"
-                    name="hosting"
-                    value="XL"
-                    className="hidden peer"
-                    required
-                  />
-                  <label
-                    htmlFor="XL"
-                    className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
-                  >
-                    <div className="block text-lg font-semibold">XL</div>
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    id="XXL"
-                    name="hosting"
-                    value="XXL"
-                    className="hidden peer"
-                    required
-                  />
-                  <label
-                    htmlFor="XXL"
-                    className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
-                  >
-                    <div className="block text-lg font-semibold">XXL</div>
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    id="XXXL"
-                    name="hosting"
-                    value="XXXL"
-                    className="hidden peer"
-                    required
-                  />
-                  <label
-                    htmlFor="XXXL"
-                    className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
-                  >
-                    <div className="block text-lg font-semibold">XXXL</div>
-                  </label>
-                </li>
+                {["XS", "S", "M", "L", "XL", "XXL", "XXXL"].map((size) => (
+                  <li key={size}>
+                    <input
+                      type="radio"
+                      id={size}
+                      name="size"
+                      value={size}
+                      className="hidden peer"
+                      onChange={handleSizeChange} // Update selected size
+                      required
+                    />
+                    <label
+                      htmlFor={size}
+                      className="inline-flex items-center justify-center w-[5rem] h-[4rem] p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer hover:text-gray-600 hover:bg-gray-100 peer-checked:border-blue-600 peer-checked:text-blue-600 transition-all"
+                    >
+                      <div className="block text-lg font-semibold">{size}</div>
+                    </label>
+                  </li>
+                ))}
               </ul>
 
               {/* Buttons */}
@@ -173,6 +91,25 @@ export default function AddToCart({ onClose, product }) {
                 color="primary"
                 size="lg"
                 className="w-[100%] lg:w-[23rem] md:w-[48%] sm:w-[100%] xs:w-[100%] my-5 bg-black text-white transition-all duration-300 transform hover:scale-105"
+                onClick={(event) => {
+                  event.stopPropagation(); // Prevent parent click
+                  if (!selectedSize) {
+                    alert("Please select a size before adding to the cart."); // Alert if size not selected
+                    return;
+                  }
+                  dispatch(
+                    addToCart({
+                      _id: product?._id,
+                      name: product?.name,
+                      quantity: 1,
+                      image: product?.image,
+                      badge: product?.badge,
+                      price: product?.price,
+                      colors: product?.colors,
+                      size: selectedSize, // Use selected size
+                    })
+                  );
+                }}
               >
                 Add To Cart
               </Button>
