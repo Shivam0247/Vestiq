@@ -31,7 +31,7 @@ const BestSellers = () => {
     const fetchNewArrivals = async () => {
       try {
         const response = await fetch(
-          "https://vestiq-server.vercel.app/api/Product/ProductDisplay"
+          "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         ); // Adjust the URL as per your API endpoint
         const data = await response.json();
         const filteredProducts = data.filter(
