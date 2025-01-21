@@ -36,8 +36,15 @@ const NewArrivals = () => {
     fetchNewArrivals();
   }, []);
 
+  // Loader Component
+  const Loader = () => (
+    <div className="flex justify-center items-center h-[50vh]">
+      <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+    </div>
+  );
+
   if (loading) {
-    return <p className="text-center">Loading New Arrivals...</p>;
+    return <Loader />;
   }
 
   return (
