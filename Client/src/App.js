@@ -17,9 +17,7 @@ import SignUp from "./pages/Account/SignUp";
 import Cart from "./pages/Cart/Cart";
 import Contact from "./pages/Contact/Contact";
 import Home from "./pages/Home/Home";
-import Journal from "./pages/Journal/Journal";
 import Offer from "./pages/Offer/Offer";
-import Payment from "./pages/payment/Payment";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
 import Shop from "./pages/Shop/Shop";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -41,7 +39,6 @@ const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
 const App = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  // Handlers for opening and closing the sidebar
   const openSidebar = () => setSidebarOpen(true);
   const closeSidebar = () => setSidebarOpen(false);
 
@@ -58,20 +55,16 @@ const App = () => {
             />
           }
         >
-          {/* Header Navigation Routes */}
-          <Route index element={<Home />} />
+          <Route path="/" index element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/journal" element={<Journal />} />
-          {/* Product and Cart Routes */}
           <Route path="/offer" element={<Offer />} />
           <Route path="/product/:_id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/paymentgateway" element={<Payment />} />
         </Route>
-        <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
       </Route>
     )
   );

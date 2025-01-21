@@ -7,13 +7,8 @@ import {
 } from "@heroui/react";
 import { IoClose } from "react-icons/io5"; // Import a professional icon for the close button
 import { AiOutlineCopyright } from "react-icons/ai";
-import {
-  FaFacebook,
-  FaYoutube,
-  FaLinkedin,
-  FaGithub,
-  FaInstagram,
-} from "react-icons/fa";
+import { FaFacebook, FaYoutube, FaLinkedin, FaInstagram } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function Sidebar({ isOpen, onClose }) {
   return (
@@ -47,7 +42,7 @@ export default function Sidebar({ isOpen, onClose }) {
             className="text-gray-500 hover:text-gray-900 p-2 rounded-full transition-all duration-300"
             aria-label="Close Sidebar"
           >
-            <IoClose size={24} /> {/* Professional close icon */}
+            <IoClose size={24} />
           </button>
         </DrawerHeader>
 
@@ -55,57 +50,63 @@ export default function Sidebar({ isOpen, onClose }) {
         <DrawerBody className="py-10 px-6">
           <ul className="flex flex-col gap-3">
             <li>
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                onClick={onClose}
               >
                 HOME
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/shop"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                onClick={onClose}
               >
                 SHOP ALL
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/limited-stock"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                onClick={onClose}
               >
                 LIMITED STOCK
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/about"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                onClick={onClose}
               >
                 ABOUT US
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/contact"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                onClick={onClose}
               >
                 CONTACT
-              </a>
+              </Link>
             </li>
-            {/* Add extra top margin to Account */}
             <li className="mt-10">
-              <a
-                href="#"
+              <Link
+                to="/account"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                onClick={onClose}
               >
                 ACCOUNT
-              </a>
+              </Link>
             </li>
           </ul>
         </DrawerBody>
 
+        {/* Sidebar Footer */}
         <DrawerFooter>
           <div className="w-full group">
             <ul className="flex items-center gap-2">
@@ -119,7 +120,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 </li>
               </a>
               <a
-                href="https://github.com/noorjsdivs"
+                href="https://www.instagram.com/"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -128,7 +129,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 </li>
               </a>
               <a
-                href="https://www.facebook.com/Noorlalu143/"
+                href="https://www.facebook.com/"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -137,7 +138,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 </li>
               </a>
               <a
-                href="https://www.linkedin.com/in/noor-mohammad-ab2245193/"
+                href="https://www.linkedin.com/"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -148,16 +149,11 @@ export default function Sidebar({ isOpen, onClose }) {
             </ul>
 
             <div className="max-w-container mx-auto pt-5 pb-5">
-              <p className="text-titleFont font-normal text-center flex md:items-center text-lightText duration-200 text-sm">
-                <span className="text-md mr-[1px] mt-[2px] md:mt-0 text-center hidden md:inline-flex">
+              <p className="text-titleFont font-normal text-lightText duration-200 text-sm">
+                <span className="text-md mr-[1px] mt-[2px] md:mt-0 hidden md:inline-flex">
                   <AiOutlineCopyright />
                 </span>
                 Copyright 2025 | Up Strides | All Rights Reserved
-                {/* <a href="https://reactbd.com/" target="_blank" rel="noreferrer">
-            <span className="ml-1 font-medium group-hover:text-primeColor">
-              Powered by ReactBD.com
-            </span>
-          </a> */}
               </p>
             </div>
           </div>

@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
 import Product from "../../home/Products/Product";
 import AddToCart from "../../home/Products/AddToCart";
-
-const Pagination = ({ itemsPerPage }) => {
+import {
+  Pagination,
+  PaginationItem,
+  PaginationCursor,
+} from "@heroui/pagination";
+const PaginationProduct = ({ itemsPerPage }) => {
   const [items, setItems] = useState([]); // State to hold fetched items
   const [loading, setLoading] = useState(true); // Loading state
   const [itemOffset, setItemOffset] = useState(0); // Offset for pagination
@@ -50,9 +54,14 @@ const Pagination = ({ itemsPerPage }) => {
   const currentItems = items.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(items.length / itemsPerPage);
 
-  // Loading state
+  const Loader = () => (
+    <div className="flex justify-center items-center h-[50vh]">
+      <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+    </div>
+  );
+
   if (loading) {
-    return <p className="text-center">Loading products...</p>;
+    return <Loader />;
   }
 
   return (
@@ -60,7 +69,14 @@ const Pagination = ({ itemsPerPage }) => {
       {isModalOpen && (
         <AddToCart product={selectedProduct} onClose={handleCloseModal} />
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mdl:gap-4 lg:gap-10">
+      <div class="icon-container group flex items-center rounded-full bg-black w-14 h-14 pt-1 z-10 cursor-pointer hover:w-48 transition-all duration-300 sticky top-5 left-[94%]">
+        <i class="fi fi-rr-settings-sliders text-white text-xl ml-4"></i>
+        <span class="absolute left-14 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap bottom-5">
+          FILTER AND SORT
+        </span>
+      </div>
+
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lgl:grid-cols-3 xl:grid-cols-4 gap-4 mt-[-65px]">
         {currentItems.map((product) => (
           <div key={product._id} className="w-full">
             <Product
@@ -77,25 +93,17 @@ const Pagination = ({ itemsPerPage }) => {
           </div>
         ))}
       </div>
-      <div className="flex flex-col mdl:flex-row justify-center mdl:justify-between items-center">
-        <ReactPaginate
-          nextLabel=""
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={3}
-          marginPagesDisplayed={2}
-          pageCount={pageCount}
-          previousLabel=""
-          pageLinkClassName="w-9 h-9 border-[1px] border-lightColor hover:border-gray-500 duration-300 flex justify-center items-center"
-          pageClassName="mr-6"
-          containerClassName="flex text-base font-semibold font-titleFont py-10"
-          activeClassName="bg-black text-white"
+      <div className="mt-10 flex justify-center">
+        <Pagination
+          loop
+          showControls
+          color="primary"
+          initialPage={1}
+          total={5}
         />
-        <p className="text-base font-normal text-lightText">
-          Products from {itemOffset + 1} to {endOffset} of {items.length}
-        </p>
       </div>
     </>
   );
 };
 
-export default Pagination;
+export default PaginationProduct;

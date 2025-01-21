@@ -75,7 +75,7 @@ const Product = (props) => {
     <Card
       isPressable
       shadow="sm"
-      className="group"
+      className="group w-[100%]"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={(e) => {
@@ -94,7 +94,7 @@ const Product = (props) => {
       </CardBody>
       <CardFooter className="text-small justify-between">
         <div className="flex flex-col items-start">
-          <b>{props.productName}</b>
+          <b className="text-start">{props.productName}</b>
           <p className="text-default-500">INR {props.price}</p>
         </div>
 
@@ -103,7 +103,7 @@ const Product = (props) => {
           className="opacity-0 group-hover:opacity-100 duration-300 transform group-hover:translate-y-0 translate-y-3"
           onClick={handleAddToCart}
         >
-          <i className="fa-solid fa-cart-shopping text-xl hover:scale-110 transform duration-300 hover:text-primeColor"></i>
+          <i class="fi fi-rr-shopping-cart-add text-2xl hover:scale-110 transform duration-300 hover:text-primeColor mr-2"></i>
         </div>
       </CardFooter>
     </Card>
