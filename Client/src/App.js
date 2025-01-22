@@ -21,7 +21,8 @@ import Offer from "./pages/Offer/Offer";
 import ProductDetails from "./pages/ProductDetails/ProductDetails";
 import Shop from "./pages/Shop/Shop";
 import Sidebar from "./components/Sidebar/Sidebar";
-
+import LimitedStock from "./components/LimitedStock/LimitedStock";
+import LTD_ED from "./components/LTD_ED/LTD_ED";
 const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
   return (
     <div>
@@ -59,6 +60,8 @@ const App = () => {
           <Route path="/shop" element={<Shop />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/limitedstock" element={<LimitedStock />} />
+          <Route path="/LTD_ED" element={<LTD_ED />} />
           <Route path="/offer" element={<Offer />} />
           <Route path="/product/:_id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />

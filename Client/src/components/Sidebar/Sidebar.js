@@ -69,11 +69,20 @@ export default function Sidebar({ isOpen, onClose }) {
             </li>
             <li>
               <Link
-                to="/limited-stock"
+                to="/limitedstock"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
                 onClick={onClose}
               >
                 LIMITED STOCK
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/LTD_ED"
+                className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                onClick={onClose}
+              >
+                LTD. ED.
               </Link>
             </li>
             <li>
