@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
 import Product from "../../home/Products/Product";
 import AddToCart from "../../home/Products/AddToCart";
+import FilterSidebar from "../../filterSidebar/FilterSidebar"; // Import the FilterSidebar component
 import {
   Pagination,
   PaginationItem,
   PaginationCursor,
 } from "@heroui/pagination";
+
 const PaginationProduct = ({ itemsPerPage }) => {
   const [items, setItems] = useState([]); // State to hold fetched items
   const [loading, setLoading] = useState(true); // Loading state
   const [itemOffset, setItemOffset] = useState(0); // Offset for pagination
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar state
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const handleCartClick = (product) => {
@@ -23,6 +26,10 @@ const PaginationProduct = ({ itemsPerPage }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false); // Close the modal
   };
+
+  // Open and close sidebar
+  const handleOpenSidebar = () => setIsSidebarOpen(true);
+  const handleCloseSidebar = () => setIsSidebarOpen(false);
 
   // Fetch items dynamically from the API
   useEffect(() => {
@@ -66,16 +73,23 @@ const PaginationProduct = ({ itemsPerPage }) => {
 
   return (
     <>
+      <FilterSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+
       {isModalOpen && (
         <AddToCart product={selectedProduct} onClose={handleCloseModal} />
       )}
-      <div class="icon-container group flex items-center rounded-full bg-black w-14 h-14 pt-1 z-10 cursor-pointer hover:w-48 transition-all duration-300 sticky top-5 left-[94%]">
-        <i class="fi fi-rr-settings-sliders text-white text-xl ml-4"></i>
-        <span class="absolute left-14 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap bottom-5">
+      {/* Filter and Sort Button */}
+      <div
+        className="icon-container group flex items-center rounded-full bg-black w-14 h-14 pt-1 z-10 cursor-pointer hover:w-48 transition-all duration-300 sticky top-5 left-[94%]"
+        onClick={handleOpenSidebar} // Open the sidebar on click
+      >
+        <i className="fi fi-rr-settings-sliders text-white text-xl ml-4"></i>
+        <span className="absolute left-14 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap bottom-5">
           FILTER AND SORT
         </span>
       </div>
 
+      {/* Products */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lgl:grid-cols-3 xl:grid-cols-4 gap-4 mt-[-65px]">
         {currentItems.map((product) => (
           <div key={product._id} className="w-full">
@@ -93,6 +107,8 @@ const PaginationProduct = ({ itemsPerPage }) => {
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
       <div className="mt-10 flex justify-center">
         <Pagination
           loop
