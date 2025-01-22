@@ -94,14 +94,17 @@ const PaginationProduct = ({ itemsPerPage }) => {
         {currentItems.map((product) => (
           <div key={product._id} className="w-full">
             <Product
+              key={product._id}
               _id={product._id}
               img1={`/images/${product.Images[0]}`}
               img2={`/images/${product.Images[1]}`}
               productName={product.ProductName}
               price={product.Price}
-              color={product.Colors.join(", ")} // Joining multiple colors into a single string
-              badge={product.New}
-              des={product.Description}
+              sizes={product.Sizes}
+              Description={product.Description}
+              Features={product.Features}
+              CompositionAndCare={product.CompositionAndCare}
+              SizeChart={product.SizeChart}
               onCartClick={handleCartClick}
             />
           </div>
