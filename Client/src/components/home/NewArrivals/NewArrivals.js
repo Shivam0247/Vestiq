@@ -63,10 +63,12 @@ const NewArrivals = () => {
               img2={`/images/${product.Images[1]}`}
               productName={product.ProductName}
               price={product.Price}
-              color={product.Colors.join(", ")} // Join colors into a string
-              badge={product.New}
-              description={product.Description}
-              onCartClick={handleCartClick} // Pass cart click handler
+              sizes={product.Sizes}
+              Description={product.Description}
+              Features={product.Features}
+              CompositionAndCare={product.CompositionAndCare}
+              SizeChart={product.SizeChart}
+              onCartClick={handleCartClick}
             />
           ))}
         </div>

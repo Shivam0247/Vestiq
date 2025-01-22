@@ -16,9 +16,12 @@ const productSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  New: {
-    type: Boolean,
-    default: false,
+  Sizes: {
+    type: [String], // Array of available sizes (e.g., ["XS", "S", "M"])
+    validate: {
+      validator: (arr) => arr.every((size) => typeof size === "string"),
+      message: "Each size must be a string.",
+    },
   },
   Images: {
     type: [String], // Array of image URLs
@@ -27,28 +30,60 @@ const productSchema = new mongoose.Schema({
       message: "Each image must be a string (URL).",
     },
   },
-  Colors: {
-    type: [String],
+  Features: {
+    type: [String], // Array of product features
     validate: {
-      validator: (arr) => arr.every((color) => typeof color === "string"),
-      message: "Each color must be a string.",
+      validator: (arr) => arr.every((feature) => typeof feature === "string"),
+      message: "Each feature must be a string.",
     },
   },
-  Categories: {
-    type: [String],
+  CompositionAndCare: {
+    type: [String], // Array for composition & care details
     validate: {
-      validator: (arr) => arr.every((category) => typeof category === "string"),
-      message: "Each category must be a string.",
+      validator: (arr) => arr.every((item) => typeof item === "string"),
+      message: "Each composition & care item must be a string.",
     },
   },
-  ProductCategory: {
-    type: String,
-    enum: ["New Arrivals", "BestSellers", "Offer"],
-    required: true,
+  SizeChart: {
+    type: [
+      {
+        size: { type: String, required: true },
+        chest: { type: String, required: true }, // Use String for flexibility (e.g., '42"')
+        length: { type: String, required: true },
+        shoulder: { type: String, required: true },
+      },
+    ],
+    validate: {
+      validator: (arr) =>
+        arr.every(
+          (entry) =>
+            typeof entry.size === "string" &&
+            typeof entry.chest === "string" &&
+            typeof entry.length === "string" &&
+            typeof entry.shoulder === "string"
+        ),
+      message:
+        "Each size chart entry must have size, chest, length, and shoulder as strings.",
+    },
   },
-  Visible: {
+  InStock: {
     type: Boolean,
+    required: true,
     default: true,
+  },
+  ProductType: {
+    type: String, // Type of product (e.g., "Clothing", "Accessories")
+    required: true,
+    trim: true,
+  },
+  Status: {
+    type: String,
+    enum: ["New", "On Sale", "Sold Out", "Coming Soon"],
+    default: "New",
+  },
+  Category: {
+    type: [String], // Array of categories
+    enum: ["Limited Stock", "LTD_ED", null],
   },
 });
 

@@ -14,10 +14,12 @@ const Product = (props) => {
           _id: props._id,
           name: props.productName,
           image: props.img1,
-          badge: props.badge,
           price: props.price,
-          colors: props.color,
-          description: props.description,
+          Description: props.Description,
+          Features: props.Features,
+          CompositionAndCare: props.CompositionAndCare,
+          sizes: props.sizes,
+          SizeChart: props.SizeChart,
         },
       },
     });
@@ -29,11 +31,9 @@ const Product = (props) => {
       _id: props._id,
       name: props.productName,
       image: props.img1,
-      badge: props.badge,
       price: props.price,
-      colors: props.color,
-      description: props.description,
-    }); // Pass product details to parent
+      sizes: props.sizes,
+    });
   };
 
   return (

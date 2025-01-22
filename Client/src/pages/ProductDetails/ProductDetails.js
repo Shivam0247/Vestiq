@@ -25,7 +25,11 @@ const ProductDetails = () => {
   const [prevLocation, setPrevLocation] = useState("");
   const [productInfo, setProductInfo] = useState([]);
 
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["XS"]));
+  const [selectedKeys, setSelectedKeys] = React.useState(() =>
+    productInfo.sizes && productInfo.sizes.length > 0
+      ? new Set([productInfo.sizes[0]])
+      : new Set()
+  );
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
@@ -37,62 +41,16 @@ const ProductDetails = () => {
     setPrevLocation(location.pathname);
   }, [location, productInfo]);
 
-  const rows = [
-    {
-      key: "1",
-      sizes: "XX-SMALL",
-      chest: '42"',
-      length: '26.5"',
-      shoulders: '19.5"',
-    },
-
-    {
-      key: "2",
-      sizes: "XX-SMALL",
-      chest: '42"',
-      length: '26.5"',
-      shoulders: '19.5"',
-    },
-    {
-      key: "3",
-      sizes: "XX-SMALL",
-      chest: '42"',
-      length: '26.5"',
-      shoulders: '19.5"',
-    },
-    {
-      key: "4",
-      sizes: "XX-SMALL",
-      chest: '42"',
-      length: '26.5"',
-      shoulders: '19.5"',
-    },
-    {
-      key: "5",
-      sizes: "XX-SMALL",
-      chest: '42"',
-      length: '26.5"',
-      shoulders: '19.5"',
-    },
-    {
-      key: "6",
-      sizes: "XX-SMALL",
-      chest: '42"',
-      length: '26.5"',
-      shoulders: '19.5"',
-    },
-    {
-      key: "7",
-      sizes: "XX-SMALL",
-      chest: '42"',
-      length: '26.5"',
-      shoulders: '19.5"',
-    },
-  ];
+  const rows = productInfo.SizeChart
+    ? productInfo.SizeChart.map((sizeChartItem, index) => ({
+        key: index + 1, // Adding the key starting from 1
+        ...sizeChartItem, // Spreading the size chart data
+      }))
+    : [];
 
   const columns = [
     {
-      key: "sizes",
+      key: "size",
       label: "SIZES",
     },
     {
@@ -104,10 +62,17 @@ const ProductDetails = () => {
       label: "LENGTH",
     },
     {
-      key: "shoulders",
+      key: "shoulder",
       label: "SHOULDERS",
     },
   ];
+
+  useEffect(() => {
+    if (location.state?.item) {
+      setProductInfo(location.state.item);
+    }
+    console.log(location.state.item.sizes);
+  }, [location]);
 
   return (
     <div className="w-full mx-auto flex overflow-hidden">
@@ -121,37 +86,42 @@ const ProductDetails = () => {
       <div className="info w-[50%] px-[6%] flex flex-col mt-16">
         <div>
           <h1 className="text-3xl font-extrabold">
-            FASHION SCHOOL 2.0 HOODIE [UNISEX]
+            {productInfo.name ? productInfo.name : "N/A"}
           </h1>
         </div>
 
         <div>
-          <h1 className="text-2xl font-extrabold mt-5">INR 600.00</h1>
+          <h1 className="text-2xl font-extrabold mt-5">
+            INR {productInfo.price ? productInfo.price.toFixed(2) : "N/A"}
+          </h1>
         </div>
 
         <div className="mt-14">
           <div className="flex flex-col">
             <label className="mb-3 font-bold">Select Size</label>
-
             <Dropdown>
               <DropdownTrigger>
                 <Button className="capitalize" variant="bordered">
-                  {selectedValue}
+                  {selectedValue || "Select Size"}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
-                aria-label="Single selection example"
+                aria-label="Size selection"
                 selectedKeys={selectedKeys}
                 selectionMode="single"
                 variant="flat"
                 onSelectionChange={setSelectedKeys}
               >
-                <DropdownItem key="XS">XS</DropdownItem>
-                <DropdownItem key="S">S</DropdownItem>
-                <DropdownItem key="M">M</DropdownItem>
-                <DropdownItem key="L">L</DropdownItem>
-                <DropdownItem key="XL">XL</DropdownItem>
+                {productInfo.sizes && productInfo.sizes.length > 0 ? (
+                  productInfo.sizes.map((size, index) => (
+                    <DropdownItem key={size} aria-label={`Size ${size}`}>
+                      {size}
+                    </DropdownItem>
+                  ))
+                ) : (
+                  <DropdownItem disabled>No Sizes Available</DropdownItem>
+                )}
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -235,27 +205,35 @@ const ProductDetails = () => {
 
         <div className="desc mt-16">
           <p className="text-center">
-            THE ORIGINAL JAYWALKING ARTWORK PRINT ON THE FRONT AND BACK, PAIRS
-            WELL WITH EVERYTHING.
+            {productInfo.Description
+              ? productInfo.Description.toUpperCase()
+              : "N/A"}
           </p>
         </div>
 
         <div className="FEATURES mt-10">
-          <h3 className="text-center text-lg font-extrabold">FEATURES</h3>
-          <p className="text-center text-md mt-3">OVERSIZED FIT</p>
-          <p className="text-center">GRAPHIC PRINT ON THE FRONT AND BACK</p>
-          <p className="text-center">MADE IN INDIA</p>
-          <p className="text-center">210 GSM</p>
+          <h3 className="text-center text-lg font-extrabold mb-3">FEATURES</h3>
+          {productInfo.Features && productInfo.Features.length > 0
+            ? productInfo.Features.map((Feature, index) => (
+                <p key={index} className="text-center">
+                  {Feature.toUpperCase()}
+                </p>
+              ))
+            : null}
         </div>
 
         <div className="Care mt-10">
-          <h3 className="text-center text-lg font-extrabold">
+          <h3 className="text-center text-lg font-extrabold mb-3">
             COMPOSITION & CARE
           </h3>
-          <p className="text-center text-md mt-3">100% COTTON</p>
-          <p className="text-center">
-            MACHINE WASH INSIDE OUT, DRY & IRON INSIDE OUT.
-          </p>
+          {productInfo.CompositionAndCare &&
+          productInfo.CompositionAndCare.length > 0
+            ? productInfo.CompositionAndCare.map((Composition_Care, index) => (
+                <p key={index} className="text-center">
+                  {Composition_Care.toUpperCase()}
+                </p>
+              ))
+            : null}
         </div>
 
         <div className="sizeChart mt-10">

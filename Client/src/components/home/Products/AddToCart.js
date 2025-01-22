@@ -52,7 +52,7 @@ export default function AddToCart({ onClose, product }) {
           <ModalBody className="flex lg:flex-row lg:justify-center">
             {/* Display product details */}
             {product ? (
-              <div className="lg:h-full flex items-center lg:w-[50%]">
+              <div className="lg:h-full flex items-center justify-center lg:w-[50%]">
                 <div className="mb-4">
                   <img
                     src={product.image}
@@ -71,7 +71,7 @@ export default function AddToCart({ onClose, product }) {
                 Select Size
               </h5>
               <ul className="grid gap-3 grid-cols-2 md:grid-cols-7 lg:grid-cols-4 sm:grid-cols-4 xs:grid-cols-3">
-                {sizes.map((size) => (
+                {product.sizes.map((size) => (
                   <li key={size}>
                     <input
                       type="radio"
