@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Drawer,
   DrawerContent,
@@ -5,12 +6,35 @@ import {
   DrawerBody,
   DrawerFooter,
 } from "@heroui/react";
+import { Input } from "@heroui/react";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button,
+} from "@heroui/react";
+import "./FilterSidebar.css";
+import { CheckboxGroup, Checkbox } from "@heroui/checkbox";
 import { IoClose } from "react-icons/io5"; // Import a professional icon for the close button
-import { AiOutlineCopyright } from "react-icons/ai";
-import { FaFacebook, FaYoutube, FaLinkedin, FaInstagram } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 
 export default function FilterSidebar({ isOpen, onClose }) {
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["XS"]));
+
+  const selectedValue = React.useMemo(
+    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
+    [selectedKeys]
+  );
+
+  // Function to allow only numeric input
+  const handleNumericInput = (event) => {
+    const value = event.target.value;
+    if (!/^\d*\.?\d*$/.test(value)) {
+      event.target.value = value.slice(0, -1);
+    }
+  };
+
   return (
     <Drawer
       isOpen={isOpen}
@@ -50,6 +74,93 @@ export default function FilterSidebar({ isOpen, onClose }) {
         <DrawerBody className="py-0 px-0">
           <div className="totalProducts border-b-1 px-6 h-14 flex items-center">
             <span className="text-gray-500">127 Products</span>
+          </div>
+
+          <div className="px-6 mt-4">
+            <span className="font-bold">FILTER</span>
+            <Accordion showDivider={false} selectionMode="multiple">
+              <AccordionItem
+                key="1"
+                aria-label="Availability"
+                title="Availability"
+              >
+                <CheckboxGroup>
+                  <Checkbox value="buenos-aires">In stock (115)</Checkbox>
+                  <Checkbox value="sydney">Out of stock (87)</Checkbox>
+                </CheckboxGroup>
+              </AccordionItem>
+              <AccordionItem key="2" aria-label="Price" title="Price">
+                <div className="flex justify-between items-center">
+                  <Input
+                    labelPlacement="outside"
+                    placeholder="0.00"
+                    startContent={
+                      <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">₹</span>
+                      </div>
+                    }
+                    type="text"
+                    onInput={handleNumericInput} // Restrict input to numbers
+                    className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
+                  />
+                  <span>To</span>
+                  <Input
+                    labelPlacement="outside"
+                    placeholder="0.00"
+                    startContent={
+                      <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">₹</span>
+                      </div>
+                    }
+                    type="text"
+                    onInput={handleNumericInput} // Restrict input to numbers
+                    className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
+                  />
+                </div>
+              </AccordionItem>
+              <AccordionItem
+                key="3"
+                aria-label="Product Type"
+                title="Product Type"
+              >
+                <CheckboxGroup>
+                  <Checkbox value="buenos-aires">T-Shirt</Checkbox>
+                  <Checkbox value="sydney">Tie dye shirts</Checkbox>
+                  <Checkbox value="san-francisco">Sweatshirt</Checkbox>
+                  <Checkbox value="london">Shirt</Checkbox>
+                  <Checkbox value="tokyo">Pants</Checkbox>
+                </CheckboxGroup>
+              </AccordionItem>
+            </Accordion>
+          </div>
+
+          <div className="px-6 mt-4">
+            <span className="font-bold">SORT BY</span>
+            <div className="mt-3">
+              <div className="flex flex-col">
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button className="capitalize" variant="bordered">
+                      {selectedValue}
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    disallowEmptySelection
+                    aria-label="Single selection example"
+                    selectedKeys={selectedKeys}
+                    selectionMode="single"
+                    variant="flat"
+                    onSelectionChange={setSelectedKeys}
+                  >
+                    <DropdownItem key="XS">XS</DropdownItem>
+                    <DropdownItem key="S">S</DropdownItem>
+                    <DropdownItem key="M">M</DropdownItem>
+                    <DropdownItem key="L">L</DropdownItem>
+                    <DropdownItem key="XL">XL</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            </div>
           </div>
         </DrawerBody>
       </DrawerContent>
