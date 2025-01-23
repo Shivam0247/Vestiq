@@ -85,7 +85,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 LTD. ED.
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 to="/about"
                 className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
@@ -93,7 +93,7 @@ export default function Sidebar({ isOpen, onClose }) {
               >
                 ABOUT US
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 to="/contact"
