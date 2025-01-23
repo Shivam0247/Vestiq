@@ -117,6 +117,7 @@ const PaginationProduct = ({ itemsPerPage, Category }) => {
               Features={product.Features}
               CompositionAndCare={product.CompositionAndCare}
               SizeChart={product.SizeChart}
+              Status={product.Status}
               onCartClick={handleCartClick}
             />
           </div>

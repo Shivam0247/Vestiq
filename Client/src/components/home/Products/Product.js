@@ -3,6 +3,7 @@ import { FaShoppingCart } from "react-icons/fa";
 // import Image from "../../designLayouts/Image";
 import { useNavigate } from "react-router-dom";
 import { Card, CardBody, CardFooter, Image } from "@heroui/react";
+import { Chip } from "@heroui/chip";
 const Product = (props) => {
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
@@ -83,6 +84,9 @@ const Product = (props) => {
       }}
     >
       <CardBody className="overflow-visible p-0">
+        <Chip variant="flat" color="warning" className="absolute top-3 right-5">
+          {props.Status}
+        </Chip>
         <img
           alt="ss"
           className="w-full object-cover h-full bg-transparent transition-transform duration-500 ease-in-out group-hover:scale-105 group-hover:rotate-2"

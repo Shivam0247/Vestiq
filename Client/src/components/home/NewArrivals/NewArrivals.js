@@ -68,6 +68,7 @@ const NewArrivals = () => {
               Features={product.Features}
               CompositionAndCare={product.CompositionAndCare}
               SizeChart={product.SizeChart}
+              Status={product.Status}
               onCartClick={handleCartClick}
             />
           ))}
