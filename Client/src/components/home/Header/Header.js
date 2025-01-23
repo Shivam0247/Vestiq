@@ -30,13 +30,13 @@ const Header = ({ onSidebarOpen }) => {
 
   return (
     <div className="w-full h-20 bg-white top-0 z-50 border-b-[1px] border-b-gray-200">
-      <nav className="h-full px-4 mx-auto relative">
+      <nav className="h-full px-5 mx-auto relative">
         <Flex className="flex items-center justify-between h-full">
           <Link to="/">
             <div>
               <Image
-                className="w-[9rem] object-cover"
-                imgSrc={logo_trans_black}
+                className="lg:w-[10rem] sm:w-[7rem] md:w-[8rem] w-[6rem] object-cover"
+                imgSrc="/UPSTRIDES.png"
               />
             </div>
           </Link>
