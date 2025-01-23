@@ -4,6 +4,6 @@ input:focus {
 }
 
 textarea:focus {
-  outline: 2px solid #2563eb !important; /* Tailwind's bg-blue-600 HEX color */
+  outline: none !important; /* Tailwind's bg-blue-600 HEX color */
   border-color: #d1d5db !important; /* Optional: Add your custom border color */
 }
