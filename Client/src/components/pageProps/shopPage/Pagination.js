@@ -9,7 +9,7 @@ import {
   PaginationCursor,
 } from "@heroui/pagination";
 
-const PaginationProduct = ({ itemsPerPage }) => {
+const PaginationProduct = ({ itemsPerPage, Category }) => {
   const [items, setItems] = useState([]); // State to hold fetched items
   const [loading, setLoading] = useState(true); // Loading state
   const [itemOffset, setItemOffset] = useState(0); // Offset for pagination
@@ -39,7 +39,19 @@ const PaginationProduct = ({ itemsPerPage }) => {
           "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         ); // Replace with your API URL
         const data = await response.json();
-        setItems(data); // Set fetched items in state
+
+        if (Category === "ALL") {
+          setItems(data);
+        } else {
+          console.log("data:", data);
+          const filteredItems = data.filter(
+            (item) => item.Category && item.Category[0] == Category
+          );
+
+          console.log("filteredItems:", filteredItems);
+
+          setItems(filteredItems); // Set fetched items in state
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {

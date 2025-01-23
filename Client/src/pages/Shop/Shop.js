@@ -20,7 +20,7 @@ const Shop = () => {
         </div> */}
         <div className="w-full mt-5">
           {/* <ProductBanner itemsPerPageFromBanner={itemsPerPageFromBanner} /> */}
-          <PaginationProduct itemsPerPage={itemsPerPage} />
+          <PaginationProduct itemsPerPage={itemsPerPage} Category="ALL" />
         </div>
       </div>
       {/* ================= Products End here ===================== */}

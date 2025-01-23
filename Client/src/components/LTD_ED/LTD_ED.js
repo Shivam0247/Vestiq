@@ -14,7 +14,7 @@ const LTD_ED = () => {
     <div className="max-w-[100%] mx-auto px-4">
       <div className="w-full h-full flex pb-20 gap-10">
         <div className="w-full mt-5">
-          <PaginationProduct itemsPerPage={itemsPerPage} />
+          <PaginationProduct itemsPerPage={itemsPerPage} Category={"LTD_ED"} />
         </div>
       </div>
     </div>
