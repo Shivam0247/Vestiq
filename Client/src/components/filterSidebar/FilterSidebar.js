@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-} from "@heroui/react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerBody } from "@heroui/react";
 import { Input } from "@heroui/react";
 import {
   Dropdown,
@@ -15,13 +9,15 @@ import {
   Button,
 } from "@heroui/react";
 import "./FilterSidebar.css";
-import { CheckboxGroup, Checkbox } from "@heroui/checkbox";
-import { IoClose } from "react-icons/io5"; // Import a professional icon for the close button
+import { Checkbox } from "@heroui/checkbox";
+import { IoClose } from "react-icons/io5";
 import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Chip } from "@heroui/react";
 
 export default function FilterSidebar({ isOpen, onClose, Category }) {
   const [selectedKeys, setSelectedKeys] = useState(new Set(["XS"]));
   const [totalProducts, setTotalProducts] = useState(0);
+  const [selectedFilters, setSelectedFilters] = useState([]); // Persistent state for selected filters
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
@@ -41,12 +37,11 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
       fetch("https://upstrides-server.vercel.app/api/Product/ProductDisplay")
         .then((response) => response.json())
         .then((data) => {
-          if (Category == "ALL") {
+          if (Category === "ALL") {
             setTotalProducts(data.length);
           } else {
-            console.log("data:", data);
             const filteredItems = data.filter(
-              (item) => item.Category && item.Category[0] == Category
+              (item) => item.Category && item.Category[0] === Category
             );
             setTotalProducts(filteredItems.length);
           }
@@ -54,6 +49,26 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
         .catch((error) => console.error("Error fetching products:", error));
     }
   }, [isOpen, Category]);
+
+  // Handle filter selection
+  const handleFilterChange = (filter, isChecked) => {
+    if (isChecked) {
+      // Add filter to the selected list
+      setSelectedFilters((prevFilters) => [...prevFilters, filter]);
+    } else {
+      // Remove filter from the selected list
+      setSelectedFilters((prevFilters) =>
+        prevFilters.filter((item) => item !== filter)
+      );
+    }
+  };
+
+  // Handle filter removal via Chip close button
+  const handleClose = (filterToRemove) => {
+    setSelectedFilters((prevFilters) =>
+      prevFilters.filter((filter) => filter !== filterToRemove)
+    );
+  };
 
   return (
     <Drawer
@@ -92,10 +107,27 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
         </DrawerHeader>
 
         <DrawerBody className="py-0 px-0">
+          {/* Total Products */}
           <div className="totalProducts border-b-1 px-6 h-14 flex items-center">
             <span className="text-gray-500">{totalProducts} Products</span>
           </div>
 
+          {selectedFilters.length > 0 && (
+            <div className="px-6 mt-3">
+              {selectedFilters.map((filter, index) => (
+                <Chip
+                  key={index}
+                  variant="flat"
+                  onClose={() => handleClose(filter)}
+                  className="my-1 mx-1"
+                >
+                  {filter}
+                </Chip>
+              ))}
+            </div>
+          )}
+
+          {/* Filters */}
           <div className="px-6 mt-4">
             <span className="font-bold">FILTER</span>
             <Accordion showDivider={false} selectionMode="multiple">
@@ -104,11 +136,29 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                 aria-label="Availability"
                 title="Availability"
               >
-                <CheckboxGroup>
-                  <Checkbox value="buenos-aires">In stock (115)</Checkbox>
-                  <Checkbox value="sydney">Out of stock (87)</Checkbox>
-                </CheckboxGroup>
+                <div className="flex flex-col gap-2">
+                  <Checkbox
+                    value="In stock"
+                    isSelected={selectedFilters.includes("In stock")}
+                    onChange={(e) =>
+                      handleFilterChange("In stock", e.target.checked)
+                    }
+                  >
+                    In stock (115)
+                  </Checkbox>
+                  <Checkbox
+                    value="Out of stock"
+                    isSelected={selectedFilters.includes("Out of stock")}
+                    onChange={(e) =>
+                      handleFilterChange("Out of stock", e.target.checked)
+                    }
+                  >
+                    Out of stock (87)
+                  </Checkbox>
+                </div>
               </AccordionItem>
+
+              {/* Price */}
               <AccordionItem key="2" aria-label="Price" title="Price">
                 <div className="flex justify-between items-center">
                   <Input
@@ -120,7 +170,7 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                       </div>
                     }
                     type="text"
-                    onInput={handleNumericInput} // Restrict input to numbers
+                    onInput={handleNumericInput}
                     className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
                   />
                   <span>To</span>
@@ -133,23 +183,65 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                       </div>
                     }
                     type="text"
-                    onInput={handleNumericInput} // Restrict input to numbers
+                    onInput={handleNumericInput}
                     className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
                   />
                 </div>
               </AccordionItem>
+
+              {/* Product Type */}
               <AccordionItem
                 key="3"
                 aria-label="Product Type"
                 title="Product Type"
               >
-                <CheckboxGroup>
-                  <Checkbox value="buenos-aires">T-Shirt</Checkbox>
-                  <Checkbox value="sydney">Tie dye shirts</Checkbox>
-                  <Checkbox value="san-francisco">Sweatshirt</Checkbox>
-                  <Checkbox value="london">Shirt</Checkbox>
-                  <Checkbox value="tokyo">Pants</Checkbox>
-                </CheckboxGroup>
+                <div className="flex flex-col gap-2">
+                  <Checkbox
+                    value="T-Shirt"
+                    isSelected={selectedFilters.includes("T-Shirt")}
+                    onChange={(e) =>
+                      handleFilterChange("T-Shirt", e.target.checked)
+                    }
+                  >
+                    T-Shirt
+                  </Checkbox>
+                  <Checkbox
+                    value="Tie dye shirts"
+                    isSelected={selectedFilters.includes("Tie dye shirts")}
+                    onChange={(e) =>
+                      handleFilterChange("Tie dye shirts", e.target.checked)
+                    }
+                  >
+                    Tie dye shirts
+                  </Checkbox>
+                  <Checkbox
+                    value="Sweatshirt"
+                    isSelected={selectedFilters.includes("Sweatshirt")}
+                    onChange={(e) =>
+                      handleFilterChange("Sweatshirt", e.target.checked)
+                    }
+                  >
+                    Sweatshirt
+                  </Checkbox>
+                  <Checkbox
+                    value="Shirt"
+                    isSelected={selectedFilters.includes("Shirt")}
+                    onChange={(e) =>
+                      handleFilterChange("Shirt", e.target.checked)
+                    }
+                  >
+                    Shirt
+                  </Checkbox>
+                  <Checkbox
+                    value="Pants"
+                    isSelected={selectedFilters.includes("Pants")}
+                    onChange={(e) =>
+                      handleFilterChange("Pants", e.target.checked)
+                    }
+                  >
+                    Pants
+                  </Checkbox>
+                </div>
               </AccordionItem>
             </Accordion>
           </div>
