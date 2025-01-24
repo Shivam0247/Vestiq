@@ -17,7 +17,8 @@ import { Chip } from "@heroui/react";
 export default function FilterSidebar({ isOpen, onClose, Category }) {
   const [selectedKeys, setSelectedKeys] = useState(new Set(["XS"]));
   const [totalProducts, setTotalProducts] = useState(0);
-  const [selectedFilters, setSelectedFilters] = useState([]); // Persistent state for selected filters
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 0 }); // State for price range
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
@@ -53,10 +54,8 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
   // Handle filter selection
   const handleFilterChange = (filter, isChecked) => {
     if (isChecked) {
-      // Add filter to the selected list
       setSelectedFilters((prevFilters) => [...prevFilters, filter]);
     } else {
-      // Remove filter from the selected list
       setSelectedFilters((prevFilters) =>
         prevFilters.filter((item) => item !== filter)
       );
@@ -65,9 +64,13 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
 
   // Handle filter removal via Chip close button
   const handleClose = (filterToRemove) => {
-    setSelectedFilters((prevFilters) =>
-      prevFilters.filter((filter) => filter !== filterToRemove)
-    );
+    if (filterToRemove === "price") {
+      setPriceRange({ min: 0, max: 0 }); // Reset price range
+    } else {
+      setSelectedFilters((prevFilters) =>
+        prevFilters.filter((filter) => filter !== filterToRemove)
+      );
+    }
   };
 
   return (
@@ -88,7 +91,7 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
         },
       }}
       onOpenChange={(open) => {
-        if (!open) onClose(); // Close Drawer
+        if (!open) onClose();
       }}
       hideCloseButton={true}
     >
@@ -107,11 +110,9 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
         </DrawerHeader>
 
         <DrawerBody className="py-0 px-0">
-          {/* Total Products */}
           <div className="totalProducts border-b-1 px-6 h-14 flex items-center">
             <span className="text-gray-500">{totalProducts} Products</span>
           </div>
-
           {selectedFilters.length > 0 && (
             <div className="px-6 mt-3">
               {selectedFilters.map((filter, index) => (
@@ -124,6 +125,17 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                   {filter}
                 </Chip>
               ))}
+
+              {(priceRange.min > 0 || priceRange.max > 0) && (
+                <Chip
+                  key="price"
+                  variant="flat"
+                  onClose={() => handleClose("price")}
+                  className="my-1 mx-1"
+                >
+                  INR {priceRange.min} - INR {priceRange.max}
+                </Chip>
+              )}
             </div>
           )}
 
@@ -131,6 +143,7 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
           <div className="px-6 mt-4">
             <span className="font-bold">FILTER</span>
             <Accordion showDivider={false} selectionMode="multiple">
+              {/* Availability */}
               <AccordionItem
                 key="1"
                 aria-label="Availability"
@@ -164,26 +177,40 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                   <Input
                     labelPlacement="outside"
                     placeholder="0.00"
+                    value={priceRange.min} // Bind to state
                     startContent={
                       <div className="pointer-events-none flex items-center">
                         <span className="text-default-400 text-small">₹</span>
                       </div>
                     }
                     type="text"
-                    onInput={handleNumericInput}
+                    onChange={(e) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        min: e.target.value,
+                      }))
+                    }
+                    onInput={handleNumericInput} // Restrict input to numeric
                     className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
                   />
                   <span>To</span>
                   <Input
                     labelPlacement="outside"
                     placeholder="0.00"
+                    value={priceRange.max} // Bind to state
                     startContent={
                       <div className="pointer-events-none flex items-center">
                         <span className="text-default-400 text-small">₹</span>
                       </div>
                     }
                     type="text"
-                    onInput={handleNumericInput}
+                    onChange={(e) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        max: e.target.value,
+                      }))
+                    }
+                    onInput={handleNumericInput} // Restrict input to numeric
                     className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
                   />
                 </div>
