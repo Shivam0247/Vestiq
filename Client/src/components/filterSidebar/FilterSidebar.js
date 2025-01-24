@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -19,8 +19,9 @@ import { CheckboxGroup, Checkbox } from "@heroui/checkbox";
 import { IoClose } from "react-icons/io5"; // Import a professional icon for the close button
 import { Accordion, AccordionItem } from "@heroui/accordion";
 
-export default function FilterSidebar({ isOpen, onClose }) {
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["XS"]));
+export default function FilterSidebar({ isOpen, onClose, Category }) {
+  const [selectedKeys, setSelectedKeys] = useState(new Set(["XS"]));
+  const [totalProducts, setTotalProducts] = useState(0);
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
@@ -34,6 +35,25 @@ export default function FilterSidebar({ isOpen, onClose }) {
       event.target.value = value.slice(0, -1);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetch("https://upstrides-server.vercel.app/api/Product/ProductDisplay")
+        .then((response) => response.json())
+        .then((data) => {
+          if (Category == "ALL") {
+            setTotalProducts(data.length);
+          } else {
+            console.log("data:", data);
+            const filteredItems = data.filter(
+              (item) => item.Category && item.Category[0] == Category
+            );
+            setTotalProducts(filteredItems.length);
+          }
+        })
+        .catch((error) => console.error("Error fetching products:", error));
+    }
+  }, [isOpen, Category]);
 
   return (
     <Drawer
@@ -73,7 +93,7 @@ export default function FilterSidebar({ isOpen, onClose }) {
 
         <DrawerBody className="py-0 px-0">
           <div className="totalProducts border-b-1 px-6 h-14 flex items-center">
-            <span className="text-gray-500">127 Products</span>
+            <span className="text-gray-500">{totalProducts} Products</span>
           </div>
 
           <div className="px-6 mt-4">

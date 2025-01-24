@@ -85,7 +85,11 @@ const PaginationProduct = ({ itemsPerPage, Category }) => {
 
   return (
     <>
-      <FilterSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+      <FilterSidebar
+        isOpen={isSidebarOpen}
+        onClose={handleCloseSidebar}
+        Category={Category}
+      />
 
       {isModalOpen && (
         <AddToCart product={selectedProduct} onClose={handleCloseModal} />
