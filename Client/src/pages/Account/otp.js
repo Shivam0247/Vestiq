@@ -3,6 +3,7 @@ import { BsCheckCircleFill } from "react-icons/bs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { InputOtp } from "@heroui/input-otp";
 import Cookies from "js-cookie"; // For handling cookies
+import { Button } from "@heroui/react";
 
 const OTP = () => {
   const { email } = useParams();
@@ -13,7 +14,7 @@ const OTP = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsLoading(true); // Start loading
 
     try {
       // Fetch OTP from the database using the email
@@ -24,17 +25,26 @@ const OTP = () => {
       const data = await response.json();
 
       if (response.status === 200) {
+        // Check if OTP is valid
+        if (data.valid === false) {
+          setError("This OTP has expired or is no longer valid.");
+          return; // Stop further execution
+        }
+
         // Compare OTP entered with OTP from the database
         if (data.otp === otp) {
           // OTP matched, store email in cookies
           Cookies.set("userEmail", email); // Cookie expires in 1 day
 
+          // Call expire route to set OTP valid to false
           await fetch(`http://localhost:4000/api/OTP/expire/${email}`, {
             method: "POST",
           });
 
-          // Redirect to home page
-          navigate("/");
+          // Wait for 1.5 seconds before redirecting
+          setTimeout(() => {
+            navigate("/"); // Redirect to home page
+          }, 1500); // 1.5 second delay
         } else {
           setError("Incorrect OTP, please try again.");
         }
@@ -45,7 +55,7 @@ const OTP = () => {
       console.error("Error validating OTP:", error);
       setError("An error occurred while validating the OTP.");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Reset loading state after the operation
     }
   };
 
@@ -90,13 +100,15 @@ const OTP = () => {
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}{" "}
               {/* Display error message */}
-              <button
+              <Button
+                color="primary"
                 type="submit"
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-[100%]"
                 disabled={isLoading}
+                isLoading={isLoading} // Display loading state on button
               >
-                {isLoading ? "Loading..." : "Submit"}
-              </button>
+                Submit
+              </Button>
             </form>
 
             <p className="text-sm text-primary-700 font-medium">
