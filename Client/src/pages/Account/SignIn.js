@@ -18,13 +18,16 @@ const SignIn = () => {
 
       try {
         // Send the email to the server to create or update the OTP
-        const response = await fetch("http://localhost:4000/api/OTP/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }), // Send email in the body
-        });
+        const response = await fetch(
+          "https://upstrides-server.vercel.app/api/OTP/add",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }), // Send email in the body
+          }
+        );
 
         const data = await response.json();
 

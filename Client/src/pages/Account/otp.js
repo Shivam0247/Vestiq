@@ -19,7 +19,7 @@ const OTP = () => {
     try {
       // Fetch OTP from the database using the email
       const response = await fetch(
-        `http://localhost:4000/api/OTP/fetch/${email}`
+        `https://upstrides-server.vercel.app/api/OTP/fetch/${email}`
       );
 
       const data = await response.json();
@@ -37,9 +37,12 @@ const OTP = () => {
           Cookies.set("userEmail", email); // Cookie expires in 1 day
 
           // Call expire route to set OTP valid to false
-          await fetch(`http://localhost:4000/api/OTP/expire/${email}`, {
-            method: "POST",
-          });
+          await fetch(
+            `https://upstrides-server.vercel.app/api/OTP/expire/${email}`,
+            {
+              method: "POST",
+            }
+          );
 
           // Wait for 1.5 seconds before redirecting
           setTimeout(() => {
