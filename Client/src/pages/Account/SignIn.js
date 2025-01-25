@@ -8,17 +8,40 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   const handleEmail = (e) => {
-    setEmail(e.target.value);
+    setEmail(e.target.value); // Update the email state as the user types
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
     if (email) {
-      setIsLoading(true);
+      setIsLoading(true); // Set loading state to true while the request is in progress
 
-      setTimeout(() => {
-        navigate(`/otp/${encodeURIComponent(email)}`);
-      }, 1500);
+      try {
+        // Send the email to the server to create or update the OTP
+        const response = await fetch("http://localhost:4000/api/OTP/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }), // Send email in the body
+        });
+
+        const data = await response.json();
+
+        if (response.status === 201 || response.status === 200) {
+          setTimeout(() => {
+            navigate(`/otp/${encodeURIComponent(email)}`);
+          }, 1500);
+        } else {
+          console.error("Error:", data.message);
+          // Handle error if any (e.g., show message to the user)
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle network errors
+      } finally {
+        setIsLoading(false); // Reset loading state after request is finished
+      }
     }
   };
 
@@ -66,7 +89,7 @@ const SignIn = () => {
                 type="submit"
                 className="w-[100%]"
                 disabled={isLoading}
-                isLoading={isLoading}
+                isLoading={isLoading} // Display loading state on button
               >
                 Continue
               </Button>
