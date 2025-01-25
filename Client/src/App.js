@@ -23,6 +23,8 @@ import Shop from "./pages/Shop/Shop";
 import Sidebar from "./components/Sidebar/Sidebar";
 import LimitedStock from "./components/LimitedStock/LimitedStock";
 import LTD_ED from "./components/LTD_ED/LTD_ED";
+import OTP from "./pages/Account/otp";
+
 const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
   return (
     <div>
@@ -67,7 +69,8 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
         </Route>
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/OTP/:email" element={<OTP />} />
+        {/* <Route path="/signup" element={<SignUp />} /> */}
       </Route>
     )
   );
