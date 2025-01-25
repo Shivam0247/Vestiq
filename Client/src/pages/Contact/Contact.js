@@ -3,17 +3,17 @@ import "./Contact.css";
 import emailjs from "@emailjs/browser";
 
 const Contact = () => {
-  const form = useRef(); // Initialize useRef for the form reference
+  const form = useRef();
 
   const sendEmail = (e) => {
     e.preventDefault();
 
     emailjs
       .sendForm(
-        "service_s9rf8uf", // Replace with your EmailJS service ID
-        "template_q6qbkt2", // Replace with your EmailJS template ID
+        "service_s9rf8uf",
+        "template_q6qbkt2",
         form.current,
-        "Ec8VVjffAqoD2SHOU" // Replace with your EmailJS public key
+        "Ec8VVjffAqoD2SHOU"
       )
       .then(
         () => {
