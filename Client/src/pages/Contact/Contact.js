@@ -1,91 +1,125 @@
-import React from "react";
+import React, { useRef } from "react";
 import "./Contact.css";
+import emailjs from "@emailjs/browser";
+
 const Contact = () => {
+  const form = useRef(); // Initialize useRef for the form reference
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        "service_s9rf8uf", // Replace with your EmailJS service ID
+        "template_q6qbkt2", // Replace with your EmailJS template ID
+        form.current,
+        "Ec8VVjffAqoD2SHOU" // Replace with your EmailJS public key
+      )
+      .then(
+        () => {
+          console.log("Email sent successfully!");
+          alert("Your message has been sent successfully!");
+        },
+        (error) => {
+          console.error("Failed to send email:", error.text);
+          alert("There was an error sending your message. Please try again.");
+        }
+      );
+  };
+
   return (
     <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
       <div className="max-w-2xl lg:max-w-5xl mx-auto">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl ">
+          <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">
             Contact us
           </h1>
-          <p className="mt-1 text-gray-600 ">
+          <p className="mt-1 text-gray-600">
             We'd love to talk about how we can help you.
           </p>
         </div>
 
         <div className="mt-12 grid items-center lg:grid-cols-2 gap-6 lg:gap-16">
-          <div className="flex flex-col border rounded-xl p-4 sm:p-6 lg:p-8 ">
-            <h2 className="mb-8 text-xl font-semibold text-gray-800 ">
+          {/* Contact Form */}
+          <div className="flex flex-col border rounded-xl p-4 sm:p-6 lg:p-8">
+            <h2 className="mb-8 text-xl font-semibold text-gray-800">
               Fill in the form
             </h2>
 
-            <form>
+            <form ref={form} onSubmit={sendEmail}>
               <div className="grid gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label for="hs-firstname-contacts-1" className="sr-only">
+                    <label htmlFor="first_name" className="sr-only">
                       First Name
                     </label>
                     <input
                       type="text"
-                      name="hs-firstname-contacts-1"
-                      id="hs-firstname-contacts-1"
-                      className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none "
+                      name="first_name"
+                      id="first_name"
+                      className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="First Name"
+                      required
                     />
                   </div>
 
+                  {/* Last Name */}
                   <div>
-                    <label for="hs-lastname-contacts-1" className="sr-only">
+                    <label htmlFor="last_name" className="sr-only">
                       Last Name
                     </label>
                     <input
                       type="text"
-                      name="hs-lastname-contacts-1"
-                      id="hs-lastname-contacts-1"
-                      className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none "
+                      name="last_name"
+                      id="last_name"
+                      className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="Last Name"
+                      required
                     />
                   </div>
                 </div>
 
+                {/* Email */}
                 <div>
-                  <label for="hs-email-contacts-1" className="sr-only">
+                  <label htmlFor="email" className="sr-only">
                     Email
                   </label>
                   <input
                     type="email"
-                    name="hs-email-contacts-1"
-                    id="hs-email-contacts-1"
-                    autocomplete="email"
-                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none "
+                    name="email"
+                    id="email"
+                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Email"
+                    required
                   />
                 </div>
 
+                {/* Phone Number */}
                 <div>
-                  <label for="hs-phone-number-1" className="sr-only">
+                  <label htmlFor="phone" className="sr-only">
                     Phone Number
                   </label>
                   <input
                     type="text"
-                    name="hs-phone-number-1"
-                    id="hs-phone-number-1"
-                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none "
+                    name="phone"
+                    id="phone"
+                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Phone Number"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label for="hs-about-contacts-1" className="sr-only">
-                    Details
+                  <label htmlFor="message" className="sr-only">
+                    Message
                   </label>
                   <textarea
-                    id="hs-about-contacts-1"
-                    name="hs-about-contacts-1"
+                    id="message"
+                    name="message"
                     rows="4"
-                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                    placeholder="Details"
+                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="Message"
+                    required
                   ></textarea>
                 </div>
               </div>
@@ -93,41 +127,41 @@ const Contact = () => {
               <div className="mt-4 grid">
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
                 >
-                  Send inquiry
+                  Send Inquiry
                 </button>
               </div>
 
               <div className="mt-3 text-center">
-                <p className="text-sm text-gray-500 ">
+                <p className="text-sm text-gray-500">
                   We'll get back to you in 1-2 business days.
                 </p>
               </div>
             </form>
           </div>
 
-          <div className="divide-y divide-gray-200 ">
+          <div className="divide-y divide-gray-200">
             <div className="flex gap-x-7 py-6">
               <svg
-                className="shrink-0 size-6 mt-1.5 text-gray-800 "
+                className="shrink-0 size-6 mt-1.5 text-gray-800"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <circle cx="12" cy="12" r="10" />
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                 <path d="M12 17h.01" />
               </svg>
               <div className="grow">
-                <h3 className="font-semibold text-gray-800 ">Knowledgebase</h3>
-                <p className="mt-1 text-sm text-gray-500 ">
+                <h3 className="font-semibold text-gray-800">Knowledgebase</h3>
+                <p className="mt-1 text-sm text-gray-500">
                   We're here to help with any questions or code.
                 </p>
                 <a
