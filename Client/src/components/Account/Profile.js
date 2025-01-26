@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -7,13 +7,79 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Checkbox,
   Input,
-  Link,
 } from "@heroui/react";
 
 function Profile(props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure(); // Modal state management
+  const [firstName, setFirstName] = useState(""); // Manage first name
+  const [lastName, setLastName] = useState(""); // Manage last name
+  const [error, setError] = useState(null); // Manage error messages
+  const [isLoading, setIsLoading] = useState(false); // Manage loading state
+
+  // Fetch the user's name from the API when the component mounts
+  useEffect(() => {
+    const fetchName = async () => {
+      try {
+        const response = await fetch(
+          `https://upstrides-server.vercel.app/api/userDetails/get-name/${props.userEmail}`
+        );
+        const data = await response.json();
+        if (response.status === 200) {
+          setFirstName(data.firstName);
+          setLastName(data.lastName);
+        }
+      } catch (error) {
+        console.error("Error fetching user name:", error);
+      }
+    };
+
+    if (props.userEmail) {
+      fetchName();
+    }
+  }, [props.userEmail]);
+
+  const handleSave = async () => {
+    if (!firstName || !lastName) {
+      setError("First name and last name are required.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Make PUT request to backend to update name
+      const response = await fetch(
+        `https://upstrides-server.vercel.app/api/userDetails/add-name/${props.userEmail}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        // Successfully updated name
+        setError(null);
+        onOpenChange(false); // Close the modal
+        // Optionally, update the state or show success message
+      } else {
+        setError(data.message || "Error updating profile");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setError("An error occurred while updating the profile.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -36,6 +102,10 @@ function Profile(props) {
               <span className="text-base font-semibold text-gray-700 break-words">
                 {props.userEmail}
               </span>
+            </div>
+            <div className="text-lg font-semibold text-gray-700 mt-2">
+              {/* Display first name and last name as a full name */}
+              {firstName} {lastName}
             </div>
           </div>
         </div>
@@ -69,22 +139,32 @@ function Profile(props) {
                 <div className="flex justify-between flex-wrap">
                   <Input
                     placeholder="First Name"
-                    // variant="bordered"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     className="lg:w-[49%] sm:w-[100%] mb-3"
                   />
 
                   <Input
                     placeholder="Last Name"
-                    // variant="bordered"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     className="lg:w-[49%] sm:w-[100%] "
                   />
                 </div>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onClick={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onClick={onClose}>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    handleSave();
+                    onClose();
+                  }}
+                  isLoading={isLoading}
+                >
                   Save
                 </Button>
               </ModalFooter>

@@ -34,7 +34,7 @@ const OTP = () => {
         // Compare OTP entered with OTP from the database
         if (data.otp === otp) {
           // OTP matched, store email in cookies
-          Cookies.set("userEmail", email); // Cookie expires in 1 day
+          Cookies.set("userEmail", email);
 
           // Call expire route to set OTP valid to false
           await fetch(
@@ -44,10 +44,20 @@ const OTP = () => {
             }
           );
 
-          // Wait for 1.5 seconds before redirecting
+          await fetch(
+            "https://upstrides-server.vercel.app/api/userDetails/add-email",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            }
+          );
+
           setTimeout(() => {
-            navigate("/"); // Redirect to home page
-          }, 1500); // 1.5 second delay
+            navigate("/");
+          }, 1500);
         } else {
           setError("Incorrect OTP, please try again.");
         }
