@@ -6,6 +6,7 @@ import {
   createRoutesFromElements,
   Route,
   ScrollRestoration,
+  useLocation,
 } from "react-router-dom";
 import Footer from "./components/home/Footer/Footer";
 import FooterBottom from "./components/home/Footer/FooterBottom";
@@ -24,8 +25,14 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import LimitedStock from "./components/LimitedStock/LimitedStock";
 import LTD_ED from "./components/LTD_ED/LTD_ED";
 import OTP from "./pages/Account/otp";
+import Account from "./components/Account/Account";
 
 const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
+  const location = useLocation();
+
+  // Check if the current route is "/account"
+  const hideFooter = location.pathname === "/account";
+
   return (
     <div>
       <Header onSidebarOpen={onSidebarOpen} />
@@ -33,8 +40,13 @@ const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
       <SpecialCase />
       <ScrollRestoration />
       <Outlet />
-      <Footer />
-      <FooterBottom />
+      {/* Conditionally render Footer */}
+      {!hideFooter && (
+        <>
+          <Footer />
+          <FooterBottom />
+        </>
+      )}
     </div>
   );
 };
@@ -67,6 +79,7 @@ const App = () => {
           <Route path="/offer" element={<Offer />} />
           <Route path="/product/:_id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/account" element={<Account />} />
         </Route>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/OTP/:email" element={<OTP />} />

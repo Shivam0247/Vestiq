@@ -5,12 +5,20 @@ import {
   DrawerBody,
   DrawerFooter,
 } from "@heroui/react";
+import Cookies from "js-cookie";
 import { IoClose } from "react-icons/io5"; // Import a professional icon for the close button
 import { AiOutlineCopyright } from "react-icons/ai";
 import { FaFacebook, FaYoutube, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import React, { useEffect, useState } from "react";
 export default function Sidebar({ isOpen, onClose }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if the `userEmail` cookie is set
+    const userEmail = Cookies.get("userEmail");
+    setIsLoggedIn(!!userEmail); // If `userEmail` exists, set `isLoggedIn` to true
+  }, []);
   return (
     <Drawer
       isOpen={isOpen}
@@ -103,15 +111,27 @@ export default function Sidebar({ isOpen, onClose }) {
                 CONTACT
               </Link>
             </li>
-            <li className="mt-10">
-              <Link
-                to="/account"
-                className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
-                onClick={onClose}
-              >
-                ACCOUNT
-              </Link>
-            </li>
+            {isLoggedIn ? (
+              <li className="mt-10">
+                <Link
+                  to="/account"
+                  className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                  onClick={onClose}
+                >
+                  ACCOUNT
+                </Link>
+              </li>
+            ) : (
+              <li className="mt-10">
+                <Link
+                  to="/signin"
+                  className="text-medium font-medium text-gray-700 hover:text-gray-900 hover:translate-x-2 transition-all duration-300 block"
+                  onClick={onClose}
+                >
+                  LOGIN
+                </Link>
+              </li>
+            )}
           </ul>
         </DrawerBody>
 
