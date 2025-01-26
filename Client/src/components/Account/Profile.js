@@ -8,8 +8,9 @@ import {
   Button,
   Input,
 } from "@heroui/react";
-import { Checkbox } from "@heroui/react";
-import { Select, SelectItem } from "@heroui/react";
+import { Checkbox, Select, SelectItem } from "@heroui/react";
+import { Country, State, City } from "country-state-city";
+
 function Profile(props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -18,6 +19,16 @@ function Profile(props) {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(null);
+
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("IN");
+  console.log("selectedCountry", selectedCountry);
+  const [selectedState, setSelectedState] = useState("");
+  console.log("selectedState", selectedState);
+
+  const [selectedCity, setSelectedCity] = useState("");
 
   const fetchName = async () => {
     try {
@@ -64,8 +75,8 @@ function Profile(props) {
 
       if (response.status === 200) {
         setError(null);
-        fetchName(); // Call fetchName to update the displayed name
-        setOpenModal(null); // Close the modal
+        fetchName(); // Refresh name display
+        setOpenModal(null); // Close modal
       } else {
         setError(data.message || "Error updating profile");
       }
@@ -83,12 +94,29 @@ function Profile(props) {
     }
   }, [props.userEmail]);
 
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
+  useEffect(() => {
+    // Load all countries
+    const countryList = Country.getAllCountries();
+    setCountries(countryList);
+  }, []);
 
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
-    [selectedKeys]
-  );
+  useEffect(() => {
+    // Load states when the selected country changes
+    if (selectedCountry) {
+      const stateList = State.getStatesOfCountry(selectedCountry);
+      setStates(stateList);
+      setSelectedState(""); // Reset state
+      setCities([]); // Reset cities
+    }
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    // Load cities when the selected state changes
+    if (selectedState) {
+      const cityList = City.getCitiesOfState(selectedCountry, selectedState);
+      setCities(cityList);
+    }
+  }, [selectedState]);
 
   return (
     <>
@@ -164,7 +192,7 @@ function Profile(props) {
                     placeholder="Last Name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="lg:w-[49%] sm:w-[100%] "
+                    className="lg:w-[49%] sm:w-[100%]"
                   />
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -204,71 +232,61 @@ function Profile(props) {
               </ModalHeader>
               <ModalBody>
                 <Checkbox defaultSelected>This is my default address</Checkbox>
-                <Select className="" label="Country/region" variant="bordered">
-                  <SelectItem key="ss">sss</SelectItem>
-                  <SelectItem key="ssssss">ss</SelectItem>
-                  <SelectItem key="sssss">sssss</SelectItem>
-                  <SelectItem key="ssss">ssssss</SelectItem>
+                {/* Country Dropdown */}
+                <Select
+                  label="Country"
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  variant="bordered"
+                  className="flex-1"
+                >
+                  {countries.map((country) => (
+                    <SelectItem key={country.isoCode} value={country.isoCode}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
                 </Select>
-                <div className="flex justify-between flex-wrap">
-                  <Input
-                    placeholder="First Name"
-                    className="lg:w-[49%] sm:w-[100%] mb-3"
-                    variant="bordered"
-                    size="lg"
-                    radius="sm"
-                  />
 
-                  <Input
-                    placeholder="Last Name"
-                    className="lg:w-[49%] sm:w-[100%] "
-                    variant="bordered"
-                    size="lg"
-                    radius="sm"
-                  />
-                </div>
                 <Input placeholder="Address" variant="bordered" size="lg" />
                 <Input
                   placeholder="Apartment, suite, etc (optional)"
                   variant="bordered"
                   size="lg"
-                  radius="sm"
                 />
-
                 <div className="flex flex-wrap gap-4 flex-col lg:flex-row">
-                  <Input
-                    placeholder="City"
-                    variant="bordered"
-                    size="lg"
-                    className="flex-1"
-                    radius="sm"
-                  />
                   <Select
-                    className="flex-1"
-                    label="Country/region"
+                    label="State"
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
                     variant="bordered"
+                    className="flex-1"
+                    disabled={!states.length}
                     size="sm"
                   >
-                    <SelectItem key="ss">sss</SelectItem>
-                    <SelectItem key="ssssss">ss</SelectItem>
-                    <SelectItem key="sssss">sssss</SelectItem>
-                    <SelectItem key="ssss">ssssss</SelectItem>
+                    {states.map((state) => (
+                      <SelectItem key={state.isoCode} value={state.isoCode}>
+                        {state.name}
+                      </SelectItem>
+                    ))}
                   </Select>
-                  <Input
-                    placeholder="PIN code"
+                  <Select
+                    label="City"
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
                     variant="bordered"
-                    size="lg"
                     className="flex-1"
-                    radius="sm"
-                  />
+                    disabled={!cities.length}
+                    size="sm"
+                  >
+                    {cities.map((city) => (
+                      <SelectItem key={city.name} value={city.name}>
+                        {city.name}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                  <Input placeholder="PIN code" variant="bordered" size="lg" />
                 </div>
-                <Input
-                  placeholder="Phone"
-                  variant="bordered"
-                  size="lg"
-                  radius="sm"
-                  className="flex-1"
-                />
+                <Input placeholder="Phone" variant="bordered" size="lg" />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
