@@ -14,7 +14,7 @@ import Order from "./Order";
 import Profile from "./Profile";
 
 export default function Account() {
-  const [activeTab, setActiveTab] = useState("Orders"); // Default to "Orders"
+  const [activeTab, setActiveTab] = useState("Orders");
 
   return (
     <div className="flex justify-center pt-10 bg-gray-200 min-h-[100vh]">
@@ -25,7 +25,7 @@ export default function Account() {
               <Link
                 color={activeTab === "Orders" ? "primary" : "foreground"}
                 href="#"
-                onClick={() => setActiveTab("Orders")}
+                onPress={() => setActiveTab("Orders")}
                 className={`${
                   activeTab === "Orders" ? "font-bold" : ""
                 } transition duration-200`}
@@ -37,7 +37,7 @@ export default function Account() {
               <Link
                 color={activeTab === "Profile" ? "primary" : "foreground"}
                 href="#"
-                onClick={() => setActiveTab("Profile")}
+                onPress={() => setActiveTab("Profile")}
                 className={`${
                   activeTab === "Profile" ? "font-bold" : ""
                 } transition duration-200`}
@@ -59,13 +59,13 @@ export default function Account() {
                 </DropdownItem>
                 <DropdownItem
                   key="settings"
-                  onClick={() => setActiveTab("Orders")}
+                  onPress={() => setActiveTab("Orders")}
                 >
                   Orders
                 </DropdownItem>
                 <DropdownItem
                   key="team_settings"
-                  onClick={() => setActiveTab("Profile")}
+                  onPress={() => setActiveTab("Profile")}
                 >
                   Profile
                 </DropdownItem>
