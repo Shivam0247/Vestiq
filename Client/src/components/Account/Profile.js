@@ -119,11 +119,13 @@ function Profile(props) {
   }, [selectedState]);
 
   const [phoneCode, setPhoneCode] = useState("");
+  const [flag, setFalg] = useState("");
   useEffect(() => {
     // Get the phone code for the selected country
     const countryData = Country.getCountryByCode(selectedCountry);
     if (countryData) {
       setPhoneCode(countryData.phonecode);
+      setFalg(countryData.flag);
     }
   }, [selectedCountry]);
   return (
@@ -295,7 +297,7 @@ function Profile(props) {
                 </div>
                 <div className="flex items-center">
                   <Input
-                    value={`+${phoneCode} `}
+                    value={`+${phoneCode} ${flag} `}
                     className="w-[15%] text-center mr-3"
                     variant="bordered"
                     disabled
