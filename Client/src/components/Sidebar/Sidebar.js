@@ -6,7 +6,7 @@ import {
   DrawerFooter,
 } from "@heroui/react";
 import Cookies from "js-cookie";
-import { IoClose } from "react-icons/io5"; // Import a professional icon for the close button
+import { IoClose } from "react-icons/io5";
 import { AiOutlineCopyright } from "react-icons/ai";
 import { FaFacebook, FaYoutube, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -15,9 +15,8 @@ export default function Sidebar({ isOpen, onClose }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Check if the `userEmail` cookie is set
     const userEmail = Cookies.get("userEmail");
-    setIsLoggedIn(!!userEmail); // If `userEmail` exists, set `isLoggedIn` to true
+    setIsLoggedIn(!!userEmail);
   }, []);
   return (
     <Drawer

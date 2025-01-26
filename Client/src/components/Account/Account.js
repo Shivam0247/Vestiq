@@ -9,6 +9,8 @@ import {
   DropdownMenu,
   Avatar,
 } from "@heroui/react";
+import { useNavigate } from "react-router-dom";
+
 import { useState } from "react";
 import Order from "./Order";
 import Profile from "./Profile";
@@ -17,6 +19,13 @@ import Cookies from "js-cookie";
 export default function Account() {
   const [activeTab, setActiveTab] = useState("Orders");
   const userEmail = Cookies.get("userEmail");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Cookies.remove("userEmail");
+    navigate("/");
+    window.location.reload();
+  };
   return (
     <div className="flex justify-center pt-10 bg-gray-200 min-h-[100vh]">
       <div className="w-[80%] h-[80%]">
@@ -73,7 +82,11 @@ export default function Account() {
                 >
                   Profile
                 </DropdownItem>
-                <DropdownItem key="logout" color="danger">
+                <DropdownItem
+                  key="logout"
+                  color="danger"
+                  onPress={handleLogout}
+                >
                   Log Out
                 </DropdownItem>
               </DropdownMenu>
