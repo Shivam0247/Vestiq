@@ -11,33 +11,31 @@ import {
 } from "@heroui/react";
 
 function Profile(props) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure(); // Modal state management
-  const [firstName, setFirstName] = useState(""); // Manage first name
-  const [lastName, setLastName] = useState(""); // Manage last name
-  const [error, setError] = useState(null); // Manage error messages
-  const [isLoading, setIsLoading] = useState(false); // Manage loading state
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [fetchFirstName, setfetchFirstName] = useState("");
+  const [fetchLastName, setfetchLastName] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch the user's name from the API when the component mounts
-  useEffect(() => {
-    const fetchName = async () => {
-      try {
-        const response = await fetch(
-          `https://upstrides-server.vercel.app/api/userDetails/get-name/${props.userEmail}`
-        );
-        const data = await response.json();
-        if (response.status === 200) {
-          setFirstName(data.firstName);
-          setLastName(data.lastName);
-        }
-      } catch (error) {
-        console.error("Error fetching user name:", error);
+  const fetchName = async () => {
+    try {
+      const response = await fetch(
+        `https://upstrides-server.vercel.app/api/userDetails/get-name/${props.userEmail}`
+      );
+      const data = await response.json();
+      if (response.status === 200) {
+        setfetchFirstName(data.firstName);
+        setfetchLastName(data.lastName);
+      } else {
+        setError("Error fetching user name");
       }
-    };
-
-    if (props.userEmail) {
-      fetchName();
+    } catch (error) {
+      console.error("Error fetching name:", error);
+      setError("An error occurred while fetching the user name.");
     }
-  }, [props.userEmail]);
+  };
 
   const handleSave = async () => {
     if (!firstName || !lastName) {
@@ -48,7 +46,6 @@ function Profile(props) {
     setIsLoading(true);
 
     try {
-      // Make PUT request to backend to update name
       const response = await fetch(
         `https://upstrides-server.vercel.app/api/userDetails/add-name/${props.userEmail}`,
         {
@@ -66,10 +63,9 @@ function Profile(props) {
       const data = await response.json();
 
       if (response.status === 200) {
-        // Successfully updated name
         setError(null);
+        fetchName(); // Call fetchName to update the displayed name
         onOpenChange(false); // Close the modal
-        // Optionally, update the state or show success message
       } else {
         setError(data.message || "Error updating profile");
       }
@@ -81,6 +77,12 @@ function Profile(props) {
     }
   };
 
+  useEffect(() => {
+    if (props.userEmail) {
+      fetchName();
+    }
+  }, [props.userEmail]);
+
   return (
     <>
       <div>
@@ -91,7 +93,11 @@ function Profile(props) {
         <div className="w-[100%] bg-white p-6 rounded-lg shadow-md mt-3">
           <div className="flex flex-col ">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-md font-medium text-gray-500">Name</span>
+              <span className="text-md font-medium text-gray-500">
+                {fetchFirstName && fetchLastName
+                  ? `${fetchFirstName} ${fetchLastName}`
+                  : "Name"}
+              </span>
               <i
                 className="fi fi-rs-pencil text-blue-500 text-sm cursor-pointer hover:text-blue-600 transition duration-200 ml-2"
                 onClick={onOpen} // Use onClick to open the modal
@@ -102,10 +108,6 @@ function Profile(props) {
               <span className="text-base font-semibold text-gray-700 break-words">
                 {props.userEmail}
               </span>
-            </div>
-            <div className="text-lg font-semibold text-gray-700 mt-2">
-              {/* Display first name and last name as a full name */}
-              {firstName} {lastName}
             </div>
           </div>
         </div>
@@ -154,12 +156,12 @@ function Profile(props) {
                 {error && <p className="text-red-500 text-sm">{error}</p>}
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="flat" onClick={onClose}>
+                <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
                 <Button
                   color="primary"
-                  onClick={() => {
+                  onPress={() => {
                     handleSave();
                     onClose();
                   }}
