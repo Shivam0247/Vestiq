@@ -3,7 +3,7 @@ const {heroui} = require('@heroui/theme');
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./node_modules/@heroui/theme/dist/components/(accordion|avatar|button|card|checkbox|chip|drawer|dropdown|input-otp|modal|navbar|pagination|table|divider|ripple|spinner|form|menu|popover|spacer).js"
+    "./node_modules/@heroui/theme/dist/components/(accordion|avatar|button|card|checkbox|chip|drawer|dropdown|input-otp|modal|navbar|pagination|select|table|divider|ripple|spinner|form|menu|popover|listbox|scroll-shadow|spacer).js"
   ],
   theme: {
     extend: {

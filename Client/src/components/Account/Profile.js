@@ -6,18 +6,18 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  useDisclosure,
   Input,
 } from "@heroui/react";
-
+import { Checkbox } from "@heroui/react";
+import { Select, SelectItem } from "@heroui/react";
 function Profile(props) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [fetchFirstName, setfetchFirstName] = useState("");
   const [fetchLastName, setfetchLastName] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(null);
 
   const fetchName = async () => {
     try {
@@ -65,7 +65,7 @@ function Profile(props) {
       if (response.status === 200) {
         setError(null);
         fetchName(); // Call fetchName to update the displayed name
-        onOpenChange(false); // Close the modal
+        setOpenModal(null); // Close the modal
       } else {
         setError(data.message || "Error updating profile");
       }
@@ -82,6 +82,13 @@ function Profile(props) {
       fetchName();
     }
   }, [props.userEmail]);
+
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
+
+  const selectedValue = React.useMemo(
+    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
+    [selectedKeys]
+  );
 
   return (
     <>
@@ -100,7 +107,7 @@ function Profile(props) {
               </span>
               <i
                 className="fi fi-rs-pencil text-blue-500 text-sm cursor-pointer hover:text-blue-600 transition duration-200 ml-2"
-                onClick={onOpen} // Use onClick to open the modal
+                onClick={() => setOpenModal("editName")}
               ></i>
             </div>
             <div className="flex flex-col">
@@ -118,7 +125,10 @@ function Profile(props) {
               <span className="text-lg font-semibold text-gray-800">
                 Addresses
               </span>
-              <i className="fi fi-br-plus text-blue-500 text-base cursor-pointer hover:text-blue-600 transition-colors duration-200"></i>
+              <i
+                className="fi fi-br-plus text-blue-500 text-base cursor-pointer hover:text-blue-600 transition-colors duration-200"
+                onClick={() => setOpenModal("addAddress")}
+              ></i>
             </div>
 
             <div className="flex items-center bg-gray-100 rounded-md p-4">
@@ -130,7 +140,11 @@ function Profile(props) {
       </div>
 
       {/* Modal for editing profile */}
-      <Modal isOpen={isOpen} placement="center" onOpenChange={onOpenChange}>
+      <Modal
+        isOpen={openModal === "editName"}
+        placement="center"
+        onOpenChange={() => setOpenModal(null)}
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -167,6 +181,100 @@ function Profile(props) {
                   }}
                   isLoading={isLoading}
                 >
+                  Save
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Modal for adding address */}
+      <Modal
+        isOpen={openModal === "addAddress"}
+        placement="center"
+        onOpenChange={() => setOpenModal(null)}
+        size="2xl"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Add Address
+              </ModalHeader>
+              <ModalBody>
+                <Checkbox defaultSelected>This is my default address</Checkbox>
+                <Select className="" label="Country/region" variant="bordered">
+                  <SelectItem key="ss">sss</SelectItem>
+                  <SelectItem key="ssssss">ss</SelectItem>
+                  <SelectItem key="sssss">sssss</SelectItem>
+                  <SelectItem key="ssss">ssssss</SelectItem>
+                </Select>
+                <div className="flex justify-between flex-wrap">
+                  <Input
+                    placeholder="First Name"
+                    className="lg:w-[49%] sm:w-[100%] mb-3"
+                    variant="bordered"
+                    size="lg"
+                    radius="sm"
+                  />
+
+                  <Input
+                    placeholder="Last Name"
+                    className="lg:w-[49%] sm:w-[100%] "
+                    variant="bordered"
+                    size="lg"
+                    radius="sm"
+                  />
+                </div>
+                <Input placeholder="Address" variant="bordered" size="lg" />
+                <Input
+                  placeholder="Apartment, suite, etc (optional)"
+                  variant="bordered"
+                  size="lg"
+                  radius="sm"
+                />
+
+                <div className="flex flex-wrap gap-4 flex-col lg:flex-row">
+                  <Input
+                    placeholder="City"
+                    variant="bordered"
+                    size="lg"
+                    className="flex-1"
+                    radius="sm"
+                  />
+                  <Select
+                    className="flex-1"
+                    label="Country/region"
+                    variant="bordered"
+                    size="sm"
+                  >
+                    <SelectItem key="ss">sss</SelectItem>
+                    <SelectItem key="ssssss">ss</SelectItem>
+                    <SelectItem key="sssss">sssss</SelectItem>
+                    <SelectItem key="ssss">ssssss</SelectItem>
+                  </Select>
+                  <Input
+                    placeholder="PIN code"
+                    variant="bordered"
+                    size="lg"
+                    className="flex-1"
+                    radius="sm"
+                  />
+                </div>
+                <Input
+                  placeholder="Phone"
+                  variant="bordered"
+                  size="lg"
+                  radius="sm"
+                  className="flex-1"
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
                   Save
                 </Button>
               </ModalFooter>
