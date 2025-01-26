@@ -50,7 +50,6 @@ router.put("/add-name/:email", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update the user's first name and last name
     user.firstName = firstName;
     user.lastName = lastName;
 
@@ -123,6 +122,28 @@ router.put("/add-address/:email", async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error adding address", error });
+  }
+});
+
+router.get("/get-name/:email", async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the first name and last name
+    return res.status(200).json({
+      firstName: user.firstName,
+      lastName: user.lastName,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error fetching user name", error });
   }
 });
 
