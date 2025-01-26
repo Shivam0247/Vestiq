@@ -19,16 +19,21 @@ function Profile(props) {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(null);
-
+  const [locFirstName, setLocFirstName] = useState("");
+  const [locLastName, setLocLastName] = useState("");
+  const [address, setAddress] = useState("");
+  const [apartment, setApartment] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [phone, setPhone] = useState("");
+  const [isDefault, setIsDefault] = useState(true);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("IN");
-  console.log("selectedCountry", selectedCountry);
   const [selectedState, setSelectedState] = useState("");
-  console.log("selectedState", selectedState);
-
   const [selectedCity, setSelectedCity] = useState("");
+  const [phoneCode, setPhoneCode] = useState("");
+  const [flag, setFlag] = useState("");
 
   const fetchName = async () => {
     try {
@@ -75,14 +80,71 @@ function Profile(props) {
 
       if (response.status === 200) {
         setError(null);
-        fetchName(); // Refresh name display
-        setOpenModal(null); // Close modal
+        fetchName();
+        setOpenModal(null);
       } else {
         setError(data.message || "Error updating profile");
       }
     } catch (error) {
       console.error("Error:", error);
       setError("An error occurred while updating the profile.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddAddress = async () => {
+    if (
+      !locFirstName ||
+      !locLastName ||
+      !address ||
+      !selectedCountry ||
+      !selectedState ||
+      !selectedCity ||
+      !pincode ||
+      !phone
+    ) {
+      setError("All address fields are required.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `https://upstrides-server.vercel.app/api/userDetails/add-address/${props.userEmail}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: locFirstName,
+            lastName: locLastName,
+            address,
+            apartment,
+            country: selectedCountry,
+            state: selectedState,
+            city: selectedCity,
+            pincode,
+            phone: `+${phoneCode} ${phone}`,
+            default: isDefault,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setError(null);
+        setOpenModal(null);
+        console.log("Address added successfully");
+      } else {
+        setError(data.message || "Error adding address");
+      }
+    } catch (error) {
+      console.error("Error adding address:", error);
+      setError("An error occurred while adding the address.");
     } finally {
       setIsLoading(false);
     }
@@ -95,39 +157,34 @@ function Profile(props) {
   }, [props.userEmail]);
 
   useEffect(() => {
-    // Load all countries
     const countryList = Country.getAllCountries();
     setCountries(countryList);
   }, []);
 
   useEffect(() => {
-    // Load states when the selected country changes
     if (selectedCountry) {
       const stateList = State.getStatesOfCountry(selectedCountry);
       setStates(stateList);
-      setSelectedState(""); // Reset state
-      setCities([]); // Reset cities
+      setSelectedState("");
+      setCities([]);
     }
   }, [selectedCountry]);
 
   useEffect(() => {
-    // Load cities when the selected state changes
     if (selectedState) {
       const cityList = City.getCitiesOfState(selectedCountry, selectedState);
       setCities(cityList);
     }
   }, [selectedState]);
 
-  const [phoneCode, setPhoneCode] = useState("");
-  const [flag, setFalg] = useState("");
   useEffect(() => {
-    // Get the phone code for the selected country
     const countryData = Country.getCountryByCode(selectedCountry);
     if (countryData) {
       setPhoneCode(countryData.phonecode);
-      setFalg(countryData.flag);
+      setFlag(countryData.flag);
     }
   }, [selectedCountry]);
+
   return (
     <>
       <div>
@@ -168,7 +225,6 @@ function Profile(props) {
                 onClick={() => setOpenModal("addAddress")}
               ></i>
             </div>
-
             <div className="flex items-center bg-gray-100 rounded-md p-4">
               <i className="fi fi-rr-info text-gray-500 text-lg mr-3 mt-1"></i>
               <span className="text-gray-600 text-sm">No addresses added</span>
@@ -241,8 +297,12 @@ function Profile(props) {
                 Add Address
               </ModalHeader>
               <ModalBody>
-                <Checkbox defaultSelected>This is my default address</Checkbox>
-                {/* Country Dropdown */}
+                <Checkbox
+                  defaultSelected={isDefault}
+                  onChange={(e) => setIsDefault(e.target.checked)}
+                >
+                  This is my default address
+                </Checkbox>
                 <Select
                   label="Country"
                   value={selectedCountry}
@@ -256,11 +316,39 @@ function Profile(props) {
                     </SelectItem>
                   ))}
                 </Select>
-                <Input placeholder="Address" variant="bordered" size="lg" />
+
+                <div className="flex justify-between flex-wrap">
+                  <Input
+                    placeholder="First Name"
+                    className="lg:w-[49%] sm:w-[100%] mb-3"
+                    variant="bordered"
+                    size="lg"
+                    value={locFirstName}
+                    onChange={(e) => setLocFirstName(e.target.value)}
+                  />
+
+                  <Input
+                    placeholder="Last Name"
+                    className="lg:w-[49%] sm:w-[100%]"
+                    variant="bordered"
+                    size="lg"
+                    value={locLastName}
+                    onChange={(e) => setLocLastName(e.target.value)}
+                  />
+                </div>
+                <Input
+                  placeholder="Address"
+                  variant="bordered"
+                  size="lg"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                />
                 <Input
                   placeholder="Apartment, suite, etc (optional)"
                   variant="bordered"
                   size="lg"
+                  value={apartment}
+                  onChange={(e) => setApartment(e.target.value)}
                 />
                 <div className="flex flex-wrap gap-4 flex-col lg:flex-row">
                   <Select
@@ -293,11 +381,17 @@ function Profile(props) {
                       </SelectItem>
                     ))}
                   </Select>
-                  <Input placeholder="PIN code" variant="bordered" size="lg" />
+                  <Input
+                    placeholder="PIN code"
+                    variant="bordered"
+                    size="lg"
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value)}
+                  />
                 </div>
                 <div className="flex items-center">
                   <Input
-                    value={`+${phoneCode} ${flag} `}
+                    value={`${flag} +${phoneCode}`}
                     className="w-[15%] text-center mr-3"
                     variant="bordered"
                     disabled
@@ -308,6 +402,8 @@ function Profile(props) {
                     variant="bordered"
                     size="lg"
                     className="w-[85%]"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
               </ModalBody>
@@ -315,7 +411,14 @@ function Profile(props) {
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={onClose}>
+                <Button
+                  color="primary"
+                  onPress={() => {
+                    handleAddAddress();
+                    onClose();
+                  }}
+                  isLoading={isLoading}
+                >
                   Save
                 </Button>
               </ModalFooter>
