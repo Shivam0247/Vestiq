@@ -12,10 +12,11 @@ import {
 import { useState } from "react";
 import Order from "./Order";
 import Profile from "./Profile";
+import Cookies from "js-cookie";
 
 export default function Account() {
   const [activeTab, setActiveTab] = useState("Orders");
-
+  const userEmail = Cookies.get("userEmail");
   return (
     <div className="flex justify-center pt-10 bg-gray-200 min-h-[100vh]">
       <div className="w-[80%] h-[80%]">
@@ -55,7 +56,7 @@ export default function Account() {
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
                   <p className="font-semibold">Signed in as</p>
-                  <p className="font-semibold">zoey@example.com</p>
+                  <p className="font-semibold">{userEmail}</p>
                 </DropdownItem>
                 <DropdownItem
                   key="settings"
@@ -79,7 +80,7 @@ export default function Account() {
 
         <div className="mt-6">
           {activeTab === "Orders" && <Order />}
-          {activeTab === "Profile" && <Profile />}
+          {activeTab === "Profile" && <Profile userEmail={userEmail} />}
         </div>
       </div>
     </div>

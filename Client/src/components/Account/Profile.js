@@ -1,6 +1,6 @@
 import React from "react";
 
-function Profile() {
+function Profile(props) {
   return (
     <div>
       <div className="mt-5">
@@ -16,7 +16,7 @@ function Profile() {
           <div className="flex flex-col">
             <span className="text-sm font-medium text-gray-500">Email</span>
             <span className="text-base font-semibold text-gray-700 break-words">
-              shivam@gmail.com
+              {props.userEmail}
             </span>
           </div>
         </div>
