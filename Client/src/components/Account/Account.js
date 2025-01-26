@@ -20,7 +20,10 @@ export default function Account() {
   return (
     <div className="flex justify-center pt-10 bg-gray-200 min-h-[100vh]">
       <div className="w-[80%] h-[80%]">
-        <Navbar className="w-[100%] rounded-lg relative bg-white shadow-md">
+        <Navbar
+          className="w-[100%] rounded-lg relative bg-white shadow-md"
+          maxWidth="full"
+        >
           <NavbarContent className="flex gap-4" justify="center">
             <NavbarItem>
               <Link
