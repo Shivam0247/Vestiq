@@ -118,6 +118,14 @@ function Profile(props) {
     }
   }, [selectedState]);
 
+  const [phoneCode, setPhoneCode] = useState("");
+  useEffect(() => {
+    // Get the phone code for the selected country
+    const countryData = Country.getCountryByCode(selectedCountry);
+    if (countryData) {
+      setPhoneCode(countryData.phonecode);
+    }
+  }, [selectedCountry]);
   return (
     <>
       <div>
@@ -246,7 +254,6 @@ function Profile(props) {
                     </SelectItem>
                   ))}
                 </Select>
-
                 <Input placeholder="Address" variant="bordered" size="lg" />
                 <Input
                   placeholder="Apartment, suite, etc (optional)"
@@ -286,7 +293,21 @@ function Profile(props) {
                   </Select>
                   <Input placeholder="PIN code" variant="bordered" size="lg" />
                 </div>
-                <Input placeholder="Phone" variant="bordered" size="lg" />
+                <div className="flex items-center">
+                  <Input
+                    value={`+${phoneCode} `}
+                    className="w-[15%] text-center mr-3"
+                    variant="bordered"
+                    disabled
+                    size="lg"
+                  />
+                  <Input
+                    placeholder="Phone"
+                    variant="bordered"
+                    size="lg"
+                    className="w-[85%]"
+                  />
+                </div>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
