@@ -16,6 +16,7 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/User"));
 app.use("/api/Product", require("./routes/Products"));
 app.use("/api/OTP", require("./routes/otp"));
+app.use("/api/userDetails", require("./routes/UserDetails"));
 
 // Add the default route last so it doesn't conflict with other routes
 app.use("/", (req, res) => {
