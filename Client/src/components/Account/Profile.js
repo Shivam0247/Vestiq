@@ -94,6 +94,33 @@ function Profile(props) {
     }
   };
 
+  const handleDeleteAddress = async (index) => {
+    try {
+      // Send delete request to the server
+      const response = await fetch(
+        `http://localhost:4000/api/userDetails/delete-address/${props.userEmail}/${index}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        // Remove the deleted address from the state
+        const updatedAddresses = [...addresses];
+        updatedAddresses.splice(index, 1); // Remove the address at the specified index
+        setAddresses(updatedAddresses); // Update the state with the new addresses array
+        console.log(data.message); // Log the success message
+      } else {
+        setError(data.message || "Error deleting address");
+      }
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      setError("An error occurred while deleting the address.");
+    }
+  };
+
   const handleAddAddress = async () => {
     if (
       !locFirstName ||
@@ -262,7 +289,7 @@ function Profile(props) {
                 {addresses.map((addr, index) => (
                   <div
                     key={index}
-                    className="flex flex-col bg-gray-100 rounded-lg p-6 shadow-md"
+                    className="relative flex flex-col bg-gray-100 rounded-lg p-6 shadow-md hover:shadow-lg transition-all duration-300"
                   >
                     <span className="font-bold text-lg">{`${addr.firstName} ${addr.lastName}`}</span>
                     <span className="mt-2 text-gray-700">
@@ -275,6 +302,10 @@ function Profile(props) {
                         Default Address
                       </span>
                     )}
+                    <i
+                      className="fi fi-rr-trash absolute text-lg text-red-500 group-hover:opacity-100 transform scale-100 group-hover:scale-125 transition-all duration-300 cursor-pointer top-6 right-5"
+                      onClick={() => handleDeleteAddress(index)}
+                    ></i>
                   </div>
                 ))}
               </div>

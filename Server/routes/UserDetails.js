@@ -169,4 +169,38 @@ router.get("/get-addresses/:email", async (req, res) => {
   }
 });
 
+router.delete("/delete-address/:email/:index", async (req, res) => {
+  const { email, index } = req.params;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Parse the index to an integer
+    const idx = parseInt(index);
+
+    // Validate index to ensure it's within bounds
+    if (isNaN(idx) || idx < 0 || idx >= user.address.length) {
+      return res.status(404).json({ message: "Invalid address index" });
+    }
+
+    // Remove the address at the specified index
+    user.address.splice(idx, 1);
+
+    // Save the updated user document
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Address deleted successfully", user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error deleting address", error });
+  }
+});
+
 module.exports = router;
