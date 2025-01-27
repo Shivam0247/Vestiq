@@ -98,7 +98,7 @@ function Profile(props) {
     try {
       // Send delete request to the server
       const response = await fetch(
-        `http://localhost:4000/api/userDetails/delete-address/${props.userEmail}/${index}`,
+        `https://upstrides-server.vercel.app/api/userDetails/delete-address/${props.userEmail}/${index}`,
         {
           method: "DELETE",
         }
