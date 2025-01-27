@@ -34,6 +34,7 @@ function Profile(props) {
   const [selectedCity, setSelectedCity] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
   const [flag, setFlag] = useState("");
+  const [addresses, setAddresses] = useState([]);
 
   const fetchName = async () => {
     try {
@@ -150,9 +151,39 @@ function Profile(props) {
     }
   };
 
+  const fetchAddresses = async () => {
+    try {
+      const response = await fetch(
+        `https://upstrides-server.vercel.app/api/userDetails/get-addresses/${props.userEmail}`
+      );
+      const data = await response.json();
+      if (response.status === 200) {
+        const updatedAddresses = data.addresses.map((addr) => {
+          const countryName =
+            Country.getCountryByCode(addr.country)?.name || addr.country;
+          const stateName =
+            State.getStateByCodeAndCountry(addr.state, addr.country)?.name ||
+            addr.state;
+          return {
+            ...addr,
+            country: countryName,
+            state: stateName,
+          };
+        });
+        setAddresses(updatedAddresses);
+      } else {
+        setError("Error fetching addresses");
+      }
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      setError("An error occurred while fetching the addresses.");
+    }
+  };
+
   useEffect(() => {
     if (props.userEmail) {
       fetchName();
+      fetchAddresses();
     }
   }, [props.userEmail]);
 
@@ -214,7 +245,7 @@ function Profile(props) {
           </div>
         </div>
 
-        <div className="w-full bg-white p-6 rounded-lg shadow-md mt-5">
+        <div className="w-full bg-white p-6 rounded-lg shadow-md mt-5 mb-5">
           <div className="flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <span className="text-lg font-semibold text-gray-800">
@@ -225,10 +256,34 @@ function Profile(props) {
                 onClick={() => setOpenModal("addAddress")}
               ></i>
             </div>
-            <div className="flex items-center bg-gray-100 rounded-md p-4">
-              <i className="fi fi-rr-info text-gray-500 text-lg mr-3 mt-1"></i>
-              <span className="text-gray-600 text-sm">No addresses added</span>
-            </div>
+            {addresses.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 cursor-pointer">
+                {addresses.map((addr, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col bg-gray-100 rounded-lg p-6 shadow-md"
+                  >
+                    <span className="font-bold text-lg">{`${addr.firstName} ${addr.lastName}`}</span>
+                    <span className="mt-2 text-gray-700">
+                      {addr.apartment}, {addr.address},
+                    </span>
+                    <span className="mt-1 text-gray-700">{`${addr.city}, ${addr.state}, ${addr.country} - ${addr.pincode}`}</span>
+                    <span className="mt-1 text-gray-700">{addr.phone}</span>
+                    {addr.default && (
+                      <span className="mt-2 text-blue-500 text-sm">
+                        Default Address
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center bg-gray-100 rounded-md p-4">
+                <span className="text-gray-600 text-sm">
+                  No addresses added
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
