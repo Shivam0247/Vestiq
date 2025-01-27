@@ -147,4 +147,26 @@ router.get("/get-name/:email", async (req, res) => {
   }
 });
 
+router.get("/get-addresses/:email", async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the addresses
+    return res.status(200).json({
+      message: "Addresses fetched successfully",
+      addresses: user.address,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error fetching addresses", error });
+  }
+});
+
 module.exports = router;

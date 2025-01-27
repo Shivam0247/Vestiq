@@ -32,10 +32,11 @@ const Contact = () => {
       <div className="max-w-2xl lg:max-w-5xl mx-auto">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">
-            Contact us
+            Contact Us
           </h1>
           <p className="mt-1 text-gray-600">
-            We'd love to talk about how we can help you.
+            Questions about our collections, your order, or anything else? We’re
+            here to help!
           </p>
         </div>
 
@@ -43,7 +44,7 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="flex flex-col border rounded-xl p-4 sm:p-6 lg:p-8">
             <h2 className="mb-8 text-xl font-semibold text-gray-800">
-              Fill in the form
+              Send Us a Message
             </h2>
 
             <form ref={form} onSubmit={sendEmail}>
@@ -63,7 +64,6 @@ const Contact = () => {
                     />
                   </div>
 
-                  {/* Last Name */}
                   <div>
                     <label htmlFor="last_name" className="sr-only">
                       Last Name
@@ -79,7 +79,6 @@ const Contact = () => {
                   </div>
                 </div>
 
-                {/* Email */}
                 <div>
                   <label htmlFor="email" className="sr-only">
                     Email
@@ -94,18 +93,16 @@ const Contact = () => {
                   />
                 </div>
 
-                {/* Phone Number */}
                 <div>
-                  <label htmlFor="phone" className="sr-only">
-                    Phone Number
+                  <label htmlFor="order_number" className="sr-only">
+                    Order Number (Optional)
                   </label>
                   <input
                     type="text"
-                    name="phone"
-                    id="phone"
+                    name="order_number"
+                    id="order_number"
                     className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="Phone Number"
-                    required
+                    placeholder="Order Number (Optional)"
                   />
                 </div>
 
@@ -118,7 +115,7 @@ const Contact = () => {
                     name="message"
                     rows="4"
                     className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="Message"
+                    placeholder="How can we help you?"
                     required
                   ></textarea>
                 </div>
@@ -129,18 +126,19 @@ const Contact = () => {
                   type="submit"
                   className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
                 >
-                  Send Inquiry
+                  Send Message
                 </button>
               </div>
 
               <div className="mt-3 text-center">
                 <p className="text-sm text-gray-500">
-                  We'll get back to you in 1-2 business days.
+                  We’ll get back to you within 1-2 business days.
                 </p>
               </div>
             </form>
           </div>
 
+          {/* Information Section */}
           <div className="divide-y divide-gray-200">
             <div className="flex gap-x-7 py-6">
               <svg
@@ -160,30 +158,16 @@ const Contact = () => {
                 <path d="M12 17h.01" />
               </svg>
               <div className="grow">
-                <h3 className="font-semibold text-gray-800">Knowledgebase</h3>
+                <h3 className="font-semibold text-gray-800">Sizing Guide</h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  We're here to help with any questions or code.
+                  Unsure about your size? Check out our comprehensive sizing
+                  guide.
                 </p>
                 <a
-                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800 "
+                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
                   href="#"
                 >
-                  Contact support
-                  <svg
-                    className="shrink-0 size-2.5 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M0.975821 6.92249C0.43689 6.92249 -3.50468e-07 7.34222 -3.27835e-07 7.85999C-3.05203e-07 8.37775 0.43689 8.79749 0.975821 8.79749L12.7694 8.79748L7.60447 13.7596C7.22339 14.1257 7.22339 14.7193 7.60447 15.0854C7.98555 15.4515 8.60341 15.4515 8.98449 15.0854L15.6427 8.68862C16.1191 8.23098 16.1191 7.48899 15.6427 7.03134L8.98449 0.634573C8.60341 0.268455 7.98555 0.268456 7.60447 0.634573C7.22339 1.00069 7.22339 1.59428 7.60447 1.9604L12.7694 6.92248L0.975821 6.92249Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  View Sizing Guide
                 </a>
               </div>
             </div>
@@ -197,116 +181,88 @@ const Contact = () => {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
                 <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
               </svg>
               <div className="grow">
-                <h3 className="font-semibold text-gray-800 ">FAQ</h3>
-                <p className="mt-1 text-sm text-gray-500 ">
-                  Search our FAQ for answers to anything you might ask.
+                <h3 className="font-semibold text-gray-800">Return Policy</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Learn about our hassle-free returns and exchanges.
                 </p>
                 <a
-                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800 "
+                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
                   href="#"
                 >
-                  Visit FAQ
-                  <svg
-                    className="shrink-0 size-2.5 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M0.975821 6.92249C0.43689 6.92249 -3.50468e-07 7.34222 -3.27835e-07 7.85999C-3.05203e-07 8.37775 0.43689 8.79749 0.975821 8.79749L12.7694 8.79748L7.60447 13.7596C7.22339 14.1257 7.22339 14.7193 7.60447 15.0854C7.98555 15.4515 8.60341 15.4515 8.98449 15.0854L15.6427 8.68862C16.1191 8.23098 16.1191 7.48899 15.6427 7.03134L8.98449 0.634573C8.60341 0.268455 7.98555 0.268456 7.60447 0.634573C7.22339 1.00069 7.22339 1.59428 7.60447 1.9604L12.7694 6.92248L0.975821 6.92249Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  Read Return Policy
                 </a>
               </div>
             </div>
 
-            <div className=" flex gap-x-7 py-6">
+            {/* <div className="flex gap-x-7 py-6">
               <svg
-                className="shrink-0 size-6 mt-1.5 text-gray-800 "
+                className="shrink-0 size-6 mt-1.5 text-gray-800"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path d="m7 11 2-2-2-2" />
                 <path d="M11 13h4" />
                 <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
               </svg>
               <div className="grow">
-                <h3 className="font-semibold text-gray-800 ">Developer APIs</h3>
-                <p className="mt-1 text-sm text-gray-500 ">
-                  Check out our development quickstart guide.
+                <h3 className="font-semibold text-gray-800">
+                  Wholesale Inquiries
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Interested in carrying our brand? Reach out to our wholesale
+                  team.
                 </p>
                 <a
-                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800 "
+                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
                   href="#"
                 >
-                  Contact sales
-                  <svg
-                    className="shrink-0 size-2.5 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M0.975821 6.92249C0.43689 6.92249 -3.50468e-07 7.34222 -3.27835e-07 7.85999C-3.05203e-07 8.37775 0.43689 8.79749 0.975821 8.79749L12.7694 8.79748L7.60447 13.7596C7.22339 14.1257 7.22339 14.7193 7.60447 15.0854C7.98555 15.4515 8.60341 15.4515 8.98449 15.0854L15.6427 8.68862C16.1191 8.23098 16.1191 7.48899 15.6427 7.03134L8.98449 0.634573C8.60341 0.268455 7.98555 0.268456 7.60447 0.634573C7.22339 1.00069 7.22339 1.59428 7.60447 1.9604L12.7694 6.92248L0.975821 6.92249Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  Contact Wholesale Team
                 </a>
               </div>
-            </div>
+            </div> */}
 
-            <div className=" flex gap-x-7 py-6">
+            <div className="flex gap-x-7 py-6">
               <svg
-                className="shrink-0 size-6 mt-1.5 text-gray-800 "
+                className="shrink-0 size-6 mt-1.5 text-gray-800"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z" />
                 <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10" />
               </svg>
               <div className="grow">
-                <h3 className="font-semibold text-gray-800 ">
-                  Contact us by email
-                </h3>
-                <p className="mt-1 text-sm text-gray-500 ">
-                  If you wish to write us an email instead please use
+                <h3 className="font-semibold text-gray-800">Customer Care</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Need help with your order or have a question? Email us
+                  directly.
                 </p>
                 <a
-                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800 "
+                  className="mt-2 inline-flex items-center gap-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800"
                   href="#"
                 >
-                  example@site.com
+                  upstridesofficial@gmail.com
                 </a>
               </div>
             </div>
