@@ -208,7 +208,7 @@ function Order(props) {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:4000/api/order/get-orders/${props.userEmail}`
+        `https://upstrides-server.vercel.app/api/order/get-orders/${props.userEmail}`
       );
       const data = await response.json();
 
