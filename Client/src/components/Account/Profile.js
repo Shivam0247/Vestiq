@@ -148,6 +148,7 @@ function Profile(props) {
       setError("An error occurred while adding the address.");
     } finally {
       setIsLoading(false);
+      fetchAddresses();
     }
   };
 
