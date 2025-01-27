@@ -95,7 +95,7 @@ export default function Account() {
         </Navbar>
 
         <div className="mt-6">
-          {activeTab === "Orders" && <Order />}
+          {activeTab === "Orders" && <Order userEmail={userEmail} />}
           {activeTab === "Profile" && <Profile userEmail={userEmail} />}
         </div>
       </div>
