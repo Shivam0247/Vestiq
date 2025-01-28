@@ -22,54 +22,6 @@ export const columns = [
   { name: "", uid: "actions" },
 ];
 
-export const users = [
-  {
-    id: 1,
-    orderno: "222",
-    totalproduct: "2",
-    orderstatus: "Shipping",
-    paymentmethod: "Credit Card",
-    total: "2332",
-    orderdate: "22 Jan 2024",
-  },
-  {
-    id: 2,
-    orderno: "222",
-    totalproduct: "2",
-    orderstatus: "Shipping",
-    paymentmethod: "Credit Card",
-    total: "2332",
-    orderdate: "22 Jan 2024",
-  },
-  {
-    id: 3,
-    orderno: "222",
-    totalproduct: "2",
-    orderstatus: "Shipping",
-    paymentmethod: "Credit Card",
-    total: "2332",
-    orderdate: "22 Jan 2024",
-  },
-  {
-    id: 4,
-    orderno: "222",
-    totalproduct: "2",
-    orderstatus: "Shipping",
-    paymentmethod: "Credit Card",
-    total: "2332",
-    orderdate: "22 Jan 2024",
-  },
-  {
-    id: 5,
-    orderno: "222",
-    totalproduct: "2",
-    orderstatus: "Shipping",
-    paymentmethod: "Credit Card",
-    total: "2332",
-    orderdate: "22 Jan 2024",
-  },
-];
-
 export const EyeIcon = (props) => {
   return (
     <svg
@@ -221,7 +173,7 @@ function Order(props) {
       console.error("Error fetching orders:", err);
       setError("An error occurred while fetching orders.");
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading
     }
   };
 
@@ -230,6 +182,7 @@ function Order(props) {
       fetchOrders();
     }
   }, [props.userEmail]);
+
   const renderCell = React.useCallback((order, columnKey) => {
     const cellValue = order[columnKey];
     switch (columnKey) {
@@ -294,7 +247,17 @@ function Order(props) {
         <span className="text-2xl font-bold">Orders</span>
       </div>
 
-      {orders.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center items-center h-[50vh]">
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+        </div>
+      ) : error ? (
+        <div className="w-[100%] bg-red-100 p-6 rounded-lg shadow-md mt-3">
+          <div className="flex flex-col items-center">
+            <span className="font-bold mb-2 text-red-500">{error}</span>
+          </div>
+        </div>
+      ) : orders.length === 0 ? (
         <div className="w-[100%] bg-white p-6 rounded-lg shadow-md mt-3">
           <div className="flex flex-col items-center">
             <span className="font-bold mb-2">No orders yet</span>

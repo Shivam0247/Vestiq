@@ -35,6 +35,7 @@ function Profile(props) {
   const [phoneCode, setPhoneCode] = useState("");
   const [flag, setFlag] = useState("");
   const [addresses, setAddresses] = useState([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(true); // Added loading state for addresses
 
   const fetchName = async () => {
     try {
@@ -180,6 +181,7 @@ function Profile(props) {
   };
 
   const fetchAddresses = async () => {
+    setLoadingAddresses(true); // Set loading state to true
     try {
       const response = await fetch(
         `https://upstrides-server.vercel.app/api/userDetails/get-addresses/${props.userEmail}`
@@ -205,6 +207,8 @@ function Profile(props) {
     } catch (error) {
       console.error("Error fetching addresses:", error);
       setError("An error occurred while fetching the addresses.");
+    } finally {
+      setLoadingAddresses(false); // Set loading state to false after fetching is complete
     }
   };
 
@@ -284,7 +288,11 @@ function Profile(props) {
                 onClick={() => setOpenModal("addAddress")}
               ></i>
             </div>
-            {addresses.length > 0 ? (
+            {loadingAddresses ? ( // Show loader when fetching addresses
+              <div className="flex justify-center items-center h-[50vh]">
+                <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+              </div>
+            ) : addresses.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 cursor-pointer">
                 {addresses.map((addr, index) => (
                   <div
