@@ -10,39 +10,110 @@ import {
 const ItemCard = ({ item }) => {
   const dispatch = useDispatch();
   return (
-    <div className="w-full grid grid-cols-6 mb-4 border py-2">
-      <div className="flex col-span-5 mdl:col-span-2 items-center gap-4 ml-4">
-        <ImCross
-          onClick={() => dispatch(deleteItem(item._id))}
-          className="text-primeColor hover:text-red-500 duration-300 cursor-pointer"
-        />
-        <img className="w-32 h-32" src={item.image} alt="productImage" />
-        <h1 className="font-titleFont font-semibold">{item.name}</h1>
-      </div>
-      <div className="flex w-1/3 items-center text-lg font-semibold">
-        {item.size}
-      </div>
-      <div className="col-span-5 mdl:col-span-3 flex items-center justify-between py-4 mdl:py-0 px-4 mdl:px-0 gap-6 mdl:gap-0">
-        <div className="flex w-1/3 items-center text-lg font-semibold">
-          ₹ {item.price}
-        </div>
-        <div className="w-1/3 flex items-center gap-6 text-lg">
-          <span
-            onClick={() => dispatch(drecreaseQuantity({ _id: item._id }))}
-            className="w-6 h-6 bg-gray-100 text-2xl flex items-center justify-center hover:bg-gray-300 cursor-pointer duration-300 border-[1px] border-gray-300 hover:border-gray-300"
+    <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm  md:p-6">
+      <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+        <div class="flex items-center gap-4">
+          <button
+            onClick={() => dispatch(deleteItem(item._id))}
+            type="button"
+            class="inline-flex items-center text-sm font-medium text-red-600 hover:underline "
           >
-            -
-          </span>
-          <p>{item.quantity}</p>
-          <span
-            onClick={() => dispatch(increaseQuantity({ _id: item._id }))}
-            className="w-6 h-6 bg-gray-100 text-2xl flex items-center justify-center hover:bg-gray-300 cursor-pointer duration-300 border-[1px] border-gray-300 hover:border-gray-300"
-          >
-            +
-          </span>
+            <svg
+              class="me-1.5 h-5 w-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18 17.94 6M18 18 6.06 6"
+              />
+            </svg>
+          </button>
         </div>
-        <div className="w-1/3 flex items-center font-titleFont font-bold text-lg">
-          <p>₹ {item.quantity * item.price}</p>
+        <a href="#" class="shrink-0 md:order-1">
+          <img class="w-36" src={item.image} alt="imac image" />
+        </a>
+
+        <label for="counter-input" class="sr-only">
+          Choose quantity:
+        </label>
+        <div class="flex items-center justify-between md:order-3 md:justify-end">
+          <div class="flex items-center">
+            <button
+              onClick={() => dispatch(drecreaseQuantity({ _id: item._id }))}
+              type="button"
+              id="decrement-button"
+              data-input-counter-decrement="counter-input"
+              class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 "
+            >
+              <svg
+                class="h-2.5 w-2.5 text-gray-900 "
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 18 2"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M1 1h16"
+                />
+              </svg>
+            </button>
+            <span class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 ">
+              {item.quantity}
+            </span>
+
+            <button
+              onClick={() => dispatch(increaseQuantity({ _id: item._id }))}
+              type="button"
+              id="increment-button"
+              data-input-counter-increment="counter-input"
+              class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 "
+            >
+              <svg
+                class="h-2.5 w-2.5 text-gray-900 "
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 18 18"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 1v16M1 9h16"
+                />
+              </svg>
+            </button>
+          </div>
+          <div class="text-end md:order-4 md:w-32">
+            <p class="text-base font-bold text-gray-900 ">
+              ₹ {item.quantity * item.price}
+            </p>
+          </div>
+        </div>
+
+        <div class="w-full min-w-0 flex-1 space-y-0 md:order-2 md:max-w-md">
+          <a
+            href="#"
+            class="text-base font-medium text-gray-900 hover:underline "
+          >
+            {item.name}
+          </a>
+          <div className="">
+            <span> {item.size}</span>
+          </div>
         </div>
       </div>
     </div>
