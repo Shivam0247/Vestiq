@@ -26,6 +26,7 @@ import LimitedStock from "./components/LimitedStock/LimitedStock";
 import LTD_ED from "./components/LTD_ED/LTD_ED";
 import OTP from "./pages/Account/otp";
 import Account from "./components/Account/Account";
+import Checkout from "./components/Checkout/Checkout";
 
 const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
   const location = useLocation();
@@ -80,6 +81,7 @@ const App = () => {
           <Route path="/product/:_id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/Checkout" element={<Checkout />} />
         </Route>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/OTP/:email" element={<OTP />} />
