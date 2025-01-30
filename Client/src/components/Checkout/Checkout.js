@@ -87,18 +87,17 @@ function Checkout() {
   }, [userEmail]);
 
   const handleSubmitOrder = async () => {
-    // Prepare the order data
     const orderData = {
       email: userEmail,
-      orderNo: `ORD-${Date.now()}`, // Generating a simple order number
+      orderNo: `ORD-${Date.now()}`,
       products: products.map(({ _id, image, ...productWithoutImage }) => ({
-        id: _id, // Renaming _id to id
+        id: _id,
         ...productWithoutImage,
       })),
       shippingAddress: shippingAddress,
       billingAddress: isDifferentBilling ? billingAddress : shippingAddress,
       orderStatus: "placed",
-      paymentMethod: "credit_card", // You can change this according to your payment method
+      paymentMethod: "credit_card",
       subtotal: totalAmt,
       shippingCost: shippingCharge,
       total: totalAmt + shippingCharge,
