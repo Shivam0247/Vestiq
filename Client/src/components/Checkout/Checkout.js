@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Accordion, AccordionItem } from "@heroui/react";
 import Cookies from "js-cookie";
 import CartProduct from "./CartProduct";
+import { Link } from "react-router-dom";
 function Checkout() {
   const [isDifferentBilling, setIsDifferentBilling] = useState(false);
   const userEmail = Cookies.get("userEmail");
@@ -631,41 +632,55 @@ function Checkout() {
                 </div>
               </div>
               <div class="flow-root">
-                <div class="-my-3 divide-y divide-gray-200 ">
-                  <dl class="flex items-center justify-between gap-4 py-3">
-                    <dt class="text-base font-normal text-gray-500 ">
-                      Subtotal
-                    </dt>
-                    <dd class="text-base font-medium text-gray-900 ">
-                      $8,094.00
-                    </dd>
-                  </dl>
+                <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+                  <p class="text-xl font-semibold text-gray-900 ">
+                    Order summary
+                  </p>
 
-                  <dl class="flex items-center justify-between gap-4 py-3">
-                    <dt class="text-base font-normal text-gray-500 ">
-                      Savings
-                    </dt>
-                    <dd class="text-base font-medium text-green-500">0</dd>
-                  </dl>
+                  <div class="space-y-4">
+                    <div class="space-y-2">
+                      <dl class="flex items-center justify-between gap-4">
+                        <dt class="text-base font-normal text-gray-500 ">
+                          Original price
+                        </dt>
+                        <dd class="text-base font-medium text-gray-900 ">
+                          ₹ 111
+                        </dd>
+                      </dl>
 
-                  <dl class="flex items-center justify-between gap-4 py-3">
-                    <dt class="text-base font-normal text-gray-500">
-                      Store Pickup
-                    </dt>
-                    <dd class="text-base font-medium text-gray-900 ">$99</dd>
-                  </dl>
+                      {/* <dl class="flex items-center justify-between gap-4">
+                          <dt class="text-base font-normal text-gray-500">
+                            Savings
+                          </dt>
+                          <dd class="text-base font-medium text-green-600">
+                            -$299.00
+                          </dd>
+                        </dl> */}
 
-                  <dl class="flex items-center justify-between gap-4 py-3">
-                    <dt class="text-base font-normal text-gray-500">Tax</dt>
-                    <dd class="text-base font-medium text-gray-900 ">$199</dd>
-                  </dl>
+                      <dl class="flex items-center justify-between gap-4">
+                        <dt class="text-base font-normal text-gray-500 ">
+                          Shipping Charge
+                        </dt>
+                        <dd class="text-base font-medium text-gray-900">
+                          ₹ 22
+                        </dd>
+                      </dl>
 
-                  <dl class="flex items-center justify-between gap-4 py-3">
-                    <dt class="text-base font-bold text-gray-900 ">Total</dt>
-                    <dd class="text-base font-bold text-gray-900 ">
-                      $8,392.00
-                    </dd>
-                  </dl>
+                      {/* <dl class="flex items-center justify-between gap-4">
+                          <dt class="text-base font-normal text-gray-500 ">
+                            Tax
+                          </dt>
+                          <dd class="text-base font-medium text-gray-900 ">
+                            $799
+                          </dd>
+                        </dl> */}
+                    </div>
+
+                    <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 ">
+                      <dt class="text-base font-bold text-gray-900 ">Total</dt>
+                      <dd class="text-base font-bold text-gray-900 ">₹ 2222</dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
