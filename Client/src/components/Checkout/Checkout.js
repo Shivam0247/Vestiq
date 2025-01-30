@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Accordion, AccordionItem } from "@heroui/react";
 import Cookies from "js-cookie";
-
+import CartProduct from "./CartProduct";
 function Checkout() {
   const [isDifferentBilling, setIsDifferentBilling] = useState(false);
   const userEmail = Cookies.get("userEmail");
@@ -277,7 +277,7 @@ function Checkout() {
                       </li>
                     </ul>
 
-                    <span className="text-sm text-blue-600 cursor-pointer hover:underline mt-2 block">
+                    <span className="text-sm text-blue-600 cursor-pointer mt-2 block">
                       + Use a different address
                     </span>
                   </AccordionItem>
@@ -611,18 +611,15 @@ function Checkout() {
 
             <div class="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
               <div>
-                <label
-                  for="voucher"
-                  class="mb-2 block text-sm font-medium text-gray-900 "
-                >
-                  Enter a gift card, voucher or promotional code
-                </label>
+                <CartProduct />
+              </div>
+              <div>
                 <div class="flex max-w-md items-center gap-4">
                   <input
                     type="text"
                     id="voucher"
                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                    placeholder=""
+                    placeholder="Enter a gift card, voucher or promotional code"
                     required
                   />
                   <button
