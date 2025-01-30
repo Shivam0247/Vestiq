@@ -3,9 +3,13 @@ import { Accordion, AccordionItem } from "@heroui/react";
 import Cookies from "js-cookie";
 import CartProduct from "./CartProduct";
 import { Country, State } from "country-state-city";
+import { useDispatch, useSelector } from "react-redux";
+
 function Checkout() {
   const [isDifferentBilling, setIsDifferentBilling] = useState(false);
   const userEmail = Cookies.get("userEmail");
+  const products = useSelector((state) => state.orebiReducer.products);
+
   const [addresses, setAddresses] = useState([]);
   const [shippingAddress, setShippingAddress] = useState({
     country: "",
@@ -660,7 +664,11 @@ function Checkout() {
 
             <div className="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
               <div>
-                <CartProduct />
+                {products.map((item) => (
+                  <div key={item._id}>
+                    <CartProduct item={item} />
+                  </div>
+                ))}
               </div>
               <div>
                 <div className="flex max-w-md items-center gap-4">
