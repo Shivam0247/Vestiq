@@ -22,6 +22,8 @@ function Checkout() {
     pincode: "",
     phone: "",
   });
+  const [totalAmt, setTotalAmt] = useState("");
+  const [shippingCharge, setShippingCharge] = useState("");
 
   const handleAddressSelect = (address) => {
     const { _id, default: isDefault, ...addressWithoutId } = address;
@@ -63,6 +65,24 @@ function Checkout() {
       fetchAddresses();
     }
   }, [userEmail]);
+
+  useEffect(() => {
+    let price = 0;
+    products.map((item) => {
+      price += item.price * item.quantity;
+      return price;
+    });
+    setTotalAmt(price);
+  }, [products]);
+  useEffect(() => {
+    if (totalAmt <= 200) {
+      setShippingCharge(30);
+    } else if (totalAmt <= 400) {
+      setShippingCharge(25);
+    } else if (totalAmt > 401) {
+      setShippingCharge(20);
+    }
+  }, [totalAmt]);
 
   return (
     <div>
@@ -352,9 +372,8 @@ function Checkout() {
                               aria-describedby="dhl-text"
                               type="radio"
                               name="delivery-method"
-                              value=""
+                              value="Fast Delivery"
                               className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
-                              checked
                             />
                           </div>
 
@@ -384,7 +403,7 @@ function Checkout() {
                               aria-describedby="fedex-text"
                               type="radio"
                               name="delivery-method"
-                              value=""
+                              value="Free Delivery"
                               className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
                             />
                           </div>
@@ -415,7 +434,7 @@ function Checkout() {
                               aria-describedby="express-text"
                               type="radio"
                               name="delivery-method"
-                              value=""
+                              value="Express Delivery"
                               className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
                             />
                           </div>
@@ -700,7 +719,7 @@ function Checkout() {
                           Original price
                         </dt>
                         <dd className="text-base font-medium text-gray-900 ">
-                          ₹ 111
+                          ₹ {totalAmt}
                         </dd>
                       </dl>
 
@@ -718,7 +737,7 @@ function Checkout() {
                           Shipping Charge
                         </dt>
                         <dd className="text-base font-medium text-gray-900">
-                          ₹ 22
+                          ₹ {shippingCharge}
                         </dd>
                       </dl>
 
@@ -737,7 +756,7 @@ function Checkout() {
                         Total
                       </dt>
                       <dd className="text-base font-bold text-gray-900 ">
-                        ₹ 2222
+                        ₹ {totalAmt + shippingCharge}
                       </dd>
                     </dl>
                   </div>
