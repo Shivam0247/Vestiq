@@ -25,6 +25,27 @@ function Checkout() {
   const [totalAmt, setTotalAmt] = useState("");
   const [shippingCharge, setShippingCharge] = useState("");
 
+  const [billingAddress, setBillingAddress] = useState({
+    country: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    apartment: "",
+    city: "",
+    state: "",
+    pincode: "",
+    phone: "",
+  });
+
+  const handleBillingChange = (e) => {
+    const { name, value } = e.target;
+    setBillingAddress((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    console.log("billingAddress", billingAddress);
+  };
+
   const handleAddressSelect = (address) => {
     const { _id, default: isDefault, ...addressWithoutId } = address;
 
@@ -509,6 +530,7 @@ function Checkout() {
                         </li>
                       </ul>
                     </div>
+
                     {isDifferentBilling && (
                       <div className="space-y-3 p-5 bg-[#0000000a] rounded-b-lg">
                         <div className="mb-2 flex items-center gap-2">
@@ -521,148 +543,180 @@ function Checkout() {
                         </div>
                         <select
                           id="select-country-input-3"
+                          name="country"
+                          value={billingAddress.country}
+                          onChange={handleBillingChange}
                           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                         >
-                          <option selected>United States</option>
-                          <option value="AS">Australia</option>
+                          <option value="IN">India</option>
+                          <option value="US">United States</option>
+                          <option value="AU">Australia</option>
                           <option value="FR">France</option>
                           <option value="ES">Spain</option>
-                          <option value="UK">United Kingdom</option>
                         </select>
+
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <div>
                             <label
-                              htmlFor="your_name"
+                              htmlFor="firstName"
                               className="mb-2 block text-sm font-medium text-gray-900 "
                             >
                               First Name
                             </label>
                             <input
                               type="text"
-                              id="your_name"
+                              id="firstName"
+                              name="firstName"
+                              value={billingAddress.firstName}
+                              onChange={handleBillingChange}
                               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                              placeholder="Bonnie Green"
+                              placeholder="Bonnie"
                               required
                             />
                           </div>
 
                           <div>
                             <label
-                              htmlFor="your_email"
+                              htmlFor="lastName"
                               className="mb-2 block text-sm font-medium text-gray-900 "
                             >
                               Last Name
                             </label>
                             <input
                               type="text"
-                              id="your_email"
+                              id="lastName"
+                              name="lastName"
+                              value={billingAddress.lastName}
+                              onChange={handleBillingChange}
                               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                              placeholder="name@flowbite.com"
+                              placeholder="Green"
                               required
                             />
                           </div>
                         </div>
+
                         <div>
                           <label
-                            htmlFor="your_email"
+                            htmlFor="address"
                             className="mb-2 block text-sm font-medium text-gray-900 "
                           >
                             Address
                           </label>
                           <input
                             type="text"
-                            id="your_email"
+                            id="address"
+                            name="address"
+                            value={billingAddress.address}
+                            onChange={handleBillingChange}
                             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="name@flowbite.com"
+                            placeholder="123 Street"
                             required
                           />
                         </div>
+
                         <div>
                           <label
-                            htmlFor="your_email"
+                            htmlFor="apartment"
                             className="mb-2 block text-sm font-medium text-gray-900 "
                           >
                             Apartment, suite, etc. (optional)
                           </label>
                           <input
                             type="text"
-                            id="your_email"
+                            id="apartment"
+                            name="apartment"
+                            value={billingAddress.apartment}
+                            onChange={handleBillingChange}
                             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="name@flowbite.com"
-                            required
+                            placeholder="Apt 101"
                           />
                         </div>
+
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
                           <div>
                             <div className="mb-2 flex items-center gap-2">
                               <label
-                                htmlFor="select-city-input-3"
+                                htmlFor="city"
                                 className="block text-sm font-medium text-gray-900"
                               >
                                 City
                               </label>
                             </div>
                             <select
-                              id="select-city-input-3"
+                              id="city"
+                              name="city"
+                              value={billingAddress.city}
+                              onChange={handleBillingChange}
                               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                             >
-                              <option selected>San Francisco</option>
-                              <option value="NY">New York</option>
-                              <option value="LA">Los Angeles</option>
-                              <option value="CH">Chicago</option>
-                              <option value="HU">Houston</option>
+                              <option value="San Francisco">
+                                San Francisco
+                              </option>
+                              <option value="New York">New York</option>
+                              <option value="Los Angeles">Los Angeles</option>
+                              <option value="Chicago">Chicago</option>
+                              <option value="Houston">Houston</option>
                             </select>
                           </div>
 
                           <div>
                             <div className="mb-2 flex items-center gap-2">
                               <label
-                                htmlFor="select-city-input-3"
+                                htmlFor="state"
                                 className="block text-sm font-medium text-gray-900"
                               >
                                 State
                               </label>
                             </div>
                             <select
-                              id="select-city-input-3"
+                              id="state"
+                              name="state"
+                              value={billingAddress.state}
+                              onChange={handleBillingChange}
                               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                             >
-                              <option selected>San Francisco</option>
+                              <option value="CA">California</option>
                               <option value="NY">New York</option>
-                              <option value="LA">Los Angeles</option>
-                              <option value="CH">Chicago</option>
-                              <option value="HU">Houston</option>
+                              <option value="TX">Texas</option>
+                              <option value="FL">Florida</option>
                             </select>
                           </div>
 
                           <div>
                             <label
-                              htmlFor="your_email"
+                              htmlFor="pincode"
                               className="mb-2 block text-sm font-medium text-gray-900 "
                             >
                               PIN code
                             </label>
                             <input
                               type="text"
-                              id="your_email"
+                              id="pincode"
+                              name="pincode"
+                              value={billingAddress.pincode}
+                              onChange={handleBillingChange}
                               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                              placeholder="name@flowbite.com"
+                              placeholder="94110"
                               required
                             />
                           </div>
                         </div>
+
                         <div>
                           <label
-                            htmlFor="your_email"
+                            htmlFor="phone"
                             className="mb-2 block text-sm font-medium text-gray-900 "
                           >
                             Phone
                           </label>
                           <input
                             type="text"
-                            id="your_email"
+                            id="phone"
+                            name="phone"
+                            value={billingAddress.phone}
+                            onChange={handleBillingChange}
                             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="name@flowbite.com"
+                            placeholder="+1 234 567 890"
                             required
                           />
                         </div>
