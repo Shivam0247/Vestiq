@@ -9,7 +9,6 @@ function Checkout() {
   const [isDifferentBilling, setIsDifferentBilling] = useState(false);
   const userEmail = Cookies.get("userEmail");
   const products = useSelector((state) => state.orebiReducer.products);
-
   const [addresses, setAddresses] = useState([]);
   const [shippingAddress, setShippingAddress] = useState({
     country: "",
@@ -86,6 +85,50 @@ function Checkout() {
       fetchAddresses();
     }
   }, [userEmail]);
+
+  const handleSubmitOrder = async () => {
+    // Prepare the order data
+    const orderData = {
+      email: userEmail,
+      orderNo: `ORD-${Date.now()}`, // Generating a simple order number
+      products: products.map(({ _id, image, ...productWithoutImage }) => ({
+        id: _id, // Renaming _id to id
+        ...productWithoutImage,
+      })),
+      shippingAddress: shippingAddress,
+      billingAddress: isDifferentBilling ? billingAddress : shippingAddress,
+      orderStatus: "placed",
+      paymentMethod: "credit_card", // You can change this according to your payment method
+      subtotal: totalAmt,
+      shippingCost: shippingCharge,
+      total: totalAmt + shippingCharge,
+    };
+
+    try {
+      const response = await fetch(
+        "https://upstrides-server.vercel.app/api/order/add-order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Order placed successfully!");
+        console.log(data);
+      } else {
+        alert("Error placing order: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("An error occurred while placing the order.");
+    }
+  };
 
   useEffect(() => {
     let price = 0;
@@ -729,6 +772,7 @@ function Checkout() {
                 <button
                   type="submit"
                   className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
+                  onClick={handleSubmitOrder}
                 >
                   Proceed to Payment
                 </button>
