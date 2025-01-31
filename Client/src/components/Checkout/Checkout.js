@@ -23,7 +23,7 @@ function Checkout() {
   });
   const [totalAmt, setTotalAmt] = useState("");
   const [shippingCharge, setShippingCharge] = useState("");
-
+  const [email, setEmail] = useState("");
   const [billingAddress, setBillingAddress] = useState({
     country: "",
     firstName: "",
@@ -35,6 +35,19 @@ function Checkout() {
     pincode: "",
     phone: "",
   });
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setShippingAddress((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    console.log(shippingAddress);
+  };
 
   const handleBillingChange = (e) => {
     const { name, value } = e.target;
@@ -88,7 +101,7 @@ function Checkout() {
 
   const handleSubmitOrder = async () => {
     const orderData = {
-      email: userEmail,
+      email: userEmail ? userEmail : email,
       orderNo: `ORD-${Date.now()}`,
       products: products.map(({ _id, image, ...productWithoutImage }) => ({
         id: _id,
@@ -96,7 +109,7 @@ function Checkout() {
       })),
       shippingAddress: shippingAddress,
       billingAddress: isDifferentBilling ? billingAddress : shippingAddress,
-      orderStatus: "placed",
+      orderStatus: "shipping",
       paymentMethod: "credit_card",
       subtotal: totalAmt,
       shippingCost: shippingCharge,
@@ -150,7 +163,7 @@ function Checkout() {
   return (
     <div>
       <section className="bg-white py-8 antialiased  md:py-16">
-        <form action="#" className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
           <h2 className="text-xl font-semibold text-gray-900 sm:text-3xl">
             Checkout
           </h2>
@@ -170,10 +183,13 @@ function Checkout() {
                   >
                     <div className="space-y-4">
                       <input
-                        type="text"
-                        id="your_name"
+                        type="email"
+                        name="email"
+                        value={email}
+                        onChange={handleEmailChange}
+                        id="email"
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                        placeholder="Email or Phone number"
+                        placeholder="Email"
                         required
                       />
                     </div>
@@ -202,160 +218,154 @@ function Checkout() {
                     }
                   >
                     <div className="space-y-4">
+                      {/* Country Selection */}
                       <div>
-                        <div className="mb-2 flex items-center gap-2">
-                          <label
-                            htmlFor="select-country-input-3"
-                            className="block text-sm font-medium text-gray-900 "
-                          >
-                            Country
-                          </label>
-                        </div>
+                        <label className="block text-sm font-medium text-gray-900">
+                          Country
+                        </label>
                         <select
-                          id="select-country-input-3"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                          name="country"
+                          value={shippingAddress.country}
+                          onChange={handleChange}
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
                         >
-                          <option selected>United States</option>
-                          <option value="AS">Australia</option>
+                          <option value="">Select a country</option>
+                          <option value="US">United States</option>
+                          <option value="AU">Australia</option>
                           <option value="FR">France</option>
                           <option value="ES">Spain</option>
                           <option value="UK">United Kingdom</option>
                         </select>
                       </div>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                      {/* First & Last Name */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label
-                            htmlFor="your_name"
-                            className="mb-2 block text-sm font-medium text-gray-900 "
-                          >
+                          <label className="block text-sm font-medium text-gray-900">
                             First Name
                           </label>
                           <input
                             type="text"
-                            id="your_name"
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="Bonnie Green"
+                            name="firstName"
+                            value={shippingAddress.firstName}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                            placeholder="John"
                             required
                           />
                         </div>
-
                         <div>
-                          <label
-                            htmlFor="your_email"
-                            className="mb-2 block text-sm font-medium text-gray-900 "
-                          >
+                          <label className="block text-sm font-medium text-gray-900">
                             Last Name
                           </label>
                           <input
                             type="text"
-                            id="your_email"
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="name@flowbite.com"
+                            name="lastName"
+                            value={shippingAddress.lastName}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                            placeholder="Doe"
                             required
                           />
                         </div>
                       </div>
+
+                      {/* Address & Apartment */}
                       <div>
-                        <label
-                          htmlFor="your_email"
-                          className="mb-2 block text-sm font-medium text-gray-900 "
-                        >
+                        <label className="block text-sm font-medium text-gray-900">
                           Address
                         </label>
                         <input
                           type="text"
-                          id="your_email"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                          placeholder="name@flowbite.com"
+                          name="address"
+                          value={shippingAddress.address}
+                          onChange={handleChange}
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                          placeholder="123 Street Name"
                           required
                         />
                       </div>
                       <div>
-                        <label
-                          htmlFor="your_email"
-                          className="mb-2 block text-sm font-medium text-gray-900 "
-                        >
+                        <label className="block text-sm font-medium text-gray-900">
                           Apartment, suite, etc. (optional)
                         </label>
                         <input
                           type="text"
-                          id="your_email"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                          placeholder="name@flowbite.com"
-                          required
+                          name="apartment"
+                          value={shippingAddress.apartment}
+                          onChange={handleChange}
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                          placeholder="Apt 101"
                         />
                       </div>
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
+
+                      {/* City, State, PIN */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <div className="mb-2 flex items-center gap-2">
-                            <label
-                              htmlFor="select-city-input-3"
-                              className="block text-sm font-medium text-gray-900"
-                            >
-                              City
-                            </label>
-                          </div>
+                          <label className="block text-sm font-medium text-gray-900">
+                            City
+                          </label>
                           <select
-                            id="select-city-input-3"
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                            name="city"
+                            value={shippingAddress.city}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
                           >
-                            <option selected>San Francisco</option>
-                            <option value="NY">New York</option>
-                            <option value="LA">Los Angeles</option>
-                            <option value="CH">Chicago</option>
-                            <option value="HU">Houston</option>
+                            <option value="">Select a city</option>
+                            <option value="San Francisco">San Francisco</option>
+                            <option value="New York">New York</option>
+                            <option value="Los Angeles">Los Angeles</option>
+                            <option value="Chicago">Chicago</option>
+                            <option value="Houston">Houston</option>
                           </select>
                         </div>
 
                         <div>
-                          <div className="mb-2 flex items-center gap-2">
-                            <label
-                              htmlFor="select-city-input-3"
-                              className="block text-sm font-medium text-gray-900"
-                            >
-                              State
-                            </label>
-                          </div>
+                          <label className="block text-sm font-medium text-gray-900">
+                            State
+                          </label>
                           <select
-                            id="select-city-input-3"
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                            name="state"
+                            value={shippingAddress.state}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
                           >
-                            <option selected>San Francisco</option>
+                            <option value="">Select a state</option>
+                            <option value="CA">California</option>
                             <option value="NY">New York</option>
-                            <option value="LA">Los Angeles</option>
-                            <option value="CH">Chicago</option>
-                            <option value="HU">Houston</option>
+                            <option value="TX">Texas</option>
+                            <option value="FL">Florida</option>
                           </select>
                         </div>
 
                         <div>
-                          <label
-                            htmlFor="your_email"
-                            className="mb-2 block text-sm font-medium text-gray-900 "
-                          >
+                          <label className="block text-sm font-medium text-gray-900">
                             PIN code
                           </label>
                           <input
                             type="text"
-                            id="your_email"
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="name@flowbite.com"
+                            name="pincode"
+                            value={shippingAddress.pincode}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                            placeholder="400001"
                             required
                           />
                         </div>
                       </div>
+
+                      {/* Phone Number */}
                       <div>
-                        <label
-                          htmlFor="your_email"
-                          className="mb-2 block text-sm font-medium text-gray-900 "
-                        >
+                        <label className="block text-sm font-medium text-gray-900">
                           Phone
                         </label>
                         <input
                           type="text"
-                          id="your_email"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                          placeholder="name@flowbite.com"
+                          name="phone"
+                          value={shippingAddress.phone}
+                          onChange={handleChange}
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                          placeholder="+91 1234567890"
                           required
                         />
                       </div>
@@ -769,7 +779,6 @@ function Checkout() {
               </Accordion>
               <div className="space-y-3">
                 <button
-                  type="submit"
                   className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
                   onClick={handleSubmitOrder}
                 >
@@ -860,7 +869,7 @@ function Checkout() {
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </section>
     </div>
   );
