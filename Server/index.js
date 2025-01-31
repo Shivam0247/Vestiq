@@ -18,6 +18,7 @@ app.use("/api/Product", require("./routes/Products"));
 app.use("/api/OTP", require("./routes/otp"));
 app.use("/api/userDetails", require("./routes/UserDetails"));
 app.use("/api/order", require("./routes/order"));
+app.use("/api/payments", require("./routes/payment"));
 
 // Add the default route last so it doesn't conflict with other routes
 app.use("/", (req, res) => {
