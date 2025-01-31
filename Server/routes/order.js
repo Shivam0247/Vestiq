@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Order = require("../models/order");
 
-// Route to add a new order
+// Route to add a new order after payment
 router.post("/add-order", async (req, res) => {
   const {
     email,
@@ -15,6 +15,8 @@ router.post("/add-order", async (req, res) => {
     subtotal,
     shippingCost,
     total,
+    paymentId, // Receive Razorpay Payment ID
+    paymentStatus, // Receive Razorpay Payment Status (e.g., "captured", "failed")
   } = req.body;
 
   try {
@@ -40,8 +42,10 @@ router.post("/add-order", async (req, res) => {
       products,
       shippingAddress,
       billingAddress,
-      orderStatus: orderStatus || "placed",
+      orderStatus: orderStatus || "ordered", // Default to "ordered" if not provided
       paymentMethod,
+      paymentId, // Store the Razorpay Payment ID
+      paymentStatus: paymentStatus || "pending", // Default to "pending" if not provided
       subtotal,
       shippingCost,
       total,

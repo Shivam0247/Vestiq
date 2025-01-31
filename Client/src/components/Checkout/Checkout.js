@@ -107,35 +107,60 @@ function Checkout() {
         id: _id,
         ...productWithoutImage,
       })),
-      shippingAddress: shippingAddress,
+      shippingAddress,
       billingAddress: isDifferentBilling ? billingAddress : shippingAddress,
-      orderStatus: "shipping",
-      paymentMethod: "credit_card",
+      orderStatus: "pending",
+      paymentMethod: "razorpay",
       subtotal: totalAmt,
       shippingCost: shippingCharge,
       total: totalAmt + shippingCharge,
     };
 
     try {
+      // **Step 1: Create Order in Backend**
       const response = await fetch(
-        "https://upstrides-server.vercel.app/api/order/add-order",
+        "https://upstrides-server.vercel.app/api/payments/orders",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(orderData),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: orderData.total, currency: "INR" }),
         }
       );
 
-      const data = await response.json();
+      const orderDataResponse = await response.json();
 
-      if (response.ok) {
-        alert("Order placed successfully!");
-        console.log(data);
-      } else {
-        alert("Error placing order: " + data.message);
+      if (!orderDataResponse.order_id) {
+        alert("Error creating Razorpay order");
+        return;
       }
+
+      // **Step 2: Open Razorpay Checkout**
+      const options = {
+        key: "rzp_test_qJMenRdRHXHatJ", // ✅ Use Razorpay Test Key
+        amount: orderDataResponse.amount,
+        currency: orderDataResponse.currency,
+        order_id: orderDataResponse.order_id, // ✅ Order ID from backend
+        name: "UpStrides",
+        description: "Complete Your Purchase",
+        handler: async function (response) {
+          console.log("Payment Success:", response);
+
+          // **Step 3: Send Payment ID to Backend**
+          fetch(
+            `https://upstrides-server.vercel.app/api/payments/payment/${response.razorpay_payment_id}`
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              console.log("Payment Details:", data);
+              alert("Order placed successfully!");
+            })
+            .catch((err) => console.error("Error fetching payment:", err));
+        },
+        theme: { color: "#3399cc" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       console.error("Error placing order:", error);
       alert("An error occurred while placing the order.");
