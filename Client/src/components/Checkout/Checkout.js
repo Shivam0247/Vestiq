@@ -100,30 +100,14 @@ function Checkout() {
   }, [userEmail]);
 
   const handleSubmitOrder = async () => {
-    const orderData = {
-      email: userEmail ? userEmail : email,
-      orderNo: `ORD-${Date.now()}`,
-      products: products.map(({ _id, image, ...productWithoutImage }) => ({
-        id: _id,
-        ...productWithoutImage,
-      })),
-      shippingAddress,
-      billingAddress: isDifferentBilling ? billingAddress : shippingAddress,
-      orderStatus: "pending",
-      paymentMethod: "razorpay",
-      subtotal: totalAmt,
-      shippingCost: shippingCharge,
-      total: totalAmt + shippingCharge,
-    };
-
     try {
-      // **Step 1: Create Order in Backend**
+      // **Step 1: Create Order in Backend (Razorpay Order Creation)**
       const response = await fetch(
         "https://upstrides-server.vercel.app/api/payments/orders",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: orderData.total, currency: "INR" }),
+          body: JSON.stringify({ amount: totalAmt, currency: "INR" }),
         }
       );
 
@@ -140,27 +124,72 @@ function Checkout() {
         amount: orderDataResponse.amount,
         currency: orderDataResponse.currency,
         order_id: orderDataResponse.order_id, // ✅ Order ID from backend
-        name: "UpStrides",
+        name: "Up Strides",
         description: "Complete Your Purchase",
         handler: async function (response) {
-          console.log("Payment Success:", response);
+          // **Fetch Payment Details Before Proceeding to Add Order to DB**
+          try {
+            const paymentDetailsResponse = await fetch(
+              `https://upstrides-server.vercel.app/api/payments/payment/${response.razorpay_payment_id}`
+            );
 
-          // **Step 3: Send Payment ID to Backend**
-          fetch(
-            `https://upstrides-server.vercel.app/api/payments/payment/${response.razorpay_payment_id}`
-          )
-            .then((res) => res.json())
-            .then((data) => {
-              console.log("Payment Details:", data);
-              alert("Order placed successfully!");
-            })
-            .catch((err) => console.error("Error fetching payment:", err));
+            const paymentDetails = await paymentDetailsResponse.json();
+
+            if (paymentDetailsResponse.ok) {
+              // **Step 3: Use Payment Details and Order Data to Add Order to DB**
+              const paymentData = {
+                paymentId: paymentDetails.payment_id,
+                paymentStatus: paymentDetails.status,
+                orderNo: response.razorpay_order_id,
+                paymentMethod: paymentDetails.method,
+                email: userEmail ? userEmail : email,
+                products: products.map(
+                  ({ _id, image, ...productWithoutImage }) => ({
+                    id: _id,
+                    ...productWithoutImage,
+                  })
+                ),
+                shippingAddress,
+                billingAddress: isDifferentBilling
+                  ? billingAddress
+                  : shippingAddress,
+                orderStatus: "shipping",
+                subtotal: totalAmt,
+                shippingCost: shippingCharge,
+                total: totalAmt + shippingCharge,
+              };
+
+              // Send payment and order details to backend (Add order to DB)
+              const addOrderResponse = await fetch(
+                "https://upstrides-server.vercel.app/api/order/add-order",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(paymentData),
+                }
+              );
+
+              const data = await addOrderResponse.json();
+
+              if (addOrderResponse.ok) {
+                console.log("Order placed successfully:", data);
+                alert("Order placed successfully!");
+              } else {
+                alert("Error placing order: " + data.message);
+              }
+            } else {
+              alert("Payment details fetch failed. Please try again.");
+            }
+          } catch (err) {
+            console.error("Error fetching payment details:", err);
+            alert("An error occurred while fetching payment details.");
+          }
         },
         theme: { color: "#3399cc" },
       };
 
       const rzp = new window.Razorpay(options);
-      rzp.open();
+      rzp.open(); // Open Razorpay Checkout
     } catch (error) {
       console.error("Error placing order:", error);
       alert("An error occurred while placing the order.");
