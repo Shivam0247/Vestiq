@@ -120,14 +120,13 @@ function Checkout() {
 
       // **Step 2: Open Razorpay Checkout**
       const options = {
-        key: "rzp_test_qJMenRdRHXHatJ", // ✅ Use Razorpay Test Key
+        key: "rzp_test_qJMenRdRHXHatJ",
         amount: orderDataResponse.amount,
         currency: orderDataResponse.currency,
-        order_id: orderDataResponse.order_id, // ✅ Order ID from backend
+        order_id: orderDataResponse.order_id,
         name: "Up Strides",
         description: "Complete Your Purchase",
         handler: async function (response) {
-          // **Fetch Payment Details Before Proceeding to Add Order to DB**
           try {
             const paymentDetailsResponse = await fetch(
               `https://upstrides-server.vercel.app/api/payments/payment/${response.razorpay_payment_id}`
@@ -136,7 +135,6 @@ function Checkout() {
             const paymentDetails = await paymentDetailsResponse.json();
 
             if (paymentDetailsResponse.ok) {
-              // **Step 3: Use Payment Details and Order Data to Add Order to DB**
               const paymentData = {
                 paymentId: paymentDetails.payment_id,
                 paymentStatus: paymentDetails.status,
@@ -159,7 +157,6 @@ function Checkout() {
                 total: totalAmt + shippingCharge,
               };
 
-              // Send payment and order details to backend (Add order to DB)
               const addOrderResponse = await fetch(
                 "https://upstrides-server.vercel.app/api/order/add-order",
                 {
