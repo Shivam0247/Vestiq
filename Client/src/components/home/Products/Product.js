@@ -27,7 +27,7 @@ const Product = (props) => {
   };
 
   const handleAddToCart = (event) => {
-    event.stopPropagation(); // Prevent click from propagating to parent
+    event.stopPropagation();
     props.onCartClick({
       _id: props._id,
       name: props.productName,
