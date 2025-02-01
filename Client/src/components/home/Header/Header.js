@@ -8,6 +8,8 @@ import logo_trans_black from "../../../assets/images/logo_trans_black.png";
 import Image from "../../designLayouts/Image";
 import { navBarList } from "../../../constants";
 import Flex from "../../designLayouts/Flex";
+import { RiShoppingCart2Fill } from "react-icons/ri";
+import { useSelector } from "react-redux";
 
 const Header = ({ onSidebarOpen }) => {
   const [showMenu, setShowMenu] = useState(true);
@@ -15,6 +17,7 @@ const Header = ({ onSidebarOpen }) => {
   const [category, setCategory] = useState(false);
   const [brand, setBrand] = useState(false);
   const location = useLocation();
+  const products = useSelector((state) => state.orebiReducer.products);
 
   useEffect(() => {
     let ResponsiveMenu = () => {
@@ -40,7 +43,21 @@ const Header = ({ onSidebarOpen }) => {
               />
             </div>
           </Link>
-          <div>
+          <div className="flex">
+            <Link to="/cart" className="flex md:hidden">
+              <div className="w-16 h-[70px] flex flex-col gap-1 justify-center items-center overflow-x-hidden group cursor-pointer relative mr-1">
+                <div className="flex justify-center items-center mt-2">
+                  <i class="fi fi-rr-shopping-cart-add text-2xl -translate-x-12 group-hover:translate-x-3 transition-transform duration-200 "></i>
+                  <i class="fi fi-rr-shopping-cart-add text-2xl -translate-x-3 group-hover:translate-x-12 transition-transform duration-200"></i>
+                </div>
+                {products.length > 0 && (
+                  <p className="absolute top-4 right-3 bg-primeColor text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-semibold">
+                    {products.length}
+                  </p>
+                )}
+              </div>
+            </Link>
+
             <motion.ul
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
