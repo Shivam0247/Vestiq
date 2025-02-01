@@ -33,7 +33,11 @@ const Product = (props) => {
       name: props.productName,
       image: props.img1,
       price: props.price,
+      Description: props.Description,
+      Features: props.Features,
+      CompositionAndCare: props.CompositionAndCare,
       sizes: props.sizes,
+      SizeChart: props.SizeChart,
     });
   };
 

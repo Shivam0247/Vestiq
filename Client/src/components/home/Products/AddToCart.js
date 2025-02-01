@@ -8,9 +8,11 @@ import {
 } from "@heroui/react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/orebiSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function AddToCart({ onClose, product }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Sizes array
   const sizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
@@ -27,6 +29,24 @@ export default function AddToCart({ onClose, product }) {
 
   const handleSizeChange = (event) => {
     setSelectedSize(event.target.value); // Update selected size
+  };
+
+  const handleProductClick = () => {
+    navigate(`/product/${product._id}`, {
+      state: {
+        item: {
+          _id: product?._id,
+          name: product?.name,
+          image: product?.image,
+          price: product?.price,
+          Description: product?.Description,
+          Features: product?.Features,
+          CompositionAndCare: product?.CompositionAndCare,
+          sizes: product?.sizes,
+          SizeChart: product?.SizeChart,
+        },
+      },
+    });
   };
 
   return (
@@ -146,6 +166,7 @@ export default function AddToCart({ onClose, product }) {
                 color="primary"
                 size="lg"
                 className="w-[100%] lg:w-[23rem] lg:ml-0 md:w-[48%] sm:w-[100%] xs:w-[100%] xs:ml-0 md:ml-5 sm:ml-0 bg-white border-black text-black border-2 transition-all duration-300 transform hover:scale-105"
+                onPress={handleProductClick}
               >
                 Visit Product Page
               </Button>
