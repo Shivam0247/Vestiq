@@ -59,8 +59,8 @@ const NewArrivals = () => {
             <Product
               key={product._id}
               _id={product._id}
-              img1={`/images/${product.Images[0]}`}
-              img2={`/images/${product.Images[1]}`}
+              img1={`/images/Tshirts/${product.Images[0]}`}
+              img2={`/images/Tshirts/${product.Images[1]}`}
               productName={product.ProductName}
               price={product.Price}
               sizes={product.Sizes}

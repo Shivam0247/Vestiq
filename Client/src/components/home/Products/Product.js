@@ -84,18 +84,22 @@ const Product = (props) => {
       }}
     >
       <CardBody className="overflow-visible p-0">
-        <Chip variant="flat" color="warning" className="absolute top-3 right-5">
+        <Chip
+          variant="flat"
+          className="absolute top-3 right-5 bg-gradient-to-r from-[#8f8f8f] to-[#373d49] text-white rounded-full px-3 py-1 text-sm font-medium"
+        >
           {props.Status}
         </Chip>
+
         <img
-          alt="ss"
-          className="w-full object-cover h-full bg-transparent transition-transform duration-500 ease-in-out group-hover:scale-105 group-hover:rotate-2"
+          alt={props.productName}
+          className="w-auto max-w-full max-h-full object-cover bg-transparent transition-transform duration-500 ease-in-out group-hover:scale-105 group-hover:rotate-2"
           radius="lg"
           shadow="sm"
           src={hover ? props.img2 : props.img1}
-          width="100%"
         />
       </CardBody>
+
       <CardFooter className="text-small justify-between">
         <div className="flex flex-col items-start">
           <b className="text-start">{props.productName}</b>
