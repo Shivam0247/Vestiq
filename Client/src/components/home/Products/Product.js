@@ -80,7 +80,9 @@ const Product = (props) => {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={(e) => {
-        handleProductClick(e);
+        if (window.innerWidth > 768) {
+          handleProductClick(e);
+        }
       }}
     >
       <CardBody className="overflow-visible p-0">
