@@ -83,6 +83,11 @@ body {
     animation: button-pulse 7s ease-in-out infinite;
     cursor: pointer;
 
+  @media (max-width: 761px) {
+    height: $buttonRadius * 1.5;
+    width: $buttonRadius * 1.5;
+  }
+  
   &:after {
     position: absolute;
     top: 50%;
