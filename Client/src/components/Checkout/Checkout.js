@@ -1055,7 +1055,7 @@ function Checkout() {
               </Accordion>
               <div className="space-y-3">
                 <button
-                  className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
+                  className="hidden lg:visible lg:flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
                   onClick={handleSubmitOrder}
                 >
                   Proceed to Payment
@@ -1064,6 +1064,9 @@ function Checkout() {
             </div>
 
             <div className="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
+              <p className="lg:hidden text-xl font-semibold text-gray-900 ">
+                Order summary
+              </p>
               <div>
                 {products.map((item) => (
                   <div key={item._id}>
@@ -1088,8 +1091,8 @@ function Checkout() {
                 </div>
               </div>
               <div className="flow-root">
-                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-                  <p className="text-xl font-semibold text-gray-900 ">
+                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 sm:pt-0 lg:pt-6">
+                  <p className="hidden lg:flex text-xl font-semibold text-gray-900 ">
                     Order summary
                   </p>
 
@@ -1140,6 +1143,15 @@ function Checkout() {
                         ₹ {totalAmt + shippingCharge}
                       </dd>
                     </dl>
+
+                    <div className="space-y-3">
+                      <button
+                        className="lg:hidden flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
+                        onClick={handleSubmitOrder}
+                      >
+                        Proceed to Payment
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
