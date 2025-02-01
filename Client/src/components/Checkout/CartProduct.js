@@ -22,7 +22,7 @@ function CartProduct(props) {
           <span className="text-gray-500 text-xs">Size: {props.item.size}</span>
         </div>
         <span className="text-blue-600 font-semibold text-sm mt-1">
-          ₹{props.item.price}
+          ₹{props.item.price * props.item.quantity}
         </span>
       </div>
     </div>

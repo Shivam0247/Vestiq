@@ -56,10 +56,16 @@ function HomeDisplay() {
       <div className="Imgcontainer">
         {/* First Image with Hotspots */}
         <div
-          className="lg-container"
+          className="lg-container "
           ref={(el) => (containerRefs.current[0] = el)}
         >
-          <img className="" src="/images/FrontImg.png" alt="Coffee Desk" />
+          <picture>
+            <source
+              srcSet="/images/FrontImgSmall.png"
+              media="(max-width: 761px)"
+            />
+            <img className="" src="/images/FrontImg.png" alt="Coffee Desk" />
+          </picture>
 
           <div
             ref={(el) => (hotspotRefs.current[0] = el)}

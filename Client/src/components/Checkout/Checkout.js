@@ -100,6 +100,40 @@ function Checkout() {
   }, [userEmail]);
 
   const handleSubmitOrder = async () => {
+    if (!userEmail && !email) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    if (
+      !shippingAddress.country ||
+      !shippingAddress.firstName ||
+      !shippingAddress.lastName ||
+      !shippingAddress.address ||
+      !shippingAddress.city ||
+      !shippingAddress.state ||
+      !shippingAddress.pincode ||
+      !shippingAddress.phone
+    ) {
+      alert("Please fill in all shipping address details.");
+      return;
+    }
+
+    if (
+      isDifferentBilling &&
+      (!billingAddress.country ||
+        !billingAddress.firstName ||
+        !billingAddress.lastName ||
+        !billingAddress.address ||
+        !billingAddress.city ||
+        !billingAddress.state ||
+        !billingAddress.pincode ||
+        !billingAddress.phone)
+    ) {
+      alert("Please fill in all billing address details.");
+      return;
+    }
+
     try {
       // **Step 1: Create Order in Backend (Razorpay Order Creation)**
       const response = await fetch(
@@ -107,7 +141,10 @@ function Checkout() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: totalAmt, currency: "INR" }),
+          body: JSON.stringify({
+            amount: totalAmt + shippingCharge,
+            currency: "INR",
+          }),
         }
       );
 
@@ -210,6 +247,20 @@ function Checkout() {
       setShippingCharge(20);
     }
   }, [totalAmt]);
+
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
+  // Set the first address as default when the component loads
+  useEffect(() => {
+    if (addresses.length > 0) {
+      handleAddressChange(addresses[0]);
+    }
+  }, [addresses]);
+
+  const handleAddressChange = (address) => {
+    setSelectedAddress(address);
+    handleAddressSelect(address);
+  };
 
   return (
     <div>
@@ -434,49 +485,206 @@ function Checkout() {
                   >
                     <ul className="text-sm font-medium text-gray-900 bg-white space-y-2">
                       {addresses.length > 0 ? (
-                        addresses.map((address, index) => (
-                          <li
-                            key={index}
-                            className="w-full rounded-lg border border-gray-300 p-3 hover:bg-gray-100 transition"
-                          >
-                            <div className="flex items-center gap-3">
-                              {/* Radio Button */}
-                              <input
-                                id={`Address-${index}`}
-                                type="radio"
-                                value={index}
-                                name="Address"
-                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                                onChange={() => handleAddressSelect(address)}
-                                // checked={!isDifferentBilling && index === 0}
-                              />
-                              {/* Label for the entire list item */}
-                              <label
-                                htmlFor={`Address-${index}`}
-                                className="text-sm font-medium text-gray-900 cursor-pointer w-full"
-                              >
-                                <span className="block font-semibold">
-                                  {address.firstName} {address.lastName}
-                                </span>
-                                <span className="block text-gray-700">
-                                  {address.apartment}-{address.address},{" "}
-                                  {address.city}, {address.state},{" "}
-                                  {address.country} - {address.pincode}
-                                </span>
-                              </label>
-                            </div>
-                          </li>
-                        ))
+                        <>
+                          {addresses.map((address, index) => (
+                            <li
+                              key={index}
+                              className="w-full rounded-lg border border-gray-300 p-3 hover:bg-gray-100 transition"
+                            >
+                              <div className="flex items-center gap-3">
+                                {/* Radio Button */}
+                                <input
+                                  id={`Address-${index}`}
+                                  type="radio"
+                                  value={index}
+                                  name="Address"
+                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                                  onChange={() => handleAddressChange(address)}
+                                  checked={selectedAddress === address}
+                                />
+                                {/* Label for the entire list item */}
+                                <label
+                                  htmlFor={`Address-${index}`}
+                                  className="text-sm font-medium text-gray-900 cursor-pointer w-full"
+                                >
+                                  <span className="block font-semibold">
+                                    {address.firstName} {address.lastName}
+                                  </span>
+                                  <span className="block text-gray-700">
+                                    {address.apartment}-{address.address},{" "}
+                                    {address.city}, {address.state},{" "}
+                                    {address.country} - {address.pincode}
+                                  </span>
+                                </label>
+                              </div>
+                            </li>
+                          ))}
+                          <span className="text-sm text-blue-600 cursor-pointer mt-2 block">
+                            + Use a different address
+                          </span>
+                        </>
                       ) : (
                         <li className="text-gray-500 p-3">
-                          No addresses found.
+                          <div className="space-y-4">
+                            {/* Country Selection */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-900">
+                                Country
+                              </label>
+                              <select
+                                name="country"
+                                value={shippingAddress.country}
+                                onChange={handleChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                              >
+                                <option value="">Select a country</option>
+                                <option value="US">United States</option>
+                                <option value="AU">Australia</option>
+                                <option value="FR">France</option>
+                                <option value="ES">Spain</option>
+                                <option value="UK">United Kingdom</option>
+                              </select>
+                            </div>
+
+                            {/* First & Last Name */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  First Name
+                                </label>
+                                <input
+                                  type="text"
+                                  name="firstName"
+                                  value={shippingAddress.firstName}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  placeholder="John"
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  Last Name
+                                </label>
+                                <input
+                                  type="text"
+                                  name="lastName"
+                                  value={shippingAddress.lastName}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  placeholder="Doe"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            {/* Address & Apartment */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-900">
+                                Address
+                              </label>
+                              <input
+                                type="text"
+                                name="address"
+                                value={shippingAddress.address}
+                                onChange={handleChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                placeholder="123 Street Name"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-900">
+                                Apartment, suite, etc. (optional)
+                              </label>
+                              <input
+                                type="text"
+                                name="apartment"
+                                value={shippingAddress.apartment}
+                                onChange={handleChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                placeholder="Apt 101"
+                              />
+                            </div>
+
+                            {/* City, State, PIN */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  City
+                                </label>
+                                <select
+                                  name="city"
+                                  value={shippingAddress.city}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                >
+                                  <option value="">Select a city</option>
+                                  <option value="San Francisco">
+                                    San Francisco
+                                  </option>
+                                  <option value="New York">New York</option>
+                                  <option value="Los Angeles">
+                                    Los Angeles
+                                  </option>
+                                  <option value="Chicago">Chicago</option>
+                                  <option value="Houston">Houston</option>
+                                </select>
+                              </div>
+
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  State
+                                </label>
+                                <select
+                                  name="state"
+                                  value={shippingAddress.state}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                >
+                                  <option value="">Select a state</option>
+                                  <option value="CA">California</option>
+                                  <option value="NY">New York</option>
+                                  <option value="TX">Texas</option>
+                                  <option value="FL">Florida</option>
+                                </select>
+                              </div>
+
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  PIN code
+                                </label>
+                                <input
+                                  type="text"
+                                  name="pincode"
+                                  value={shippingAddress.pincode}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  placeholder="400001"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            {/* Phone Number */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-900">
+                                Phone
+                              </label>
+                              <input
+                                type="text"
+                                name="phone"
+                                value={shippingAddress.phone}
+                                onChange={handleChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                placeholder="+91 1234567890"
+                                required
+                              />
+                            </div>
+                          </div>
                         </li>
                       )}
                     </ul>
-
-                    <span className="text-sm text-blue-600 cursor-pointer mt-2 block">
-                      + Use a different address
-                    </span>
                   </AccordionItem>
                 )}
                 <AccordionItem
