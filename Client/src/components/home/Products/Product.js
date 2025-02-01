@@ -111,7 +111,7 @@ const Product = (props) => {
           className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 duration-300 transform lg:group-hover:translate-y-0 lg:translate-y-3"
           onClick={handleAddToCart}
         >
-          <i class="fi fi-rr-shopping-cart-add text-2xl hover:scale-110 transform duration-300 hover:text-primeColor mr-2"></i>
+          <i className="fi fi-rr-shopping-cart-add text-2xl hover:scale-110 transform duration-300 hover:text-primeColor mr-2"></i>
         </div>
       </CardFooter>
     </Card>
