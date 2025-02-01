@@ -70,7 +70,7 @@ export default function AddToCart({ onClose, product }) {
               <h5 className="mb-5 text-medium font-medium text-gray-900">
                 Select Size
               </h5>
-              <ul className="grid gap-3 grid-cols-2 md:grid-cols-7 lg:grid-cols-4 sm:grid-cols-4 xs:grid-cols-3">
+              <ul className="grid gap-3 grid-cols-2 xs:grid-cols-3 md:grid-cols-7 lg:grid-cols-4 sm:grid-cols-4">
                 {product.sizes.map((size) => (
                   <li key={size}>
                     <input
@@ -98,10 +98,30 @@ export default function AddToCart({ onClose, product }) {
                 color="primary"
                 size="lg"
                 className="w-[100%] lg:w-[23rem] md:w-[48%] sm:w-[100%] xs:w-[100%] my-5 bg-black text-white transition-all duration-300 transform hover:scale-105"
-                onClick={(event) => {
-                  event.stopPropagation(); // Prevent parent click
+                onTouch={(event) => {
+                  event.stopPropagation();
                   if (!selectedSize) {
-                    alert("Please select a size before adding to the cart."); // Alert if size not selected
+                    alert("Please select a size before adding to the cart.");
+                    return;
+                  }
+                  dispatch(
+                    addToCart({
+                      _id: product?._id,
+                      name: product?.name,
+                      quantity: 1,
+                      image: product?.image,
+                      badge: product?.badge,
+                      price: product?.price,
+                      colors: product?.colors,
+                      size: selectedSize, // Use selected size
+                    })
+                  );
+                  onClose(); // Close the modal after adding the item to the cart
+                }}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (!selectedSize) {
+                    alert("Please select a size before adding to the cart.");
                     return;
                   }
                   dispatch(
