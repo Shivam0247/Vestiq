@@ -187,3 +187,50 @@ body {
   }
 }
 
+
+
+@media (max-width: 761px) {
+  .hide-at-761 {
+    display: none !important;
+  }
+
+  .adjust-position-761_1 {
+    top: 18% !important;
+    left: 15% !important;
+  }
+
+  .adjust-position-761_2{
+   top: 18% !important;
+   left: 50% !important;
+  }
+
+  .adjust-position-761_3 {
+    top: 18% !important;
+    left: 83% !important;
+  }
+
+  .adjust-position-761_4 {
+    top: 50% !important;
+    left: 15% !important;
+   }
+
+  .adjust-position-761_5 {
+    top: 50% !important;
+    left: 83% !important;
+  }
+  .adjust-position-761_6 {
+    top: 80% !important;
+    left: 15% !important;
+  }
+
+  .adjust-position-761_7 {
+    top: 80% !important;
+    left: 50% !important;
+  }
+  .adjust-position-761_8 {
+    top: 80% !important;
+    left: 83% !important;
+  }
+}
+
+
