@@ -98,7 +98,7 @@ export default function AddToCart({ onClose, product }) {
                 color="primary"
                 size="lg"
                 className="w-[100%] lg:w-[23rem] md:w-[48%] sm:w-[100%] xs:w-[100%] my-5 bg-black text-white transition-all duration-300 transform hover:scale-105"
-                onTouch={(event) => {
+                onTouchStart={(event) => {
                   event.stopPropagation();
                   if (!selectedSize) {
                     alert("Please select a size before adding to the cart.");
