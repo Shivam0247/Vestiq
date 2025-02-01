@@ -108,7 +108,7 @@ const Product = (props) => {
 
         {/* Cart Icon with Hover Effect */}
         <div
-          className="opacity-0 group-hover:opacity-100 duration-300 transform group-hover:translate-y-0 translate-y-3"
+          className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 duration-300 transform lg:group-hover:translate-y-0 lg:translate-y-3"
           onClick={handleAddToCart}
         >
           <i class="fi fi-rr-shopping-cart-add text-2xl hover:scale-110 transform duration-300 hover:text-primeColor mr-2"></i>
