@@ -38,53 +38,13 @@ const Product = (props) => {
   };
 
   return (
-    // <div
-    //   className="w-full relative group cursor-pointer"
-    //   onMouseEnter={() => setHover(true)}
-    //   onMouseLeave={() => setHover(false)}
-    //   onClick={handleProductClick}
-    // >
-    //   {/* Product Image */}
-    //   <div className="w-full border-[1px] border-b-0 max-h-100 relative overflow-hidden group">
-    //     <Image
-    //       className="w-full h-full object-contain bg-transparent transition-transform duration-500 ease-in-out group-hover:scale-105 group-hover:rotate-2"
-    //       imgSrc={hover ? props.img2 : props.img1}
-    //     />
-    //   </div>
-
-    //   {/* Product Details */}
-    //   <div className="w-full justify-between items-center border-[1px] border-t-0 px-4 py-6 gap-1 flex">
-    //     <div className="flex flex-col">
-    //       <h2 className="text-lg text-primeColor font-bold">
-    //         {props.productName}
-    //       </h2>
-    //       <p className="text-[#767676] text-[14px]">
-    //         INR {parseFloat(props.price).toFixed(2)}
-    //       </p>
-    //     </div>
-
-    //     {/* Cart Icon */}
-    //     <div
-    //       className="opacity-0 group-hover:opacity-100 duration-300 transform group-hover:translate-y-0 translate-y-3"
-    //       onClick={handleAddToCart}
-    //     >
-    //       <i className="fa-solid fa-cart-shopping text-2xl hover:scale-110 transform duration-300 hover:text-primeColor"></i>
-    //     </div>
-    //   </div>
-    // </div>
-    <div onClick={handleProductClick}>
+    <div onClick={handleProductClick} className="h-full">
       <Card
         // isPressable
         shadow="sm"
-        className="group w-[100%]"
+        className="group w-full h-full"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        onClick={(e) => {
-          if (window.innerWidth > 768) {
-            handleProductClick(e);
-          }
-        }}
-        onPress={handleProductClick}
       >
         <CardBody className="overflow-visible p-0">
           <Chip
@@ -113,11 +73,6 @@ const Product = (props) => {
           <div
             className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 duration-300 transform lg:group-hover:translate-y-0 lg:translate-y-3 "
             onClick={(event) => {
-              // event.stopPropagation();
-              handleAddToCart(event);
-            }}
-            onTouchStart={(event) => {
-              // event.stopPropagation();
               handleAddToCart(event);
             }}
           >

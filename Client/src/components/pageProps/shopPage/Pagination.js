@@ -108,7 +108,7 @@ const PaginationProduct = ({ itemsPerPage, Category }) => {
       {/* Products */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lgl:grid-cols-3 xl:grid-cols-4 gap-4 mt-[-65px]">
         {currentItems.map((product) => (
-          <div key={product._id} className="w-full">
+          <div key={product._id} className="w-full h-full">
             <Product
               key={product._id}
               _id={product._id}
