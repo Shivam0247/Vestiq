@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import CartProduct from "./CartProduct";
 import { Country, State } from "country-state-city";
 import { useDispatch, useSelector } from "react-redux";
-
+import { Alert } from "@heroui/alert";
 function Checkout() {
   const [isDifferentBilling, setIsDifferentBilling] = useState(false);
   const userEmail = Cookies.get("userEmail");
@@ -99,9 +99,10 @@ function Checkout() {
     }
   }, [userEmail]);
 
+  const [alertMessage, setAlertMessage] = useState(null);
   const handleSubmitOrder = async () => {
     if (!userEmail && !email) {
-      alert("Please enter a valid email address.");
+      setAlertMessage("Please enter a valid email address.");
       return;
     }
 
@@ -115,7 +116,7 @@ function Checkout() {
       !shippingAddress.pincode ||
       !shippingAddress.phone
     ) {
-      alert("Please fill in all shipping address details.");
+      setAlertMessage("Please fill in all shipping address details.");
       return;
     }
 
@@ -130,9 +131,11 @@ function Checkout() {
         !billingAddress.pincode ||
         !billingAddress.phone)
     ) {
-      alert("Please fill in all billing address details.");
+      setAlertMessage("Please fill in all billing address details.");
       return;
     }
+
+    setAlertMessage(null);
 
     try {
       // **Step 1: Create Order in Backend (Razorpay Order Creation)**
@@ -262,8 +265,22 @@ function Checkout() {
     handleAddressSelect(address);
   };
 
+  useEffect(() => {
+    if (alertMessage) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      // Auto-remove alert after 5 seconds
+      const timer = setTimeout(() => {
+        setAlertMessage(null);
+      }, 5000);
+
+      return () => clearTimeout(timer); // Cleanup on unmount
+    }
+  }, [alertMessage]);
+
   return (
     <div>
+      {alertMessage && <Alert color="danger" title={alertMessage} />}
       <section className="bg-white py-8 antialiased  md:py-16">
         <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
           <h2 className="text-xl font-semibold text-gray-900 sm:text-3xl">
