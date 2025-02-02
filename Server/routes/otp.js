@@ -8,13 +8,14 @@ require("dotenv").config(); // Load environment variables
 
 // ✅ Configure Nodemailer with SendGrid (FAST & Reliable)
 const transporter = nodemailer.createTransport({
-  host: "gmail", // ✅ Use SendGrid instead of Gmail
-  port: 587,
+  service: "gmail", // Gmail SMTP service
   auth: {
-    user: "upstridesofficial@gmail.com", // ✅ Required for SendGrid
-    pass: process.env.SENDGRID_API_KEY, // Store in `.env`
+    user: "upstridesofficial@gmail.com", // Gmail email address
+    pass: process.env.EMAIL_PASSWORD, // Your Gmail password (use app-specific password if 2FA is enabled)
   },
-  pool: false, // ✅ Disable pooling (for serverless compatibility)
+  pool: false, // Disabling pooling (important for serverless environments)
+  maxConnections: 1, // Limit to a single connection (to avoid serverless issues)
+  maxMessages: 1, // Send only one message per connection
 });
 
 // ✅ Helper Function: Generate and save OTP
