@@ -4,28 +4,23 @@ const OTPModel = require("../models/otp");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const router = express.Router();
+require("dotenv").config(); // Load environment variables
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config(); // Load .env file
-}
-
-// Configure Nodemailer with connection pooling
+// ✅ Configure Nodemailer with SendGrid (FAST & Reliable)
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "gmail", // ✅ Use SendGrid instead of Gmail
+  port: 587,
   auth: {
-    user: "upstridesofficial@gmail.com",
-    pass: process.env.EMAIL_PASSWORD,
+    user: "upstridesofficial@gmail.com", // ✅ Required for SendGrid
+    pass: process.env.SENDGRID_API_KEY, // Store in `.env`
   },
-  pool: true, // Enable connection pooling
-  maxConnections: 5, // Maximum number of connections
-  maxMessages: 10, // Maximum number of messages per connection
+  pool: false, // ✅ Disable pooling (for serverless compatibility)
 });
 
-// Helper Function: Generate and save OTP
+// ✅ Helper Function: Generate and save OTP
 const generateAndSaveOTP = async (email) => {
   const otp = crypto.randomInt(100000, 999999).toString(); // Generate 6-digit OTP
 
-  // Check if OTP data already exists
   let otpData = await OTPModel.findOne({ email });
 
   if (otpData) {
@@ -33,27 +28,19 @@ const generateAndSaveOTP = async (email) => {
     otpData.valid = true;
     await otpData.save();
   } else {
-    otpData = new OTPModel({
-      email,
-      otp,
-      valid: true,
-    });
+    otpData = new OTPModel({ email, otp, valid: true });
     await otpData.save();
   }
 
   return otpData;
 };
 
-// Route: Fetch OTP
+// ✅ Route: Fetch OTP
 router.get("/fetch/:email", async (req, res) => {
-  const { email } = req.params;
-
   try {
-    const otpData = await OTPModel.findOne({ email });
+    const otpData = await OTPModel.findOne({ email: req.params.email });
 
-    if (!otpData) {
-      return res.status(404).json({ message: "OTP not found for this email" });
-    }
+    if (!otpData) return res.status(404).json({ message: "OTP not found" });
 
     return res.status(200).json(otpData);
   } catch (error) {
@@ -62,61 +49,45 @@ router.get("/fetch/:email", async (req, res) => {
   }
 });
 
-// Route: Add or Replace OTP
+// ✅ Route: Add or Replace OTP (Sends Email)
 router.post("/add", async (req, res) => {
   const { email } = req.body;
 
   try {
-    const otpData = await generateAndSaveOTP(email); // Generate and save OTP
+    const otpData = await generateAndSaveOTP(email);
 
-    // Prepare email content
     const mailOptions = {
-      from: "upstridesofficial@gmail.com",
+      from: "UpStrides <upstridesofficial@gmail.com>", // ✅ Professional sender email
       to: email,
-      subject: "Your OTP for login",
+      subject: "Your OTP for Login",
       text: `Your OTP for login is: ${otpData.otp}`,
+      html: `<p>Your OTP for login is: <strong>${otpData.otp}</strong></p>`,
     };
 
-    // Send OTP email asynchronously
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error);
-        return res
-          .status(500)
-          .json({ message: "Error sending OTP email", error });
-      }
-      console.log("Email sent:", info.response);
-    });
+    // ✅ Ensure email is sent before responding
+    await transporter.sendMail(mailOptions);
 
-    // Respond with success
     return res.status(200).json({
-      message: "OTP created or replaced successfully, and email sent.",
-      otp: otpData,
+      message: "OTP sent successfully!",
+      otp: otpData.otp, // Send OTP for testing (REMOVE IN PROD)
     });
   } catch (error) {
-    console.error("Error creating or updating OTP:", error);
-    return res.status(500).json({ message: "Error creating or updating OTP" });
+    console.error("Error sending OTP email:", error);
+    return res.status(500).json({ message: "Error sending OTP email" });
   }
 });
 
-// Route: Expire OTP
+// ✅ Route: Expire OTP
 router.post("/expire/:email", async (req, res) => {
-  const { email } = req.params;
-
   try {
-    const otpData = await OTPModel.findOne({ email });
+    const otpData = await OTPModel.findOne({ email: req.params.email });
 
-    if (!otpData) {
-      return res.status(404).json({ message: "OTP not found for this email" });
-    }
+    if (!otpData) return res.status(404).json({ message: "OTP not found" });
 
     otpData.valid = false;
     await otpData.save();
 
-    return res.status(200).json({
-      message: "OTP expired successfully",
-      otp: otpData,
-    });
+    return res.status(200).json({ message: "OTP expired successfully" });
   } catch (error) {
     console.error("Error expiring OTP:", error);
     return res.status(500).json({ message: "Error expiring OTP" });
