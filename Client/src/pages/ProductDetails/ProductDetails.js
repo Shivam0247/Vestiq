@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
 import ProductInfo from "../../components/pageProps/productDetails/ProductInfo";
 import ProductsOnSale from "../../components/pageProps/productDetails/ProductsOnSale";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import gsap from "gsap";
 import {
   Dropdown,
   DropdownTrigger,
@@ -24,7 +26,10 @@ const ProductDetails = () => {
   const location = useLocation();
   const [prevLocation, setPrevLocation] = useState("");
   const [productInfo, setProductInfo] = useState([]);
-
+  const containerRef = useRef(null);
+  const imagesRef = useRef(null);
+  const infoRef = useRef(null);
+  const sizechartRef = useRef(null);
   const [selectedKeys, setSelectedKeys] = React.useState(() =>
     productInfo.sizes && productInfo.sizes.length > 0
       ? new Set([productInfo.sizes[0]])
@@ -74,16 +79,53 @@ const ProductDetails = () => {
     console.log(location.state.item.sizes);
   }, [location]);
 
+  useEffect(() => {
+    const images = imagesRef.current;
+    const info = infoRef.current;
+    const sizechart = sizechartRef.current;
+
+    if (!images || !info) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    let tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: info,
+        start: "bottom bottom",
+        end: () => `+=${images.scrollHeight - window.innerHeight}`,
+        pin: info, // Pin the info section
+        scrub: 1,
+      },
+    });
+
+    tl.to(images, {
+      y: () => -(images.scrollHeight - window.innerHeight),
+      ease: "none",
+      scrollTrigger: {
+        trigger: images,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1,
+      },
+    });
+  }, []);
+
   return (
-    <div className="w-full mx-auto flex overflow-hidden">
-      <div className="images border-r-1 w-[50%] justify-center flex flex-col ">
+    <div
+      ref={containerRef}
+      className="relative w-full mx-auto flex overflow-hidden"
+    >
+      <div ref={imagesRef} className="images w-[50%] flex flex-col gap-4 pr-5">
         <img src="/images/image1.jpg" alt="" />
         <img src="/images/image1.jpg" alt="" />
         <img src="/images/image1.jpg" alt="" />
         <img src="/images/image1.jpg" alt="" />
       </div>
 
-      <div className="info w-[50%] px-[6%] flex flex-col mt-16">
+      <div
+        ref={infoRef}
+        className="info w-[50%] h-full px-[6%] flex flex-col mt-16"
+      >
         <div>
           <h1 className="text-3xl font-extrabold">
             {productInfo.name ? productInfo.name : "N/A"}
@@ -236,7 +278,7 @@ const ProductDetails = () => {
             : null}
         </div>
 
-        <div className="sizeChart mt-10">
+        <div ref={sizechartRef} className="sizeChart mt-10 mb-10">
           <h3 className="text-center text-lg font-extrabold mb-5">
             SIZE CHART
           </h3>
