@@ -10,7 +10,11 @@ import {
 } from "@heroui/react";
 import { Checkbox, Select, SelectItem } from "@heroui/react";
 import { Country, State, City } from "country-state-city";
-
+import {
+  Autocomplete,
+  AutocompleteSection,
+  AutocompleteItem,
+} from "@heroui/autocomplete";
 function Profile(props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -232,13 +236,12 @@ function Profile(props) {
       setCities([]);
     }
   }, [selectedCountry]);
-
   useEffect(() => {
     if (selectedState) {
       const cityList = City.getCitiesOfState(selectedCountry, selectedState);
       setCities(cityList);
     }
-  }, [selectedState]);
+  }, [selectedState, selectedCountry]);
 
   useEffect(() => {
     const countryData = Country.getCountryByCode(selectedCountry);
@@ -398,19 +401,28 @@ function Profile(props) {
                 >
                   This is my default address
                 </Checkbox>
-                <Select
+
+                <Autocomplete
                   label="Country"
                   value={selectedCountry}
-                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  onSelectionChange={(value) => {
+                    setSelectedCountry(value);
+                    setSelectedState(""); // Reset state when country changes
+                    setCities([]); // Reset cities
+                  }}
                   variant="bordered"
                   className="flex-1"
+                  defaultInputValue="IN"
                 >
                   {countries.map((country) => (
-                    <SelectItem key={country.isoCode} value={country.isoCode}>
+                    <AutocompleteItem
+                      key={country.isoCode}
+                      value={country.isoCode}
+                    >
                       {country.name}
-                    </SelectItem>
+                    </AutocompleteItem>
                   ))}
-                </Select>
+                </Autocomplete>
 
                 <div className="flex justify-between flex-wrap">
                   <Input
@@ -446,36 +458,42 @@ function Profile(props) {
                   onChange={(e) => setApartment(e.target.value)}
                 />
                 <div className="flex flex-wrap gap-4 flex-col lg:flex-row">
-                  <Select
+                  <Autocomplete
                     label="State"
                     value={selectedState}
-                    onChange={(e) => setSelectedState(e.target.value)}
+                    onSelectionChange={(value) => {
+                      setSelectedState(value);
+                      setSelectedCity(""); // Reset city when state changes
+                    }}
                     variant="bordered"
                     className="flex-1"
                     disabled={!states.length}
-                    size="sm"
                   >
                     {states.map((state) => (
-                      <SelectItem key={state.isoCode} value={state.isoCode}>
+                      <AutocompleteItem
+                        key={state.isoCode}
+                        value={state.isoCode}
+                      >
                         {state.name}
-                      </SelectItem>
+                      </AutocompleteItem>
                     ))}
-                  </Select>
-                  <Select
+                  </Autocomplete>
+
+                  <Autocomplete
                     label="City"
                     value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
+                    onSelectionChange={(value) => setSelectedCity(value)}
                     variant="bordered"
                     className="flex-1"
                     disabled={!cities.length}
-                    size="sm"
                   >
                     {cities.map((city) => (
-                      <SelectItem key={city.name} value={city.name}>
+                      <AutocompleteItem key={city.name} value={city.name}>
                         {city.name}
-                      </SelectItem>
+                      </AutocompleteItem>
                     ))}
-                  </Select>
+                  </Autocomplete>
+
                   <Input
                     placeholder="PIN code"
                     variant="bordered"
