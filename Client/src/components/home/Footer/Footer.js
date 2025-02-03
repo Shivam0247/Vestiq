@@ -111,42 +111,42 @@ const Footer = () => {
               ab ullam, numquam nesciunt in.
             </p>
             <ul className="flex items-center gap-2">
-              <Link
-                to="https://www.youtube.com/@reactjsBD"
+              <a
+                href="https://www.youtube.com/@reactjsBD"
                 target="_blank"
                 rel="noreferrer"
               >
                 <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
                   <FaYoutube />
                 </li>
-              </Link>
-              <Link
-                to="https://github.com/noorjsdivs"
+              </a>
+              <a
+                href="https://github.com/noorjsdivs"
                 target="_blank"
                 rel="noreferrer"
               >
                 <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
                   <FaInstagram />
                 </li>
-              </Link>
-              <Link
-                to="https://www.facebook.com/Noorlalu143/"
+              </a>
+              <a
+                href="https://www.facebook.com/Noorlalu143/"
                 target="_blank"
                 rel="noreferrer"
               >
                 <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
                   <FaFacebook />
                 </li>
-              </Link>
-              <Link
-                to="https://www.linkedin.com/in/noor-mohammad-ab2245193/"
+              </a>
+              <a
+                href="https://www.linkedin.com/in/noor-mohammad-ab2245193/"
                 target="_blank"
                 rel="noreferrer"
               >
                 <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
                   <FaLinkedin />
                 </li>
-              </Link>
+              </a>
             </ul>
           </div>
         </div>
