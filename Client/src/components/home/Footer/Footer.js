@@ -99,8 +99,8 @@ const Footer = () => {
   }, []);
   return (
     <div className="w-full border-t-0 py-20">
-      <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-6 px-4 gap-10">
-        <div className="col-span-4">
+      <div className="lg:grid lg:grid-cols-6 xl:grid-cols-6 px-4 gap-10 sm:mb-5 xs:mb-5 flex justify-between">
+        <div className="col-span-4 hidden lg:block">
           <FooterListTitle title=" More about Up Strides" />
           <div className="flex flex-col gap-6">
             <p className="text-base w-full xl:w-[80%] text-lightText">
@@ -164,7 +164,7 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <div>
+        <div className="text-right lg:text-left">
           <FooterListTitle title="Your account" />
           <ul className="flex flex-col gap-2">
             <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
@@ -175,12 +175,6 @@ const Footer = () => {
             </li>
             <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
               Addresses
-            </li>
-            <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
-              Account Details
-            </li>
-            <li className="font-titleFont text-base text-lightText hover:text-black hover:underline decoration-[1px] decoration-gray-500 underline-offset-2 cursor-pointer duration-300">
-              Payment Options
             </li>
           </ul>
         </div>
