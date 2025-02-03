@@ -192,7 +192,7 @@ const Footer = () => {
       </div>
 
       <div
-        className="flex justify-betweeen items-center w-full flex-col overflow-hidden h-full"
+        className="flex justify-betweeen items-center w-full flex-col overflow-hidden h-full pb-5"
         ref={footerTextRef}
       >
         <span
