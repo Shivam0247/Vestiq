@@ -4,6 +4,8 @@ import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Card, CardBody, CardFooter, Image } from "@heroui/react";
 import { Chip } from "@heroui/chip";
+import ReactGA from "react-ga4";
+
 const Product = (props) => {
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
@@ -23,6 +25,12 @@ const Product = (props) => {
           SizeChart: props.SizeChart,
         },
       },
+    });
+
+    ReactGA.event({
+      category: "Product Visit Click",
+      action: "Product Description Page Provied",
+      label: props.productName,
     });
   };
 
