@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -27,7 +27,7 @@ import LTD_ED from "./components/LTD_ED/LTD_ED";
 import OTP from "./pages/Account/otp";
 import Account from "./components/Account/Account";
 import Checkout from "./components/Checkout/Checkout";
-
+import ReactGA from "react-ga4";
 const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
   const location = useLocation();
 
@@ -53,6 +53,15 @@ const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
 };
 
 const App = () => {
+  useEffect(() => {
+    ReactGA.initialize("G-46K62P8HCY");
+    ReactGA.send({
+      hitType: "pageview",
+      page: window.location.pathname,
+      title: "App.js",
+    });
+  }, []);
+
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const openSidebar = () => setSidebarOpen(true);
