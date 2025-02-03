@@ -1,0 +1,8 @@
+/* bigshot one font */
+@import url(https://fonts.googleapis.com/css?family=Cabin+Condensed);
+
+svg {
+  font-weight: bold;
+  max-width: 600px;
+  height: 100%;
+}

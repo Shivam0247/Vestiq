@@ -45,7 +45,7 @@ const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
       {!hideFooter && (
         <>
           <Footer />
-          <FooterBottom />
+          {/* <FooterBottom /> */}
         </>
       )}
     </div>
