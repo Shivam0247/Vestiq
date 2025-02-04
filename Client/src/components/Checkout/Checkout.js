@@ -191,7 +191,7 @@ function Checkout() {
                 billingAddress: isDifferentBilling
                   ? billingAddress
                   : shippingAddress,
-                orderStatus: "shipping",
+                orderStatus: "placed",
                 subtotal: totalAmt,
                 shippingCost: shippingCharge,
                 total: totalAmt + shippingCharge,
