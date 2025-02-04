@@ -84,7 +84,7 @@ const ProductDetails = () => {
     const info = infoRef.current;
     const sizechart = sizechartRef.current;
 
-    if (!images || !info) return;
+    if (!images || !info || !sizechart) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -92,14 +92,15 @@ const ProductDetails = () => {
       scrollTrigger: {
         trigger: info,
         start: "bottom bottom",
-        end: () => `+=${images.scrollHeight - window.innerHeight}`,
-        pin: info, // Pin the info section
+        end: () => `+=${images.scrollHeight - window.innerHeight - 300}`, // Reduce end point
+        pin: info,
+        pinSpacing: false, // Prevent extra spacing
         scrub: 1,
       },
     });
 
     tl.to(images, {
-      y: () => -(images.scrollHeight - window.innerHeight),
+      y: () => -(images.scrollHeight - window.innerHeight), // Reduce animation height
       ease: "none",
       scrollTrigger: {
         trigger: images,
