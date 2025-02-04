@@ -42,6 +42,23 @@ const ProductDetails = () => {
   );
 
   useEffect(() => {
+    const hasReloaded = sessionStorage.getItem("hasReloaded");
+
+    if (!hasReloaded) {
+      sessionStorage.setItem("hasReloaded", "true");
+      window.location.reload();
+    } else {
+      sessionStorage.removeItem("hasReloaded"); // Reset for next visit
+    }
+  }, []);
+
+  useEffect(() => {
+    if (location.state?.item) {
+      setProductInfo(location.state.item);
+    }
+  }, [location]);
+
+  useEffect(() => {
     setProductInfo(location.state.item);
     setPrevLocation(location.pathname);
   }, [location, productInfo]);

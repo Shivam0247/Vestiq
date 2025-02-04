@@ -11,6 +11,7 @@ const Product = (props) => {
   const navigate = useNavigate();
 
   const handleProductClick = () => {
+    // Navigate to the ProductDetails page and pass the product data
     navigate(`/product/${props._id}`, {
       state: {
         item: {
@@ -27,11 +28,14 @@ const Product = (props) => {
       },
     });
 
+    // Log the event to Google Analytics
     ReactGA.event({
       category: "Product Visit Click",
-      action: "Product Description Page Provied",
+      action: "Product Description Page Provided",
       label: props.productName,
     });
+
+    // window.location.reload();
   };
 
   const handleAddToCart = (event) => {
