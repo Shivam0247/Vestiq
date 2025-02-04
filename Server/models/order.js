@@ -32,7 +32,7 @@ const orderSchema = new mongoose.Schema(
     billingAddress: { type: addressSchema, required: true },
     orderStatus: {
       type: String,
-      enum: ["placed", "packing", "shipping"], // Updated the enum to include 'ordered'
+      enum: ["placed", "packed", "shipped", "delivered"], // Updated the enum to include 'ordered'
       default: "shipping", // Default status is now "ordered"
     },
     paymentMethod: { type: String, required: true },

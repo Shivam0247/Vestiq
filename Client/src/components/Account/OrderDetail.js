@@ -111,7 +111,9 @@ function OrderDetail() {
     after:content-[''] after:w-full after:h-0.5 after:inline-block after:absolute
     lg:after:top-4 after:top-3 xl:after:left-40 lg:after:left-36 md:after:left-28 sm:after:left-20 after:left-16
     ${
-      order.orderStatus === "shipping" || "packing" || "placed"
+      order.orderStatus === "packed" ||
+      order.orderStatus === "shipped" ||
+      order.orderStatus === "delivered"
         ? "after:bg-primary-700"
         : "after:bg-gray-300"
     }`}
@@ -120,9 +122,10 @@ function OrderDetail() {
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
     ${
-      order.orderStatus === "shipping" ||
-      order.orderStatus === "packing" ||
-      order.orderStatus === "placed"
+      order.orderStatus === "placed" ||
+      order.orderStatus === "packed" ||
+      order.orderStatus === "shipped" ||
+      order.orderStatus === "delivered"
         ? "bg-[#badaff]"
         : "bg-white"
     }`}
@@ -141,7 +144,7 @@ function OrderDetail() {
     after:content-[''] after:w-full after:h-0.5 after:inline-block after:absolute
     lg:after:top-4 after:top-3 xl:after:left-40 lg:after:left-36 md:after:left-28 sm:after:left-20 after:left-16
     ${
-      order.orderStatus === "packing" || order.orderStatus === "placed"
+      order.orderStatus === "delivered" || order.orderStatus === "shipped"
         ? "after:bg-primary-700"
         : "after:bg-gray-300"
     }`}
@@ -150,9 +153,9 @@ function OrderDetail() {
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
     ${
-      order.orderStatus === "shipping" ||
-      order.orderStatus === "packing" ||
-      order.orderStatus === "placed"
+      order.orderStatus === "packed" ||
+      order.orderStatus === "delivered" ||
+      order.orderStatus === "shipped"
         ? "bg-[#badaff]"
         : "bg-white"
     }`}
@@ -171,7 +174,7 @@ function OrderDetail() {
     after:content-[''] after:w-full after:h-0.5 after:inline-block after:absolute
     lg:after:top-4 after:top-3 xl:after:left-40 lg:after:left-36 md:after:left-28 sm:after:left-20 after:left-16
     ${
-      order.orderStatus === "placed"
+      order.orderStatus === "delivered" || order.orderStatus === "shipped"
         ? "after:bg-primary-700"
         : "after:bg-gray-300"
     }`}
@@ -180,7 +183,7 @@ function OrderDetail() {
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
     ${
-      order.orderStatus === "packing" || order.orderStatus === "placed"
+      order.orderStatus === "delivered" || order.orderStatus === "shipped"
         ? "bg-[#badaff]"
         : "bg-white"
     }`}
@@ -213,7 +216,7 @@ function OrderDetail() {
                   <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
-    ${order.orderStatus === "placed" ? "bg-[#badaff]" : "bg-white"}`}
+    ${order.orderStatus === "delivered" ? "bg-[#badaff]" : "bg-white"}`}
                     >
                       <svg
                         class="h-4 w-4 text-black "
@@ -252,7 +255,14 @@ function OrderDetail() {
 
               <ol class="relative ms-3 border-s border-gray-200 ">
                 <li class="mb-10 ms-6">
-                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white ">
+                  <span
+                    class={`absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full  ring-8 ring-white ${
+                      order.orderStatus === "delivered"
+                        ? "bg-primary-100"
+                        : "bg-gray-100"
+                    }`}
+                  >
+                    {" "}
                     <svg
                       class="h-4 w-4 text-gray-500 "
                       aria-hidden="true"
@@ -271,7 +281,14 @@ function OrderDetail() {
                       />
                     </svg>
                   </span>
-                  <h4 class="mb-0.5 text-base font-semibold text-gray-900 ">
+                  <h4
+                    class={`mb-0.5 text-base font-semibold ${
+                      order.orderStatus === "delivered"
+                        ? "text-primary-700"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    {" "}
                     Out for Delivery
                   </h4>
                   <p class="text-sm font-normal text-gray-500 ">
@@ -280,7 +297,14 @@ function OrderDetail() {
                 </li>
 
                 <li class="mb-10 ms-6">
-                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white ">
+                  <span
+                    class={`absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full  ring-8 ring-white ${
+                      order.orderStatus === "delivered" ||
+                      order.orderStatus === "shipped"
+                        ? "bg-primary-100"
+                        : "bg-gray-100"
+                    }`}
+                  >
                     <svg
                       class="h-4 w-4 text-gray-500 "
                       aria-hidden="true"
@@ -299,7 +323,14 @@ function OrderDetail() {
                       />
                     </svg>
                   </span>
-                  <h4 class="mb-0.5 text-base font-semibold text-gray-900 ">
+                  <h4
+                    class={`mb-0.5 text-base font-semibold ${
+                      order.orderStatus === "shipped" ||
+                      order.orderStatus === "delivered"
+                        ? "text-primary-700"
+                        : "text-gray-900"
+                    }`}
+                  >
                     In Translt
                   </h4>
                   <p class="text-sm font-normal text-gray-500 ">
@@ -308,48 +339,45 @@ function OrderDetail() {
                 </li>
 
                 <li class="mb-10 ms-6 text-primary-700 ">
-                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white ">
-                    <svg
-                      class="h-4 w-4"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 11.917 9.724 16.5 19 7.5"
-                      />
-                    </svg>
+                  <span
+                    class={`absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full  ring-8 ring-white ${
+                      order.orderStatus === "delivered" ||
+                      order.orderStatus === "shipped" ||
+                      order.orderStatus === "packed"
+                        ? "bg-primary-100"
+                        : "bg-gray-100"
+                    }`}
+                  >
+                    {" "}
+                    <i class="fi fi-rr-box-open text-gray-500 mt-1 text-sm"></i>
                   </span>
-                  <h4 class="mb-0.5 font-semibold">Order Packed</h4>
-                  <p class="text-sm">Feb 20th, 2024</p>
+                  <h4
+                    class={`mb-0.5 text-base font-semibold ${
+                      order.orderStatus === "shipped" ||
+                      order.orderStatus === "delivered" ||
+                      order.orderStatus === "packed"
+                        ? "text-primary-700"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    Order Packed
+                  </h4>
+                  <p
+                    class={`text-sm ${
+                      order.orderStatus === "shipped" ||
+                      order.orderStatus === "delivered" ||
+                      order.orderStatus === "packed"
+                        ? "text-primary-700"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    Feb 20th, 2024
+                  </p>
                 </li>
 
                 <li class="mb-10 ms-6 text-primary-700 ">
                   <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white">
-                    <svg
-                      class="h-4 w-4"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 11.917 9.724 16.5 19 7.5"
-                      />
-                    </svg>
+                    <i class="fi fi-rs-order-history text-gray-500 mt-1 text-xs"></i>
                   </span>
                   <h4 class="mb-0.5 text-base font-semibold">Order Placed</h4>
                   <p class="text-sm">Feb 20th, 2024</p>
