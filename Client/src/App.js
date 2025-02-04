@@ -33,7 +33,9 @@ const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
   const location = useLocation();
 
   // Check if the current route is "/account"
-  const hideFooter = location.pathname === "/account";
+  const hideFooter =
+    location.pathname === "/account" ||
+    location.pathname.startsWith("/OrderDetail/");
 
   return (
     <div>
@@ -92,10 +94,10 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/account" element={<Account />} />
           <Route path="/Checkout" element={<Checkout />} />
+          <Route path="/OrderDetail/:id" element={<OrderDetail />} />
         </Route>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/OTP/:email" element={<OTP />} />
-        <Route path="/OrderDetail/:id" element={<OrderDetail />} />
 
         {/* <Route path="/signup" element={<SignUp />} /> */}
       </Route>
