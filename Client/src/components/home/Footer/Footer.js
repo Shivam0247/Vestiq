@@ -101,7 +101,7 @@ const Footer = () => {
     };
   }, []);
   return (
-    <div className="w-full border-t-0 py-20">
+    <div className="footer w-full border-t-0 py-20 ">
       <div className="lg:grid lg:grid-cols-6 xl:grid-cols-6 px-4 gap-10 sm:mb-5 xs:mb-5 flex justify-between">
         <div className="col-span-4 hidden lg:block">
           <FooterListTitle title=" More about Up Strides" />

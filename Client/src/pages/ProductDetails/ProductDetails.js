@@ -92,15 +92,19 @@ const ProductDetails = () => {
       scrollTrigger: {
         trigger: info,
         start: "bottom bottom",
-        end: () => `+=${images.scrollHeight - window.innerHeight - 300}`, // Reduce end point
+        end: () =>
+          `+=${
+            images.scrollHeight - window.innerHeight - sizechart.scrollHeight
+          }`, // Dynamically adjust height
         pin: info,
-        pinSpacing: false, // Prevent extra spacing
+        pinSpacing: false, // Prevent extra spacing issues
         scrub: 1,
       },
     });
 
     tl.to(images, {
-      y: () => -(images.scrollHeight - window.innerHeight), // Reduce animation height
+      y: () =>
+        -(images.scrollHeight - window.innerHeight - sizechart.scrollHeight), // Adjust dynamically
       ease: "none",
       scrollTrigger: {
         trigger: images,
@@ -114,7 +118,7 @@ const ProductDetails = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full mx-auto flex overflow-hidden"
+      className="relative w-full mx-auto flex overflow-hidden min-h-screen pb-20" // Ensure enough space
     >
       <div ref={imagesRef} className="images w-[50%] flex flex-col gap-4 pr-5">
         <img src="/images/image1.jpg" alt="" />
