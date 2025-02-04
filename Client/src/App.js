@@ -28,6 +28,7 @@ import OTP from "./pages/Account/otp";
 import Account from "./components/Account/Account";
 import Checkout from "./components/Checkout/Checkout";
 import ReactGA from "react-ga4";
+import OrderDetail from "./components/Account/OrderDetail";
 const Layout = ({ onSidebarOpen, isSidebarOpen, closeSidebar }) => {
   const location = useLocation();
 
@@ -94,6 +95,8 @@ const App = () => {
         </Route>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/OTP/:email" element={<OTP />} />
+        <Route path="/OrderDetail/:id" element={<OrderDetail />} />
+
         {/* <Route path="/signup" element={<SignUp />} /> */}
       </Route>
     )
