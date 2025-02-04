@@ -29,8 +29,40 @@ function OrderDetail() {
     fetchOrder();
   }, [id]);
 
+  const [productDetails, setProductDetails] = useState({});
+
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      const productData = {};
+
+      await Promise.all(
+        order.products.map(async (product) => {
+          try {
+            const response = await fetch(
+              `https://your-api.com/ProductDetail/${product.id}`
+            );
+            const data = await response.json();
+            if (response.ok) {
+              productData[product._id] = data.product;
+            }
+          } catch (error) {
+            console.error("Error fetching product:", error);
+          }
+        })
+      );
+
+      setProductDetails(productData);
+    };
+
+    fetchProductDetails();
+  }, [order.products]);
+
   if (loading) {
-    return <div className="text-center py-10">Loading order details...</div>;
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   if (error) {
@@ -47,7 +79,7 @@ function OrderDetail() {
           <div class="w-full flex-col justify-start items-start gap-3 flex mb-10">
             <h3 class="text-gray-900 text-2xl font-semibold font-manrope leading-9">
               Order Id:{" "}
-              <span class="text-indigo-600 font-medium">#1025400025</span>
+              <span class="text-indigo-600 font-medium">#{order.orderNo}</span>
             </h3>
             <h4 class="text-gray-900 text-2xl font-semibold font-manrope leading-9">
               Order Date:{" "}
@@ -99,66 +131,73 @@ function OrderDetail() {
           </div>
           <div class="main-box border border-gray-200 rounded-xl pt-6 max-w-xl max-lg:mx-auto lg:max-w-full">
             <div class="w-full px-3 min-[400px]:px-6">
-              <div class="flex flex-col lg:flex-row items-center py-6 border-b border-gray-200 gap-6 w-full">
-                <div class="img-box max-lg:w-full">
-                  <img
-                    src="https://pagedone.io/asset/uploads/1701167607.png"
-                    alt="Premium Watch image"
-                    class="aspect-square w-full lg:max-w-[140px] rounded-xl object-cover"
-                  />
-                </div>
-                <div class="flex flex-row items-center w-full ">
-                  <div class="grid grid-cols-1 lg:grid-cols-2 w-full">
-                    <div class="flex items-center">
-                      <div class="">
-                        <h2 class="font-semibold text-xl leading-8 text-black mb-3">
-                          Premium Quality Dust Watch
-                        </h2>
-                        <div class="flex items-center ">
-                          <p class="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-gray-200">
-                            Size: <span class="text-gray-500">100 ml</span>
-                          </p>
-                          <p class="font-medium text-base leading-7 text-black ">
-                            Qty: <span class="text-gray-500">2</span>
-                          </p>
+              {order.products.map((product, index) => (
+                <div class="flex flex-col lg:flex-row items-center py-6 border-b border-gray-200 gap-6 w-full">
+                  <div class="img-box max-lg:w-full">
+                    <img
+                      src="https://pagedone.io/asset/uploads/1701167607.png"
+                      alt="Premium Watch image"
+                      class="aspect-square w-full lg:max-w-[140px] rounded-xl object-cover"
+                    />
+                  </div>
+                  <div class="flex flex-row items-center w-full ">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 w-full">
+                      <div class="flex items-center">
+                        <div class="">
+                          <h2 class="font-semibold text-xl leading-8 text-black mb-3">
+                            {product.name}
+                          </h2>
+                          <div class="flex items-center ">
+                            <p class="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-gray-200">
+                              Size:{" "}
+                              <span class="text-gray-500"> {product.size}</span>
+                            </p>
+                            <p class="font-medium text-base leading-7 text-black ">
+                              Qty:{" "}
+                              <span class="text-gray-500">
+                                {" "}
+                                {product.quantity}
+                              </span>
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="grid grid-cols-5">
-                      <div class="col-span-5 lg:col-span-1 flex items-center max-lg:mt-3">
-                        <div class="flex gap-3 lg:block">
-                          <p class="font-medium text-sm leading-7 text-black">
-                            price
-                          </p>
-                          <p class="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
-                            $100
-                          </p>
+                      <div class="grid grid-cols-5">
+                        <div class="col-span-5 lg:col-span-1 flex items-center max-lg:mt-3">
+                          <div class="flex gap-3 lg:block">
+                            <p class="font-medium text-sm leading-7 text-black">
+                              price
+                            </p>
+                            <p class="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
+                              ₹{product.price * product.quantity}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3 ">
-                        <div class="flex gap-3 lg:block">
-                          <p class="font-medium text-sm leading-7 text-black">
-                            Status
-                          </p>
-                          <p class="font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
-                            Ready for Delivery
-                          </p>
+                        <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3 ">
+                          <div class="flex gap-3 lg:block">
+                            <p class="font-medium text-sm leading-7 text-black">
+                              Status
+                            </p>
+                            <p class="font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
+                              {order.orderStatus}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3">
-                        <div class="flex gap-3 lg:block">
-                          <p class="font-medium text-sm whitespace-nowrap leading-6 text-black">
-                            Expected Delivery Time
-                          </p>
-                          <p class="font-medium text-base whitespace-nowrap leading-7 lg:mt-3 text-emerald-500">
-                            23rd March 2021
-                          </p>
+                        <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3">
+                          <div class="flex gap-3 lg:block">
+                            <p class="font-medium text-sm whitespace-nowrap leading-6 text-black">
+                              Expected Delivery Time
+                            </p>
+                            <p class="font-medium text-base whitespace-nowrap leading-7 lg:mt-3 text-emerald-500">
+                              23rd March 2021
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
           <div class="p-6 mt-10 border border-gray-200 rounded-3xl w-full group transition-all duration-500 hover:border-gray-400 ">
@@ -168,33 +207,25 @@ function OrderDetail() {
             <div class="data py-6 border-b border-gray-200">
               <div class="flex items-center justify-between gap-4 mb-5">
                 <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
-                  Product Cost
+                  Sub Total
                 </p>
                 <p class="font-medium text-lg leading-8 text-gray-900">
-                  $360.00
+                  ₹{order.subtotal}
                 </p>
               </div>
               <div class="flex items-center justify-between gap-4 mb-5">
                 <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
-                  Shipping
+                  Shipping Cost
                 </p>
                 <p class="font-medium text-lg leading-8 text-gray-600">
-                  $40.00
-                </p>
-              </div>
-              <div class="flex items-center justify-between gap-4 ">
-                <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700 ">
-                  Coupon Code
-                </p>
-                <p class="font-medium text-lg leading-8 text-emerald-500">
-                  #APPLIED
+                  ₹{order.shippingCost}
                 </p>
               </div>
             </div>
             <div class="total flex items-center justify-between pt-6">
-              <p class="font-normal text-xl leading-8 text-black ">Subtotal</p>
+              <p class="font-normal text-xl leading-8 text-black ">Total</p>
               <h5 class="font-manrope font-bold text-2xl leading-9 text-indigo-600">
-                $400.00
+                ₹{order.total}
               </h5>
             </div>
           </div>
