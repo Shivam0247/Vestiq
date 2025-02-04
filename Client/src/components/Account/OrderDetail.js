@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Button, ButtonGroup } from "@heroui/button";
 function OrderDetail() {
   const { id } = useParams(); // Get the order ID from URL
   const [order, setOrder] = useState(null);
@@ -30,8 +31,10 @@ function OrderDetail() {
   }, [id]);
 
   const [productDetails, setProductDetails] = useState({});
-
+  console.log("productDetails", productDetails);
   useEffect(() => {
+    if (!order || !order.products) return;
+
     const fetchProductDetails = async () => {
       const productData = {};
 
@@ -39,7 +42,7 @@ function OrderDetail() {
         order.products.map(async (product) => {
           try {
             const response = await fetch(
-              `https://your-api.com/ProductDetail/${product.id}`
+              `https://upstrides-server.vercel.app/api/Product/ProductDetail/${product.id}`
             );
             const data = await response.json();
             if (response.ok) {
@@ -55,7 +58,7 @@ function OrderDetail() {
     };
 
     fetchProductDetails();
-  }, [order.products]);
+  }, [order]);
 
   if (loading) {
     return (
@@ -86,9 +89,17 @@ function OrderDetail() {
               <span class=" text-gray-400 font-medium">10 Jan 2025</span>
             </h4>
             <p class="font-semibold text-base leading-7 text-black mt-4">
-              Address:{" "}
+              Address :{" "}
+              <span class="text-gray-400 font-bold">
+                {order.shippingAddress.firstName}{" "}
+                {order.shippingAddress.lastName},
+              </span>
               <span class="text-gray-400 font-medium">
-                39-Umiya bungalows, surat, Gujarat
+                {" "}
+                {order.shippingAddress.apartment} -{" "}
+                {order.shippingAddress.address}, {order.shippingAddress.city},{" "}
+                {order.shippingAddress.state}, {order.shippingAddress.country} -{" "}
+                {order.shippingAddress.pincode}
               </span>
             </p>
           </div>
@@ -131,73 +142,84 @@ function OrderDetail() {
           </div>
           <div class="main-box border border-gray-200 rounded-xl pt-6 max-w-xl max-lg:mx-auto lg:max-w-full">
             <div class="w-full px-3 min-[400px]:px-6">
-              {order.products.map((product, index) => (
-                <div class="flex flex-col lg:flex-row items-center py-6 border-b border-gray-200 gap-6 w-full">
-                  <div class="img-box max-lg:w-full">
-                    <img
-                      src="https://pagedone.io/asset/uploads/1701167607.png"
-                      alt="Premium Watch image"
-                      class="aspect-square w-full lg:max-w-[140px] rounded-xl object-cover"
-                    />
-                  </div>
-                  <div class="flex flex-row items-center w-full ">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 w-full">
-                      <div class="flex items-center">
-                        <div class="">
-                          <h2 class="font-semibold text-xl leading-8 text-black mb-3">
-                            {product.name}
-                          </h2>
-                          <div class="flex items-center ">
-                            <p class="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-gray-200">
-                              Size:{" "}
-                              <span class="text-gray-500"> {product.size}</span>
-                            </p>
-                            <p class="font-medium text-base leading-7 text-black ">
-                              Qty:{" "}
-                              <span class="text-gray-500">
-                                {" "}
-                                {product.quantity}
-                              </span>
-                            </p>
+              {order.products.map((product, index) => {
+                const productInfo = productDetails[product._id] || {};
+                return (
+                  <div
+                    key={index}
+                    className="flex flex-col lg:flex-row items-center py-6 border-b border-gray-200 gap-6 w-full"
+                  >
+                    <div className="img-box max-lg:w-full">
+                      {productInfo?.Images?.length > 0 ? (
+                        <img
+                          src={`/images/Tshirts/${productInfo.Images[0]}`}
+                          alt={productInfo?.ProductName || "Product Image"}
+                          className="aspect-square w-full lg:max-w-[140px] rounded-xl object-cover"
+                        />
+                      ) : (
+                        <p className="text-gray-500 text-sm">Loading...</p>
+                      )}
+                    </div>
+                    <div className="flex flex-row items-center w-full">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
+                        <div className="flex items-center">
+                          <div>
+                            <h2 className="font-semibold text-xl leading-8 text-black mb-3">
+                              {product?.name || "Loading..."}
+                            </h2>
+                            <div className="flex items-center">
+                              <p className="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-gray-200">
+                                Size:{" "}
+                                <span className="text-gray-500">
+                                  {product.size}
+                                </span>
+                              </p>
+                              <p className="font-medium text-base leading-7 text-black">
+                                Qty:{" "}
+                                <span className="text-gray-500">
+                                  {product.quantity}
+                                </span>
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="grid grid-cols-5">
-                        <div class="col-span-5 lg:col-span-1 flex items-center max-lg:mt-3">
-                          <div class="flex gap-3 lg:block">
-                            <p class="font-medium text-sm leading-7 text-black">
-                              price
-                            </p>
-                            <p class="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
-                              ₹{product.price * product.quantity}
-                            </p>
+                        <div className="grid grid-cols-5">
+                          <div className="col-span-5 lg:col-span-1 flex items-center max-lg:mt-3">
+                            <div className="flex gap-3 lg:block">
+                              <p className="font-medium text-sm leading-7 text-black">
+                                Price
+                              </p>
+                              <p className="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
+                                ₹{product.price * product.quantity}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3 ">
-                          <div class="flex gap-3 lg:block">
-                            <p class="font-medium text-sm leading-7 text-black">
-                              Status
-                            </p>
-                            <p class="font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
-                              {order.orderStatus}
-                            </p>
+                          <div className="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3">
+                            <div className="flex gap-3 lg:block">
+                              <p className="font-medium text-sm leading-7 text-black text-center">
+                                Status
+                              </p>
+                              <p className="font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
+                                {order.orderStatus}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3">
-                          <div class="flex gap-3 lg:block">
-                            <p class="font-medium text-sm whitespace-nowrap leading-6 text-black">
-                              Expected Delivery Time
-                            </p>
-                            <p class="font-medium text-base whitespace-nowrap leading-7 lg:mt-3 text-emerald-500">
-                              23rd March 2021
-                            </p>
+                          <div className="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3">
+                            <div className="flex gap-3 lg:block">
+                              <p className="font-medium text-sm whitespace-nowrap leading-6 text-black">
+                                Expected Delivery Time
+                              </p>
+                              <p className="font-medium text-base whitespace-nowrap leading-7 lg:mt-3 text-emerald-500">
+                                23rd March 2021
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
           <div class="p-6 mt-10 border border-gray-200 rounded-3xl w-full group transition-all duration-500 hover:border-gray-400 ">
@@ -228,6 +250,14 @@ function OrderDetail() {
                 ₹{order.total}
               </h5>
             </div>
+          </div>
+          <div className="mt-5">
+            <Button
+              size="lg"
+              className="w-full bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-400"
+            >
+              Cancel Order
+            </Button>
           </div>
         </div>
       </section>
