@@ -80,11 +80,11 @@ function OrderDetail() {
             Order Summary
           </h2>
           <div class="w-full flex-col justify-start items-start gap-3 flex mb-10">
-            <h3 class="text-gray-900 text-2xl font-semibold font-manrope leading-9">
+            <h3 class="text-gray-900 text-xl font-semibold font-manrope leading-9 md:text-2xl">
               Order Id:{" "}
-              <span class="text-indigo-600 font-medium">#{order.orderNo}</span>
+              <span class="text-primary-700 font-medium">#{order.orderNo}</span>
             </h3>
-            <h4 class="text-gray-900 text-2xl font-semibold font-manrope leading-9">
+            <h4 class="text-gray-900 text-xl font-semibold font-manrope leading-9 md:text-2xl">
               Order Date:{" "}
               <span class=" text-gray-400 font-medium">10 Jan 2025</span>
             </h4>
@@ -103,43 +103,262 @@ function OrderDetail() {
               </span>
             </p>
           </div>
-          <div class="w-full flex-col justify-center sm:items-center items-start gap-8 flex mb-10">
-            <ol class="flex sm:items-center items-start w-full sm:gap-0 gap-3">
-              <li class="flex w-full relative justify-center text-indigo-600 text-base font-semibold after:content-['']  after:w-full after:h-0.5 after:border after:border-dashed after:bg-indigo-600 after:inline-block after:absolute lg:after:top-5 after:top-3 xl:after:left-52 lg:after:left-48 md:after:left-36 sm:after:left-28 after:left-20">
-                <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center">
-                  <span class="w-6 h-6 bg-indigo-600 text-center border-2 border-transparent rounded-full flex justify-center items-center mx-auto mb-1 text-base font-bold text-white lg:w-10 lg:h-10">
-                    1
-                  </span>
-                  Order Confirmed <br />
-                  <span class="text-indigo-600 text-base font-normal text-center">
-                    8:00 AM, Feb 8,2024
-                  </span>
-                </div>
-              </li>
-              <li class="flex w-full relative justify-center text-black text-base font-semibold after:content-['']  after:w-full after:h-0.5 after:border after:border-dashed after:bg-indigo-200 after:inline-block after:absolute lg:after:top-5 after:top-3 xl:after:left-52 lg:after:left-48 md:after:left-36 sm:after:left-28 after:left-20">
-                <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center">
-                  <span class="w-6 h-6 bg-indigo-600 rounded-full flex justify-center items-center mx-auto mb-1 text-white text-base font-bold lg:w-10 lg:h-10">
-                    2
-                  </span>
-                  Shipping
-                  <span class="text-gray-500 text-base font-normal text-center">
-                    Shipped with FedEX
-                  </span>
-                </div>
-              </li>
-              <li class="flex w-full relative justify-center text-gray-500 text-base font-semibold">
-                <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center">
-                  <span class="w-6 h-6 text-indigo-600 border-2 bg-transparent border-indigo-600 rounded-full flex justify-center items-center mx-auto mb-1 text-sm lg:w-10 lg:h-10">
-                    3
-                  </span>
-                  To Deliver
-                  <span class="text-gray-500 text-base font-normal text-center">
-                    Estimated date: Feb 15,
-                  </span>
-                </div>
-              </li>
-            </ol>
+          <div class="hidden md:flex w-full py-9 rounded-xl border border-gray-200 flex-col justify-start items-start mb-5">
+            <div class="w-full flex-col justify-center sm:items-center items-start gap-8 flex">
+              <ol class="flex sm:items-center items-start w-full sm:gap-0 gap-5">
+                <li
+                  className={`flex w-full relative justify-center text-primary-700 text-base font-semibold 
+    after:content-[''] after:w-full after:h-0.5 after:inline-block after:absolute
+    lg:after:top-4 after:top-3 xl:after:left-40 lg:after:left-36 md:after:left-28 sm:after:left-20 after:left-16
+    ${
+      order.orderStatus === "shipping" || "packing" || "placed"
+        ? "after:bg-primary-700"
+        : "after:bg-gray-300"
+    }`}
+                >
+                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                    <span
+                      className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
+    ${
+      order.orderStatus === "shipping" ||
+      order.orderStatus === "packing" ||
+      order.orderStatus === "placed"
+        ? "bg-[#badaff]"
+        : "bg-white"
+    }`}
+                    >
+                      {" "}
+                      <i class="fi fi-rs-order-history text-black mt-1"></i>
+                    </span>{" "}
+                    Order Placed
+                    <span class="text-primary-700 text-base font-normal text-center">
+                      Feb 20th, 2024
+                    </span>
+                  </div>
+                </li>
+                <li
+                  className={`flex w-full relative justify-center text-primary-700 text-base font-semibold 
+    after:content-[''] after:w-full after:h-0.5 after:inline-block after:absolute
+    lg:after:top-4 after:top-3 xl:after:left-40 lg:after:left-36 md:after:left-28 sm:after:left-20 after:left-16
+    ${
+      order.orderStatus === "packing" || order.orderStatus === "placed"
+        ? "after:bg-primary-700"
+        : "after:bg-gray-300"
+    }`}
+                >
+                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                    <span
+                      className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
+    ${
+      order.orderStatus === "shipping" ||
+      order.orderStatus === "packing" ||
+      order.orderStatus === "placed"
+        ? "bg-[#badaff]"
+        : "bg-white"
+    }`}
+                    >
+                      {" "}
+                      <i class="fi fi-rr-box-open text-black mt-1"></i>
+                    </span>{" "}
+                    Order Packed
+                    <span class="text-primary-7000 text-base font-normal text-center">
+                      Feb 20th, 2024
+                    </span>
+                  </div>
+                </li>
+                <li
+                  className={`flex w-full relative justify-center text-primary-700 text-base font-semibold 
+    after:content-[''] after:w-full after:h-0.5 after:inline-block after:absolute
+    lg:after:top-4 after:top-3 xl:after:left-40 lg:after:left-36 md:after:left-28 sm:after:left-20 after:left-16
+    ${
+      order.orderStatus === "placed"
+        ? "after:bg-primary-700"
+        : "after:bg-gray-300"
+    }`}
+                >
+                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                    <span
+                      className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
+    ${
+      order.orderStatus === "packing" || order.orderStatus === "placed"
+        ? "bg-[#badaff]"
+        : "bg-white"
+    }`}
+                    >
+                      <svg
+                        class="h-4 w-4 text-black "
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 7h6l2 4m-8-4v8m0-8V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v9h2m8 0H9m4 0h2m4 0h2v-4m0 0h-5m3.5 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-10 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
+                        />
+                      </svg>
+                    </span>{" "}
+                    In Translt
+                    <span class="text-primary-700 text-base font-normal text-center">
+                      Feb 20th, 2024
+                    </span>
+                  </div>
+                </li>
+                <li class="flex w-full relative justify-center text-primary-700 text-base font-semibold">
+                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                    <span
+                      className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
+    ${order.orderStatus === "placed" ? "bg-[#badaff]" : "bg-white"}`}
+                    >
+                      <svg
+                        class="h-4 w-4 text-black "
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"
+                        />
+                      </svg>
+                    </span>{" "}
+                    Out for Delivery
+                    <span class="text-primary-700 text-base font-normal text-center">
+                      Feb 20th, 2024{" "}
+                    </span>
+                  </div>
+                </li>
+              </ol>
+            </div>
           </div>
+
+          {/* --------------------------- */}
+          <div class="block md:hidden mt-6 grow sm:mt-8 lg:mt-0 mb-5">
+            <div class="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
+              <h3 class="text-xl font-semibold text-gray-900 ">
+                Order history
+              </h3>
+
+              <ol class="relative ms-3 border-s border-gray-200 ">
+                <li class="mb-10 ms-6">
+                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white ">
+                    <svg
+                      class="h-4 w-4 text-gray-500 "
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"
+                      />
+                    </svg>
+                  </span>
+                  <h4 class="mb-0.5 text-base font-semibold text-gray-900 ">
+                    Out for Delivery
+                  </h4>
+                  <p class="text-sm font-normal text-gray-500 ">
+                    Feb 20th, 2024
+                  </p>
+                </li>
+
+                <li class="mb-10 ms-6">
+                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white ">
+                    <svg
+                      class="h-4 w-4 text-gray-500 "
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 7h6l2 4m-8-4v8m0-8V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v9h2m8 0H9m4 0h2m4 0h2v-4m0 0h-5m3.5 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-10 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
+                      />
+                    </svg>
+                  </span>
+                  <h4 class="mb-0.5 text-base font-semibold text-gray-900 ">
+                    In Translt
+                  </h4>
+                  <p class="text-sm font-normal text-gray-500 ">
+                    Feb 20th, 2024
+                  </p>
+                </li>
+
+                <li class="mb-10 ms-6 text-primary-700 ">
+                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white ">
+                    <svg
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 11.917 9.724 16.5 19 7.5"
+                      />
+                    </svg>
+                  </span>
+                  <h4 class="mb-0.5 font-semibold">Order Packed</h4>
+                  <p class="text-sm">Feb 20th, 2024</p>
+                </li>
+
+                <li class="mb-10 ms-6 text-primary-700 ">
+                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white">
+                    <svg
+                      class="h-4 w-4"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 11.917 9.724 16.5 19 7.5"
+                      />
+                    </svg>
+                  </span>
+                  <h4 class="mb-0.5 text-base font-semibold">Order Placed</h4>
+                  <p class="text-sm">Feb 20th, 2024</p>
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          {/* --------------------------- */}
           <div class="main-box border border-gray-200 rounded-xl pt-6 max-w-xl max-lg:mx-auto lg:max-w-full">
             <div class="w-full px-3 min-[400px]:px-6">
               {order.products.map((product, index) => {
@@ -189,7 +408,7 @@ function OrderDetail() {
                               <p className="font-medium text-sm leading-7 text-black">
                                 Price
                               </p>
-                              <p className="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
+                              <p className="lg:mt-4 font-medium text-sm leading-7 text-primary-700">
                                 ₹{product.price * product.quantity}
                               </p>
                             </div>
@@ -246,7 +465,7 @@ function OrderDetail() {
             </div>
             <div class="total flex items-center justify-between pt-6">
               <p class="font-normal text-xl leading-8 text-black ">Total</p>
-              <h5 class="font-manrope font-bold text-2xl leading-9 text-indigo-600">
+              <h5 class="font-manrope font-bold text-2xl leading-9 text-primary-700">
                 ₹{order.total}
               </h5>
             </div>
@@ -254,9 +473,18 @@ function OrderDetail() {
           <div className="mt-5">
             <Button
               size="lg"
-              className="w-full bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-400"
+              className="w-[100%] bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-400 mr-2 md:w-[49%] sm:mb-2 xs:mb-2"
             >
               Cancel Order
+            </Button>
+
+            <Button
+              size="lg"
+              color="default"
+              variant="faded"
+              className="w-[100%] md:w-[49%]"
+            >
+              Return Order
             </Button>
           </div>
         </div>
