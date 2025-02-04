@@ -114,7 +114,7 @@ const ProductDetails = () => {
             images.scrollHeight - window.innerHeight - sizechart.scrollHeight
           }`, // Dynamically adjust height
         pin: info,
-        pinSpacing: false, // Prevent extra spacing issues
+        pinSpacing: true, // Prevent extra spacing issues
         scrub: 1,
       },
     });
