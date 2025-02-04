@@ -1,6 +1,42 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 function OrderDetail() {
+  const { id } = useParams(); // Get the order ID from URL
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const response = await fetch(
+          `https://upstrides-server.vercel.app/api/order/get-order/${id}`
+        );
+        const data = await response.json();
+
+        if (response.status === 200) {
+          setOrder(data.order);
+        } else {
+          setError(data.message || "Order not found");
+        }
+      } catch (err) {
+        setError("An error occurred while fetching order details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrder();
+  }, [id]);
+
+  if (loading) {
+    return <div className="text-center py-10">Loading order details...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-10 text-red-500">{error}</div>;
+  }
+
   return (
     <div>
       <section class="py-24 relative">
@@ -78,9 +114,6 @@ function OrderDetail() {
                         <h2 class="font-semibold text-xl leading-8 text-black mb-3">
                           Premium Quality Dust Watch
                         </h2>
-                        <p class="font-normal text-lg leading-8 text-gray-500 mb-3 ">
-                          By: Dust Studios
-                        </p>
                         <div class="flex items-center ">
                           <p class="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-gray-200">
                             Size: <span class="text-gray-500">100 ml</span>
@@ -126,99 +159,43 @@ function OrderDetail() {
                   </div>
                 </div>
               </div>
-
-              <div class="flex flex-col lg:flex-row items-center py-6 gap-6 w-full">
-                <div class="img-box max-lg:w-full">
-                  <img
-                    src="https://pagedone.io/asset/uploads/1701167621.png"
-                    alt="Diamond Watch image"
-                    class="aspect-square w-full lg:max-w-[140px] rounded-xl object-cover"
-                  />
-                </div>
-                <div class="flex flex-row items-center w-full ">
-                  <div class="grid grid-cols-1 lg:grid-cols-2 w-full">
-                    <div class="flex items-center">
-                      <div class="">
-                        <h2 class="font-semibold text-xl leading-8 text-black mb-3 ">
-                          Diamond Platinum Watch
-                        </h2>
-                        <p class="font-normal text-lg leading-8 text-gray-500 mb-3">
-                          Diamond Dials
-                        </p>
-                        <div class="flex items-center  ">
-                          <p class="font-medium text-base leading-7 text-black pr-4 mr-4 border-r border-gray-200">
-                            Size: <span class="text-gray-500">Regular</span>
-                          </p>
-                          <p class="font-medium text-base leading-7 text-black ">
-                            Qty: <span class="text-gray-500">1</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="grid grid-cols-5">
-                      <div class="col-span-5 lg:col-span-1 flex items-center max-lg:mt-3">
-                        <div class="flex gap-3 lg:block">
-                          <p class="font-medium text-sm leading-7 text-black">
-                            price
-                          </p>
-                          <p class="lg:mt-4 font-medium text-sm leading-7 text-indigo-600">
-                            $100
-                          </p>
-                        </div>
-                      </div>
-                      <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3 ">
-                        <div class="flex gap-3 lg:block">
-                          <p class="font-medium text-sm leading-7 text-black">
-                            Status
-                          </p>
-                          <p class="font-medium text-sm leading-6 py-0.5 px-3 whitespace-nowrap rounded-full lg:mt-3 bg-indigo-50 text-indigo-600">
-                            Dispatched
-                          </p>
-                        </div>
-                      </div>
-                      <div class="col-span-5 lg:col-span-2 flex items-center max-lg:mt-3">
-                        <div class="flex gap-3 lg:block">
-                          <p class="font-medium text-sm whitespace-nowrap leading-6 text-black">
-                            Expected Delivery Time
-                          </p>
-                          <p class="font-medium text-base whitespace-nowrap leading-7 lg:mt-3 text-emerald-500">
-                            23rd March 2021
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-            <div class="w-full border-t border-gray-200 px-6 flex flex-col lg:flex-row items-center justify-between ">
-              <div class="flex flex-col sm:flex-row items-center max-lg:border-b border-gray-200">
-                <button class="flex outline-0 py-6 sm:pr-6  sm:border-r border-gray-200 whitespace-nowrap gap-2 items-center justify-center font-semibold group text-lg text-black bg-white transition-all duration-500 hover:text-indigo-600">
-                  <svg
-                    class="stroke-black transition-all duration-500 group-hover:stroke-indigo-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 22 22"
-                    fill="none"
-                  >
-                    <path
-                      d="M5.5 5.5L16.5 16.5M16.5 5.5L5.5 16.5"
-                      stroke=""
-                      stroke-width="1.6"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                  Cancel Order
-                </button>
-                <p class="font-medium text-lg text-gray-900 pl-6 py-3 max-lg:text-center">
-                  Paid using Credit Card{" "}
-                  <span class="text-gray-500">ending with 8822</span>
+          </div>
+          <div class="p-6 mt-10 border border-gray-200 rounded-3xl w-full group transition-all duration-500 hover:border-gray-400 ">
+            <h2 class="font-manrope font-bold text-3xl leading-10 text-black pb-6 border-b border-gray-200 ">
+              Order Summary
+            </h2>
+            <div class="data py-6 border-b border-gray-200">
+              <div class="flex items-center justify-between gap-4 mb-5">
+                <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
+                  Product Cost
+                </p>
+                <p class="font-medium text-lg leading-8 text-gray-900">
+                  $360.00
                 </p>
               </div>
-              <p class="font-semibold text-lg text-black py-6">
-                Total Price: <span class="text-indigo-600"> $200.00</span>
-              </p>
+              <div class="flex items-center justify-between gap-4 mb-5">
+                <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
+                  Shipping
+                </p>
+                <p class="font-medium text-lg leading-8 text-gray-600">
+                  $40.00
+                </p>
+              </div>
+              <div class="flex items-center justify-between gap-4 ">
+                <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700 ">
+                  Coupon Code
+                </p>
+                <p class="font-medium text-lg leading-8 text-emerald-500">
+                  #APPLIED
+                </p>
+              </div>
+            </div>
+            <div class="total flex items-center justify-between pt-6">
+              <p class="font-normal text-xl leading-8 text-black ">Subtotal</p>
+              <h5 class="font-manrope font-bold text-2xl leading-9 text-indigo-600">
+                $400.00
+              </h5>
             </div>
           </div>
         </div>

@@ -88,4 +88,24 @@ router.get("/get-orders/:email", async (req, res) => {
   }
 });
 
+router.get("/get-order/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the order by its ID
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json({ message: "Order fetched successfully", order });
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching the order", error });
+  }
+});
+
 module.exports = router;
