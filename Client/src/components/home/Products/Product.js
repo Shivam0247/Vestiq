@@ -35,7 +35,7 @@ const Product = (props) => {
       label: props.productName,
     });
 
-    // window.location.reload();
+    window.location.reload();
   };
 
   const handleAddToCart = (event) => {
