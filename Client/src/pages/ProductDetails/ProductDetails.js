@@ -6,6 +6,7 @@ import ProductsOnSale from "../../components/pageProps/productDetails/ProductsOn
 import ScrollTrigger from "gsap/ScrollTrigger";
 import gsap from "gsap";
 import Product from "../../components/home/Products/Product";
+import AddToCart from "../../components/home/Products/AddToCart";
 
 import {
   Dropdown,
@@ -169,6 +170,10 @@ const ProductDetails = () => {
 
     fetchNewArrivals();
   }, [_id]);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
 
   return (
     <>
@@ -398,6 +403,10 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <AddToCart product={selectedProduct} onClose={handleCloseModal} />
+      )}
     </>
   );
 };
