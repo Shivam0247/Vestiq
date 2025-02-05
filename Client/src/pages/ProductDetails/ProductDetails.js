@@ -388,28 +388,33 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      <div className="visible-904 hidden w-full justify-center">
-        <Carousel
-          plugins={[plugin.current]}
-          className="w-full max-w-xs"
-          onMouseEnter={plugin.current.stop}
-          onMouseLeave={plugin.current.reset}
-        >
-          <CarouselContent>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <CarouselItem key={index}>
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="flex aspect-square items-center justify-center p-6">
-                      <img src="/images/image1.jpg" alt="" />
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+      <div className="visible-904 hidden w-full justify-center items-center">
+        <Carousel className="mx-3 mt-5">
+          <div className="flex flex-col items-center">
+            {/* Image Section */}
+            <CarouselContent>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-1">
+                    <Card>
+                      <CardContent className="flex aspect-square items-center justify-center">
+                        <img
+                          src="/images/image1.jpg"
+                          alt="carousel item"
+                          className="w-full"
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            <div className="mt-8 flex items-center justify-between w-full px-5">
+              <CarouselPrevious />
+              <CarouselNext />
+            </div>
+          </div>
         </Carousel>
       </div>
       <div className="hidden xl:mt-8 xl:block px-10">
