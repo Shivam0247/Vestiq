@@ -1,0 +1,9 @@
+@media (max-width: 903px) {
+  .hidden-904 {
+    display: none !important;
+  }
+
+  .visible-904 {
+    display: flex !important;
+  }
+}

@@ -7,6 +7,16 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 import gsap from "gsap";
 import Product from "../../components/home/Products/Product";
 import AddToCart from "../../components/home/Products/AddToCart";
+import { Card, CardContent } from "../../components/ui/card";
+import Autoplay from "embla-carousel-autoplay";
+import "./ProdcutsDetails.css";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../../components/ui/Carousel";
 
 import {
   Dropdown,
@@ -175,11 +185,14 @@ const ProductDetails = () => {
     setIsModalOpen(false); // Close the modal
   };
 
+  const plugin = React.useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: true })
+  );
   return (
     <>
       <div
         ref={containerRef}
-        className="relative w-full mx-auto flex overflow-hidden min-h-screen pb-20"
+        className="relative w-full mx-auto flex overflow-hidden min-h-screen pb-20 hidden-904"
       >
         <div
           ref={imagesRef}
@@ -375,6 +388,30 @@ const ProductDetails = () => {
         </div>
       </div>
 
+      <div className="visible-904 hidden w-full justify-center">
+        <Carousel
+          plugins={[plugin.current]}
+          className="w-full max-w-xs"
+          onMouseEnter={plugin.current.stop}
+          onMouseLeave={plugin.current.reset}
+        >
+          <CarouselContent>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <CarouselItem key={index}>
+                <div className="p-1">
+                  <Card>
+                    <CardContent className="flex aspect-square items-center justify-center p-6">
+                      <img src="/images/image1.jpg" alt="" />
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      </div>
       <div className="hidden xl:mt-8 xl:block px-10">
         <div>
           <h2 class="title font-manrope font-bold text-4xl leading-10 mb-8 text-black">
