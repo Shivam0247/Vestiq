@@ -10,6 +10,8 @@ import AddToCart from "../../components/home/Products/AddToCart";
 import { Card, CardContent } from "../../components/ui/card";
 import Autoplay from "embla-carousel-autoplay";
 import "./ProdcutsDetails.css";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/orebiSlice";
 import {
   Carousel,
   CarouselContent,
@@ -37,9 +39,13 @@ const getKeyValue = (obj, key) => obj[key];
 
 const ProductDetails = () => {
   const { _id } = useParams();
+  const dispatch = useDispatch();
 
   const location = useLocation();
   const [prevLocation, setPrevLocation] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
+  const [productquantity, setProductquantity] = useState(1);
+
   const [productInfo, setProductInfo] = useState([]);
   const containerRef = useRef(null);
   const imagesRef = useRef(null);
@@ -51,6 +57,18 @@ const ProductDetails = () => {
       : new Set()
   );
 
+  const handleSizeChange = (keys) => {
+    const selectedKey = Array.from(keys)[0]; // Convert set to array and get first value
+    setSelectedSize(selectedKey);
+  };
+
+  const incrementQuantity = () => {
+    setProductquantity((prev) => prev + 1);
+  };
+
+  const decrementQuantity = () => {
+    setProductquantity((prev) => (prev > 1 ? prev - 1 : 1)); // Ensure it doesn't go below 1
+  };
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
     [selectedKeys]
@@ -226,19 +244,19 @@ const ProductDetails = () => {
               <Dropdown>
                 <DropdownTrigger>
                   <Button className="capitalize" variant="bordered">
-                    {selectedValue || "Select Size"}
+                    {selectedSize || "Select Size"}
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
                   disallowEmptySelection
                   aria-label="Size selection"
-                  selectedKeys={selectedKeys}
                   selectionMode="single"
                   variant="flat"
-                  onSelectionChange={setSelectedKeys}
+                  selectedKeys={new Set([selectedSize])} // Ensure the selected size stays active
+                  onSelectionChange={handleSizeChange}
                 >
                   {productInfo.sizes && productInfo.sizes.length > 0 ? (
-                    productInfo.sizes.map((size, index) => (
+                    productInfo.sizes.map((size) => (
                       <DropdownItem key={size} aria-label={`Size ${size}`}>
                         {size}
                       </DropdownItem>
@@ -255,53 +273,48 @@ const ProductDetails = () => {
             <div class="relative flex items-center">
               <button
                 type="button"
-                id="decrement-button"
-                data-input-counter-decrement="quantity-input"
-                class="bg-gray-100  hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100  focus:ring-2 focus:outline-none"
+                className="bg-white hover:bg-gray-50 border rounded-s-lg p-3 h-11 focus:outline-none"
+                onClick={decrementQuantity}
               >
                 <svg
-                  class="w-3 h-3 text-gray-900 "
-                  aria-hidden="true"
+                  className="w-3 h-3 text-gray-900"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 18 2"
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="M1 1h16"
                   />
                 </svg>
               </button>
+
               <input
                 type="text"
-                id="quantity-input"
-                data-input-counter
-                aria-describedby="helper-text-explanation"
-                class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 "
-                placeholder="999"
-                required
+                className="bg-[#f2f2f2] border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5"
+                value={productquantity}
+                readOnly
               />
+
               <button
                 type="button"
-                id="increment-button"
-                data-input-counter-increment="quantity-input"
-                class="bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none"
+                className="bg-white hover:bg-gray-50 border rounded-r-lg p-3 h-11 focus:outline-none"
+                onClick={incrementQuantity}
               >
                 <svg
-                  class="w-3 h-3 text-gray-900"
-                  aria-hidden="true"
+                  className="w-3 h-3 text-gray-900"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 18 18"
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="M9 1v16M1 9h16"
                   />
                 </svg>
@@ -314,6 +327,20 @@ const ProductDetails = () => {
               color="primary"
               size="lg"
               className="mr-2 w-[100%] lg:w-[48%] md:w-[48%] sm:w-[100%] xs:w-[100%] my-5 bg-black text-white transition-all duration-300 transform hover:scale-105"
+              onPress={(event) => {
+                dispatch(
+                  addToCart({
+                    _id: productInfo?._id,
+                    name: productInfo?.name,
+                    quantity: productquantity,
+                    image: productInfo?.image,
+                    badge: productInfo?.badge,
+                    price: productInfo?.price,
+                    colors: productInfo?.colors,
+                    size: selectedSize,
+                  })
+                );
+              }}
             >
               ADD TO CART
             </Button>
@@ -436,19 +463,19 @@ const ProductDetails = () => {
             <Dropdown>
               <DropdownTrigger>
                 <Button className="capitalize" variant="bordered">
-                  {selectedValue || "Select Size"}
+                  {selectedSize || "Select Size"}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
                 aria-label="Size selection"
-                selectedKeys={selectedKeys}
                 selectionMode="single"
                 variant="flat"
-                onSelectionChange={setSelectedKeys}
+                selectedKeys={new Set([selectedSize])} // Ensure the selected size stays active
+                onSelectionChange={handleSizeChange}
               >
                 {productInfo.sizes && productInfo.sizes.length > 0 ? (
-                  productInfo.sizes.map((size, index) => (
+                  productInfo.sizes.map((size) => (
                     <DropdownItem key={size} aria-label={`Size ${size}`}>
                       {size}
                     </DropdownItem>
@@ -465,53 +492,48 @@ const ProductDetails = () => {
           <div class="relative flex items-center">
             <button
               type="button"
-              id="decrement-button"
-              data-input-counter-decrement="quantity-input"
-              class="bg-gray-100  hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100  focus:ring-2 focus:outline-none"
+              className="bg-white hover:bg-gray-50 border rounded-s-lg p-3 h-11 focus:outline-none"
+              onClick={decrementQuantity}
             >
               <svg
-                class="w-3 h-3 text-gray-900 "
-                aria-hidden="true"
+                className="w-3 h-3 text-gray-900"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 18 2"
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M1 1h16"
                 />
               </svg>
             </button>
+
             <input
               type="text"
-              id="quantity-input"
-              data-input-counter
-              aria-describedby="helper-text-explanation"
-              class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 "
-              placeholder="999"
-              required
+              className="bg-[#f2f2f2] border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5"
+              value={productquantity}
+              readOnly
             />
+
             <button
               type="button"
-              id="increment-button"
-              data-input-counter-increment="quantity-input"
-              class="bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none"
+              className="bg-white hover:bg-gray-50 border rounded-r-lg p-3 h-11 focus:outline-none"
+              onClick={incrementQuantity}
             >
               <svg
-                class="w-3 h-3 text-gray-900"
-                aria-hidden="true"
+                className="w-3 h-3 text-gray-900"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 18 18"
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M9 1v16M1 9h16"
                 />
               </svg>
@@ -523,6 +545,20 @@ const ProductDetails = () => {
             color="primary"
             size="lg"
             className=" xs:w-[95%] md:w-[46%] sm:w-[95%] my-5 bg-black text-white transition-all duration-300 transform hover:scale-105 w-[95%]"
+            onPress={(event) => {
+              dispatch(
+                addToCart({
+                  _id: productInfo?._id,
+                  name: productInfo?.name,
+                  quantity: productquantity,
+                  image: productInfo?.image,
+                  badge: productInfo?.badge,
+                  price: productInfo?.price,
+                  colors: productInfo?.colors,
+                  size: selectedSize,
+                })
+              );
+            }}
           >
             ADD TO CART
           </Button>
