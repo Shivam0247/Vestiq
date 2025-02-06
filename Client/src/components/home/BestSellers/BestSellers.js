@@ -62,6 +62,7 @@ const BestSellers = () => {
               _id={product._id}
               img1={`/images/${product.Images[0]}`}
               img2={`/images/${product.Images[1]}`}
+              images={product.Images}
               productName={product.ProductName}
               price={product.Price}
               color={product.Colors.join(", ")} // Joining multiple colors into a single string

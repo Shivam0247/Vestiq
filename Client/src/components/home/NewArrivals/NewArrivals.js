@@ -61,6 +61,7 @@ const NewArrivals = () => {
               _id={product._id}
               img1={`/images/Tshirts/${product.Images[0]}`}
               img2={`/images/Tshirts/${product.Images[1]}`}
+              images={product.Images}
               productName={product.ProductName}
               price={product.Price}
               sizes={product.Sizes}

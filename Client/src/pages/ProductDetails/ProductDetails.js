@@ -199,6 +199,7 @@ const ProductDetails = () => {
     fetchNewArrivals();
   }, [_id]);
 
+  console.log("productInfo", productInfo);
   const handleCloseModal = () => {
     setIsModalOpen(false); // Close the modal
   };
@@ -216,10 +217,17 @@ const ProductDetails = () => {
           ref={imagesRef}
           className="images w-[50%] flex flex-col gap-4 pr-5"
         >
-          <img src="/images/image1.jpg" alt="" />
-          <img src="/images/image1.jpg" alt="" />
-          <img src="/images/image1.jpg" alt="" />
-          <img src="/images/image1.jpg" alt="" />
+          {productInfo?.images?.length > 0 ? (
+            productInfo.images.map((image, index) => (
+              <img
+                key={index}
+                src={`/images/Tshirts/${image}`}
+                alt={`Product image ${index + 1}`}
+              />
+            ))
+          ) : (
+            <p>No images available</p>
+          )}
         </div>
 
         <div
@@ -333,7 +341,9 @@ const ProductDetails = () => {
                     _id: productInfo?._id,
                     name: productInfo?.name,
                     quantity: productquantity,
-                    image: productInfo?.image,
+                    image: `/images/Tshirts/${
+                      productInfo?.images?.[0] || "default.jpg"
+                    }`,
                     badge: productInfo?.badge,
                     price: productInfo?.price,
                     colors: productInfo?.colors,
@@ -432,23 +442,36 @@ const ProductDetails = () => {
             <div className="flex flex-col items-center">
               {/* Image Section */}
               <CarouselContent>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <CarouselItem key={index}>
+                {productInfo?.images?.length > 0 ? (
+                  productInfo.images.map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="p-1">
+                        <Card>
+                          <CardContent className="flex aspect-square items-center justify-center">
+                            <img
+                              src={`/images/Tshirts/${image}`}
+                              alt={`Product image ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))
+                ) : (
+                  <CarouselItem>
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-square items-center justify-center">
-                          <img
-                            src="/images/image1.jpg"
-                            alt="carousel item"
-                            className="w-full"
-                          />
+                          <p>No images available</p>
                         </CardContent>
                       </Card>
                     </div>
                   </CarouselItem>
-                ))}
+                )}
               </CarouselContent>
 
+              {/* Navigation Buttons */}
               <div className="mt-8 flex items-center justify-between w-full px-5">
                 <CarouselPrevious />
                 <CarouselNext />
@@ -551,7 +574,9 @@ const ProductDetails = () => {
                   _id: productInfo?._id,
                   name: productInfo?.name,
                   quantity: productquantity,
-                  image: productInfo?.image,
+                  image: `/images/Tshirts/${
+                    productInfo?.images?.[0] || "default.jpg"
+                  }`,
                   badge: productInfo?.badge,
                   price: productInfo?.price,
                   colors: productInfo?.colors,
