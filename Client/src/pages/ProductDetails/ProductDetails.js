@@ -12,6 +12,8 @@ import Autoplay from "embla-carousel-autoplay";
 import "./ProdcutsDetails.css";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/orebiSlice";
+import { useNavigate } from "react-router-dom";
+
 import {
   Carousel,
   CarouselContent,
@@ -40,6 +42,7 @@ const getKeyValue = (obj, key) => obj[key];
 const ProductDetails = () => {
   const { _id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const location = useLocation();
   const [prevLocation, setPrevLocation] = useState("");
@@ -358,7 +361,25 @@ const ProductDetails = () => {
             <Button
               color="primary"
               size="lg"
-              className="w-[100%] lg:w-[48%] lg:ml-0 md:w-[48%] sm:w-[100%] xs:w-[100%] xs:ml-0 md:ml-5 sm:ml-0 bg-white border-black text-black border-2 transition-all duration-300 transform hover:scale-105"
+              className="xs:w-[95%] w-[95%] lg:ml-0 md:w-[46%] sm:w-[95%] xs:ml-0 md:ml-5 sm:ml-0 bg-white border-black text-black border-2 transition-all duration-300 transform hover:scale-105"
+              onClick={() => {
+                navigate("/Checkout", {
+                  state: {
+                    product: {
+                      _id: productInfo?._id,
+                      name: productInfo?.name,
+                      quantity: productquantity,
+                      image: `/images/Tshirts/${
+                        productInfo?.images?.[0] || "default.jpg"
+                      }`,
+                      price: productInfo?.price,
+                      size: selectedSize,
+                      totalPrice:
+                        (productquantity || 1) * (productInfo?.price || 0),
+                    },
+                  },
+                });
+              }}
             >
               BUY IT NOW
             </Button>
@@ -591,7 +612,23 @@ const ProductDetails = () => {
           <Button
             color="primary"
             size="lg"
-            className="xs:w-[95%]  w-[95%] lg:ml-0 md:w-[46%] sm:w-[95%] xs:ml-0 md:ml-5 sm:ml-0 bg-white border-black text-black border-2 transition-all duration-300 transform hover:scale-105"
+            className="xs:w-[95%] w-[95%] lg:ml-0 md:w-[46%] sm:w-[95%] xs:ml-0 md:ml-5 sm:ml-0 bg-white border-black text-black border-2 transition-all duration-300 transform hover:scale-105"
+            onClick={() => {
+              navigate("/Checkout", {
+                state: {
+                  product: {
+                    _id: productInfo?._id,
+                    name: productInfo?.name,
+                    quantity: productquantity,
+                    image: `/images/Tshirts/${
+                      productInfo?.images?.[0] || "default.jpg"
+                    }`,
+                    price: productInfo?.price,
+                    size: selectedSize,
+                  },
+                },
+              });
+            }}
           >
             BUY IT NOW
           </Button>

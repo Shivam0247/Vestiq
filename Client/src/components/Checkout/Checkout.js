@@ -5,7 +5,10 @@ import CartProduct from "./CartProduct";
 import { Country, State } from "country-state-city";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "@heroui/alert";
+import { useLocation } from "react-router-dom";
 function Checkout() {
+  const location = useLocation();
+  const { product } = location.state || {};
   const [isDifferentBilling, setIsDifferentBilling] = useState(false);
   const userEmail = Cookies.get("userEmail");
   const products = useSelector((state) => state.orebiReducer.products);
@@ -181,20 +184,28 @@ function Checkout() {
                 orderNo: response.razorpay_order_id,
                 paymentMethod: paymentDetails.method,
                 email: userEmail ? userEmail : email,
-                products: products.map(
-                  ({ _id, image, ...productWithoutImage }) => ({
-                    id: _id,
-                    ...productWithoutImage,
-                  })
-                ),
+                products: product
+                  ? {
+                      id: product._id,
+                      name: product.name,
+                      price: product.price,
+                      quantity: product.quantity,
+                      size: product.size,
+                    }
+                  : products.map(({ _id, image, ...rest }) => ({
+                      id: _id,
+                      ...rest,
+                    })),
                 shippingAddress,
                 billingAddress: isDifferentBilling
                   ? billingAddress
                   : shippingAddress,
                 orderStatus: "placed",
-                subtotal: totalAmt,
+                subtotal: product ? product.totalPrice : totalAmt,
                 shippingCost: shippingCharge,
-                total: totalAmt + shippingCharge,
+                total: product
+                  ? product.totalPrice + shippingCharge
+                  : totalAmt + shippingCharge,
               };
 
               const addOrderResponse = await fetch(
@@ -1068,11 +1079,17 @@ function Checkout() {
                 Order summary
               </p>
               <div>
-                {products.map((item) => (
-                  <div key={item._id}>
-                    <CartProduct item={item} />
-                  </div>
-                ))}
+                {product ? (
+                  <CartProduct item={product} />
+                ) : products.length > 0 ? (
+                  products.map((item) => (
+                    <div key={item._id}>
+                      <CartProduct item={item} />
+                    </div>
+                  ))
+                ) : (
+                  <p>No products available</p>
+                )}
               </div>
               <div>
                 <div className="flex max-w-md items-center gap-4">
@@ -1103,7 +1120,7 @@ function Checkout() {
                           Original price
                         </dt>
                         <dd className="text-base font-medium text-gray-900 ">
-                          ₹ {totalAmt}
+                          {product ? `₹${product.totalPrice}` : `₹${totalAmt}`}
                         </dd>
                       </dl>
 
@@ -1140,7 +1157,9 @@ function Checkout() {
                         Total
                       </dt>
                       <dd className="text-base font-bold text-gray-900 ">
-                        ₹ {totalAmt + shippingCharge}
+                        {product
+                          ? `₹${product.totalPrice + shippingCharge}`
+                          : `₹${totalAmt + shippingCharge}`}
                       </dd>
                     </dl>
 
