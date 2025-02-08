@@ -44,6 +44,7 @@ const Product = (props) => {
       _id: props._id,
       name: props.productName,
       image: props.img1,
+      images: props.images,
       price: props.price,
       Description: props.Description,
       Features: props.Features,

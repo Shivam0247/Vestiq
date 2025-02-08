@@ -50,6 +50,7 @@ const ProductDetails = () => {
   const [productquantity, setProductquantity] = useState(1);
 
   const [productInfo, setProductInfo] = useState([]);
+  console.log("productInfo", productInfo);
   const containerRef = useRef(null);
   const imagesRef = useRef(null);
   const infoRef = useRef(null);

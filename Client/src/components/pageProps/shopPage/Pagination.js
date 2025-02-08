@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import Product from "../../home/Products/Product";
 import FilterSidebar from "../../filterSidebar/FilterSidebar";
 import { Pagination } from "@heroui/pagination";
+import AddToCart from "../../home/Products/AddToCart";
 
 const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const [selectedFilters, setSelectedFilters] = useState({
     availability: [],
     types: [],
@@ -115,8 +119,20 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
     );
   }
 
+  const handleCartClick = (product) => {
+    setSelectedProduct(product); // Set the selected product
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
+
   return (
     <>
+      {isModalOpen && (
+        <AddToCart product={selectedProduct} onClose={handleCloseModal} />
+      )}
       <FilterSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -154,6 +170,7 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
               CompositionAndCare={product.CompositionAndCare}
               SizeChart={product.SizeChart}
               Status={product.Status}
+              onCartClick={handleCartClick}
             />
           </div>
         ))}
