@@ -60,11 +60,16 @@ const ProductDetails = () => {
       : new Set()
   );
 
+  useEffect(() => {
+    if (productInfo.sizes && productInfo.sizes.length > 0) {
+      setSelectedSize(productInfo.sizes[0]);
+    }
+  }, [productInfo]);
+
   const handleSizeChange = (keys) => {
-    const selectedKey = Array.from(keys)[0]; // Convert set to array and get first value
+    const selectedKey = Array.from(keys)[0];
     setSelectedSize(selectedKey);
   };
-
   const incrementQuantity = () => {
     setProductquantity((prev) => prev + 1);
   };
@@ -703,6 +708,7 @@ const ProductDetails = () => {
                 _id={product._id}
                 img1={`/images/Tshirts/${product.Images[0]}`}
                 img2={`/images/Tshirts/${product.Images[1]}`}
+                images={product.Images}
                 productName={product.ProductName}
                 price={product.Price}
                 sizes={product.Sizes}
