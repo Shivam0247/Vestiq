@@ -164,6 +164,7 @@ const ProductDetails = () => {
       y: () =>
         -(images.scrollHeight - window.innerHeight - sizechart.scrollHeight),
       ease: "none",
+
       scrollTrigger: {
         trigger: images,
         start: "top top",
