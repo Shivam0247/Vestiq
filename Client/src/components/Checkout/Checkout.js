@@ -2,10 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Accordion, AccordionItem } from "@heroui/react";
 import Cookies from "js-cookie";
 import CartProduct from "./CartProduct";
-import { Country, State } from "country-state-city";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "@heroui/alert";
 import { useLocation } from "react-router-dom";
+import { Country, State, City } from "country-state-city";
+
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Input,
+} from "@heroui/react";
+import { Checkbox } from "@heroui/react";
+import {
+  Autocomplete,
+  AutocompleteSection,
+  AutocompleteItem,
+} from "@heroui/autocomplete";
 function Checkout() {
   const location = useLocation();
   const { product } = location.state || {};
@@ -39,8 +55,122 @@ function Checkout() {
     phone: "",
   });
 
+  const [openModal, setOpenModal] = useState(null);
+  const [isDefault, setIsDefault] = useState(true);
+  const [selectedCountry, setSelectedCountry] = useState("IN");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [phoneCode, setPhoneCode] = useState("");
+  const [flag, setFlag] = useState("");
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [locFirstName, setLocFirstName] = useState("");
+  const [locLastName, setLocLastName] = useState("");
+  const [address, setAddress] = useState("");
+  const [apartment, setApartment] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingAddresses, setLoadingAddresses] = useState(true); // Added loading state for addresses
+
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
+  };
+
+  const handleAddAddress = async () => {
+    if (
+      !locFirstName ||
+      !locLastName ||
+      !address ||
+      !selectedCountry ||
+      !selectedState ||
+      !selectedCity ||
+      !pincode ||
+      !phone
+    ) {
+      setError("All address fields are required.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `https://upstrides-server.vercel.app/api/userDetails/add-address/${userEmail}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: locFirstName,
+            lastName: locLastName,
+            address,
+            apartment,
+            country: selectedCountry,
+            state: selectedState,
+            city: selectedCity,
+            pincode,
+            phone: `+${phoneCode} ${phone}`,
+            default: isDefault,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setError(null);
+        console.log("✅ Address added successfully");
+        await fetchAddresses(true);
+
+        setOpenModal(null);
+        console.log("Address added successfully");
+        fetchAddresses(true);
+      } else {
+        setError(data.message || "Error adding address");
+      }
+    } catch (error) {
+      console.error("Error adding address:", error);
+      setError("An error occurred while adding the address.");
+    } finally {
+      setIsLoading(false);
+      fetchAddresses();
+    }
+  };
+
+  const fetchAddresses = async (selectLatest = false) => {
+    setLoadingAddresses(true); // Set loading state to true
+    try {
+      const response = await fetch(
+        `https://upstrides-server.vercel.app/api/userDetails/get-addresses/${userEmail}`
+      );
+      const data = await response.json();
+      if (response.status === 200) {
+        const updatedAddresses = data.addresses.map((addr) => {
+          const countryName =
+            Country.getCountryByCode(addr.country)?.name || addr.country;
+          const stateName =
+            State.getStateByCodeAndCountry(addr.state, addr.country)?.name ||
+            addr.state;
+          return {
+            ...addr,
+            country: countryName,
+            state: stateName,
+          };
+        });
+        setAddresses(updatedAddresses);
+      } else {
+        setError("Error fetching addresses");
+      }
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      setError("An error occurred while fetching the addresses.");
+    } finally {
+      setLoadingAddresses(false); // Set loading state to false after fetching is complete
+    }
   };
 
   const handleChange = (e) => {
@@ -245,6 +375,34 @@ function Checkout() {
   };
 
   useEffect(() => {
+    const countryList = Country.getAllCountries();
+    setCountries(countryList);
+  }, []);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      const stateList = State.getStatesOfCountry(selectedCountry);
+      setStates(stateList);
+      setSelectedState("");
+      setCities([]);
+    }
+  }, [selectedCountry]);
+  useEffect(() => {
+    if (selectedState) {
+      const cityList = City.getCitiesOfState(selectedCountry, selectedState);
+      setCities(cityList);
+    }
+  }, [selectedState, selectedCountry]);
+
+  useEffect(() => {
+    const countryData = Country.getCountryByCode(selectedCountry);
+    if (countryData) {
+      setPhoneCode(countryData.phonecode);
+      setFlag(countryData.flag);
+    }
+  }, [selectedCountry]);
+
+  useEffect(() => {
     let price = 0;
     products.map((item) => {
       price += item.price * item.quantity;
@@ -290,704 +448,159 @@ function Checkout() {
   }, [alertMessage]);
 
   return (
-    <div>
-      {alertMessage && <Alert color="danger" title={alertMessage} />}
-      <section className="bg-white py-8 antialiased  md:py-16">
-        <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-          <h2 className="text-xl font-semibold text-gray-900 sm:text-3xl">
-            Checkout
-          </h2>
+    <>
+      <div>
+        {alertMessage && <Alert color="danger" title={alertMessage} />}
+        <section className="bg-white py-8 antialiased  md:py-16">
+          <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+            <h2 className="text-xl font-semibold text-gray-900 sm:text-3xl">
+              Checkout
+            </h2>
 
-          <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
-            <div className="min-w-0 flex-1 space-y-8">
-              <Accordion
-                selectionMode="multiple"
-                showDivider={false}
-                defaultExpandedKeys={["1", "2", "3", "4"]}
-              >
-                {!userEmail ? (
-                  <AccordionItem
-                    key="1"
-                    aria-label="Contact"
-                    title={<span className="font-bold text-xl">Contact</span>}
-                  >
-                    <div className="space-y-4">
-                      <input
-                        type="email"
-                        name="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                        id="email"
-                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                        placeholder="Email"
-                        required
-                      />
-                    </div>
-                  </AccordionItem>
-                ) : (
-                  <AccordionItem
-                    key="1"
-                    aria-label="Account"
-                    title={<span className="font-bold text-xl">Account</span>}
-                  >
-                    <span className="block text-gray-800">{userEmail}</span>
-                    <span className="text-sm text-blue-600 cursor-pointer hover:underline">
-                      Log out
-                    </span>
-                  </AccordionItem>
-                )}
-
-                {!userEmail || !addresses ? (
-                  <AccordionItem
-                    key="2"
-                    aria-label="Shipping Details"
-                    title={
-                      <span className="font-bold text-xl">
-                        Shipping Details
-                      </span>
-                    }
-                  >
-                    <div className="space-y-4">
-                      {/* Country Selection */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900">
-                          Country
-                        </label>
-                        <select
-                          name="country"
-                          value={shippingAddress.country}
-                          onChange={handleChange}
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                        >
-                          <option value="">Select a country</option>
-                          <option value="US">United States</option>
-                          <option value="AU">Australia</option>
-                          <option value="FR">France</option>
-                          <option value="ES">Spain</option>
-                          <option value="UK">United Kingdom</option>
-                        </select>
-                      </div>
-
-                      {/* First & Last Name */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-900">
-                            First Name
-                          </label>
-                          <input
-                            type="text"
-                            name="firstName"
-                            value={shippingAddress.firstName}
-                            onChange={handleChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                            placeholder="John"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-900">
-                            Last Name
-                          </label>
-                          <input
-                            type="text"
-                            name="lastName"
-                            value={shippingAddress.lastName}
-                            onChange={handleChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                            placeholder="Doe"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      {/* Address & Apartment */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900">
-                          Address
-                        </label>
+            <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
+              <div className="min-w-0 flex-1 space-y-8">
+                <Accordion
+                  selectionMode="multiple"
+                  showDivider={false}
+                  defaultExpandedKeys={["1", "2", "3", "4"]}
+                >
+                  {!userEmail ? (
+                    <AccordionItem
+                      key="1"
+                      aria-label="Contact"
+                      title={<span className="font-bold text-xl">Contact</span>}
+                    >
+                      <div className="space-y-4">
                         <input
-                          type="text"
-                          name="address"
-                          value={shippingAddress.address}
-                          onChange={handleChange}
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                          placeholder="123 Street Name"
+                          type="email"
+                          name="email"
+                          value={email}
+                          onChange={handleEmailChange}
+                          id="email"
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                          placeholder="Email"
                           required
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900">
-                          Apartment, suite, etc. (optional)
-                        </label>
-                        <input
-                          type="text"
-                          name="apartment"
-                          value={shippingAddress.apartment}
-                          onChange={handleChange}
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                          placeholder="Apt 101"
-                        />
-                      </div>
-
-                      {/* City, State, PIN */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-900">
-                            City
-                          </label>
-                          <select
-                            name="city"
-                            value={shippingAddress.city}
-                            onChange={handleChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                          >
-                            <option value="">Select a city</option>
-                            <option value="San Francisco">San Francisco</option>
-                            <option value="New York">New York</option>
-                            <option value="Los Angeles">Los Angeles</option>
-                            <option value="Chicago">Chicago</option>
-                            <option value="Houston">Houston</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-900">
-                            State
-                          </label>
-                          <select
-                            name="state"
-                            value={shippingAddress.state}
-                            onChange={handleChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                          >
-                            <option value="">Select a state</option>
-                            <option value="CA">California</option>
-                            <option value="NY">New York</option>
-                            <option value="TX">Texas</option>
-                            <option value="FL">Florida</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-900">
-                            PIN code
-                          </label>
-                          <input
-                            type="text"
-                            name="pincode"
-                            value={shippingAddress.pincode}
-                            onChange={handleChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                            placeholder="400001"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      {/* Phone Number */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900">
-                          Phone
-                        </label>
-                        <input
-                          type="text"
-                          name="phone"
-                          value={shippingAddress.phone}
-                          onChange={handleChange}
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                          placeholder="+91 1234567890"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </AccordionItem>
-                ) : (
-                  <AccordionItem
-                    key="2"
-                    aria-label="Shipping Details"
-                    title={
-                      <span className="font-bold text-xl">
-                        Shipping Details
+                    </AccordionItem>
+                  ) : (
+                    <AccordionItem
+                      key="1"
+                      aria-label="Account"
+                      title={<span className="font-bold text-xl">Account</span>}
+                    >
+                      <span className="block text-gray-800">{userEmail}</span>
+                      <span className="text-sm text-blue-600 cursor-pointer hover:underline">
+                        Log out
                       </span>
-                    }
-                  >
-                    <ul className="text-sm font-medium text-gray-900 bg-white space-y-2">
-                      {addresses.length > 0 ? (
-                        <>
-                          {addresses.map((address, index) => (
-                            <li
-                              key={index}
-                              className="w-full rounded-lg border border-gray-300 p-3 hover:bg-gray-100 transition"
-                            >
-                              <div className="flex items-center gap-3">
-                                {/* Radio Button */}
-                                <input
-                                  id={`Address-${index}`}
-                                  type="radio"
-                                  value={index}
-                                  name="Address"
-                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                                  onChange={() => handleAddressChange(address)}
-                                  checked={selectedAddress === address}
-                                />
-                                {/* Label for the entire list item */}
-                                <label
-                                  htmlFor={`Address-${index}`}
-                                  className="text-sm font-medium text-gray-900 cursor-pointer w-full"
-                                >
-                                  <span className="block font-semibold">
-                                    {address.firstName} {address.lastName}
-                                  </span>
-                                  <span className="block text-gray-700">
-                                    {address.apartment}-{address.address},{" "}
-                                    {address.city}, {address.state},{" "}
-                                    {address.country} - {address.pincode}
-                                  </span>
-                                </label>
-                              </div>
-                            </li>
-                          ))}
-                          <span className="text-sm text-blue-600 cursor-pointer mt-2 block">
-                            + Use a different address
-                          </span>
-                        </>
-                      ) : (
-                        <li className="text-gray-500 p-3">
-                          <div className="space-y-4">
-                            {/* Country Selection */}
-                            <div>
-                              <label className="block text-sm font-medium text-gray-900">
-                                Country
-                              </label>
-                              <select
-                                name="country"
-                                value={shippingAddress.country}
-                                onChange={handleChange}
-                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                              >
-                                <option value="">Select a country</option>
-                                <option value="US">United States</option>
-                                <option value="AU">Australia</option>
-                                <option value="FR">France</option>
-                                <option value="ES">Spain</option>
-                                <option value="UK">United Kingdom</option>
-                              </select>
-                            </div>
+                    </AccordionItem>
+                  )}
 
-                            {/* First & Last Name */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-900">
-                                  First Name
-                                </label>
-                                <input
-                                  type="text"
-                                  name="firstName"
-                                  value={shippingAddress.firstName}
-                                  onChange={handleChange}
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                  placeholder="John"
-                                  required
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-900">
-                                  Last Name
-                                </label>
-                                <input
-                                  type="text"
-                                  name="lastName"
-                                  value={shippingAddress.lastName}
-                                  onChange={handleChange}
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                  placeholder="Doe"
-                                  required
-                                />
-                              </div>
-                            </div>
-
-                            {/* Address & Apartment */}
-                            <div>
-                              <label className="block text-sm font-medium text-gray-900">
-                                Address
-                              </label>
-                              <input
-                                type="text"
-                                name="address"
-                                value={shippingAddress.address}
-                                onChange={handleChange}
-                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                placeholder="123 Street Name"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-900">
-                                Apartment, suite, etc. (optional)
-                              </label>
-                              <input
-                                type="text"
-                                name="apartment"
-                                value={shippingAddress.apartment}
-                                onChange={handleChange}
-                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                placeholder="Apt 101"
-                              />
-                            </div>
-
-                            {/* City, State, PIN */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-900">
-                                  City
-                                </label>
-                                <select
-                                  name="city"
-                                  value={shippingAddress.city}
-                                  onChange={handleChange}
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                >
-                                  <option value="">Select a city</option>
-                                  <option value="San Francisco">
-                                    San Francisco
-                                  </option>
-                                  <option value="New York">New York</option>
-                                  <option value="Los Angeles">
-                                    Los Angeles
-                                  </option>
-                                  <option value="Chicago">Chicago</option>
-                                  <option value="Houston">Houston</option>
-                                </select>
-                              </div>
-
-                              <div>
-                                <label className="block text-sm font-medium text-gray-900">
-                                  State
-                                </label>
-                                <select
-                                  name="state"
-                                  value={shippingAddress.state}
-                                  onChange={handleChange}
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                >
-                                  <option value="">Select a state</option>
-                                  <option value="CA">California</option>
-                                  <option value="NY">New York</option>
-                                  <option value="TX">Texas</option>
-                                  <option value="FL">Florida</option>
-                                </select>
-                              </div>
-
-                              <div>
-                                <label className="block text-sm font-medium text-gray-900">
-                                  PIN code
-                                </label>
-                                <input
-                                  type="text"
-                                  name="pincode"
-                                  value={shippingAddress.pincode}
-                                  onChange={handleChange}
-                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                  placeholder="400001"
-                                  required
-                                />
-                              </div>
-                            </div>
-
-                            {/* Phone Number */}
-                            <div>
-                              <label className="block text-sm font-medium text-gray-900">
-                                Phone
-                              </label>
-                              <input
-                                type="text"
-                                name="phone"
-                                value={shippingAddress.phone}
-                                onChange={handleChange}
-                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                placeholder="+91 1234567890"
-                                required
-                              />
-                            </div>
-                          </div>
-                        </li>
-                      )}
-                    </ul>
-                  </AccordionItem>
-                )}
-                <AccordionItem
-                  key="3"
-                  aria-label="Shipping Methods"
-                  title={
-                    <span className="font-bold text-xl">Shipping Methods</span>
-                  }
-                >
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
-                        <div className="flex items-start">
-                          <div className="flex h-5 items-center">
-                            <input
-                              id="dhl"
-                              aria-describedby="dhl-text"
-                              type="radio"
-                              name="delivery-method"
-                              value="Fast Delivery"
-                              className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
-                            />
-                          </div>
-
-                          <div className="ms-4 text-sm">
-                            <label
-                              htmlFor="dhl"
-                              className="font-medium leading-none text-gray-900 "
-                            >
-                              {" "}
-                              $15 - DHL Fast Delivery{" "}
-                            </label>
-                            <p
-                              id="dhl-text"
-                              className="mt-1 text-xs font-normal text-gray-500 "
-                            >
-                              Get it by Tommorow
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
-                        <div className="flex items-start">
-                          <div className="flex h-5 items-center">
-                            <input
-                              id="fedex"
-                              aria-describedby="fedex-text"
-                              type="radio"
-                              name="delivery-method"
-                              value="Free Delivery"
-                              className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
-                            />
-                          </div>
-
-                          <div className="ms-4 text-sm">
-                            <label
-                              htmlFor="fedex"
-                              className="font-medium leading-none text-gray-900"
-                            >
-                              {" "}
-                              Free Delivery - FedEx{" "}
-                            </label>
-                            <p
-                              id="fedex-text"
-                              className="mt-1 text-xs font-normal text-gray-500 "
-                            >
-                              Get it by Friday, 13 Dec 2023
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
-                        <div className="flex items-start">
-                          <div className="flex h-5 items-center">
-                            <input
-                              id="express"
-                              aria-describedby="express-text"
-                              type="radio"
-                              name="delivery-method"
-                              value="Express Delivery"
-                              className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
-                            />
-                          </div>
-
-                          <div className="ms-4 text-sm">
-                            <label
-                              htmlFor="express"
-                              className="font-medium leading-none text-gray-900 "
-                            >
-                              {" "}
-                              $49 - Express Delivery{" "}
-                            </label>
-                            <p
-                              id="express-text"
-                              className="mt-1 text-xs font-normal text-gray-500"
-                            >
-                              Get it today
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </AccordionItem>
-                <AccordionItem
-                  key="4"
-                  aria-label="Billing Details"
-                  title={
-                    <span className="font-bold text-xl">Billing Details</span>
-                  }
-                >
-                  <div className="space-y-0">
-                    <div>
-                      <ul className="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg ">
-                        <li className="w-full border-b border-gray-200 rounded-t-lg ">
-                          <div className="flex items-center ps-3">
-                            <input
-                              id="list-radio-license"
-                              type="radio"
-                              value=""
-                              name="list-radio"
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                              checked={!isDifferentBilling}
-                              onChange={() => setIsDifferentBilling(false)}
-                            />
-                            <label
-                              htmlFor="list-radio-license"
-                              className="w-full py-3 ms-2 text-sm font-medium text-gray-900 "
-                            >
-                              Same as shipping address
-                            </label>
-                          </div>
-                        </li>
-                        <li className="w-full border-b border-gray-200 rounded-t-lg ">
-                          <div className="flex items-center ps-3">
-                            <input
-                              id="list-radio-id"
-                              type="radio"
-                              value=""
-                              name="list-radio"
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                              checked={isDifferentBilling}
-                              onChange={() => setIsDifferentBilling(true)}
-                            />
-                            <label
-                              htmlFor="list-radio-id"
-                              className="w-full py-3 ms-2 text-sm font-medium text-gray-900 "
-                            >
-                              Use a different billing address
-                            </label>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-
-                    {isDifferentBilling && (
-                      <div className="space-y-3 p-5 bg-[#0000000a] rounded-b-lg">
-                        <div className="mb-2 flex items-center gap-2">
-                          <label
-                            htmlFor="select-country-input-3"
-                            className="block text-sm font-medium text-gray-900 "
-                          >
+                  {!userEmail || !addresses ? (
+                    <AccordionItem
+                      key="2"
+                      aria-label="Shipping Details"
+                      title={
+                        <span className="font-bold text-xl">
+                          Shipping Details
+                        </span>
+                      }
+                    >
+                      <div className="space-y-4">
+                        {/* Country Selection */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-900">
                             Country
                           </label>
+                          <select
+                            name="country"
+                            value={shippingAddress.country}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                          >
+                            <option value="">Select a country</option>
+                            <option value="US">United States</option>
+                            <option value="AU">Australia</option>
+                            <option value="FR">France</option>
+                            <option value="ES">Spain</option>
+                            <option value="UK">United Kingdom</option>
+                          </select>
                         </div>
-                        <select
-                          id="select-country-input-3"
-                          name="country"
-                          value={billingAddress.country}
-                          onChange={handleBillingChange}
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                        >
-                          <option value="IN">India</option>
-                          <option value="US">United States</option>
-                          <option value="AU">Australia</option>
-                          <option value="FR">France</option>
-                          <option value="ES">Spain</option>
-                        </select>
 
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {/* First & Last Name */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label
-                              htmlFor="firstName"
-                              className="mb-2 block text-sm font-medium text-gray-900 "
-                            >
+                            <label className="block text-sm font-medium text-gray-900">
                               First Name
                             </label>
                             <input
                               type="text"
-                              id="firstName"
                               name="firstName"
-                              value={billingAddress.firstName}
-                              onChange={handleBillingChange}
-                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                              placeholder="Bonnie"
+                              value={shippingAddress.firstName}
+                              onChange={handleChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                              placeholder="John"
                               required
                             />
                           </div>
-
                           <div>
-                            <label
-                              htmlFor="lastName"
-                              className="mb-2 block text-sm font-medium text-gray-900 "
-                            >
+                            <label className="block text-sm font-medium text-gray-900">
                               Last Name
                             </label>
                             <input
                               type="text"
-                              id="lastName"
                               name="lastName"
-                              value={billingAddress.lastName}
-                              onChange={handleBillingChange}
-                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                              placeholder="Green"
+                              value={shippingAddress.lastName}
+                              onChange={handleChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                              placeholder="Doe"
                               required
                             />
                           </div>
                         </div>
 
+                        {/* Address & Apartment */}
                         <div>
-                          <label
-                            htmlFor="address"
-                            className="mb-2 block text-sm font-medium text-gray-900 "
-                          >
+                          <label className="block text-sm font-medium text-gray-900">
                             Address
                           </label>
                           <input
                             type="text"
-                            id="address"
                             name="address"
-                            value={billingAddress.address}
-                            onChange={handleBillingChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="123 Street"
+                            value={shippingAddress.address}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                            placeholder="123 Street Name"
                             required
                           />
                         </div>
-
                         <div>
-                          <label
-                            htmlFor="apartment"
-                            className="mb-2 block text-sm font-medium text-gray-900 "
-                          >
+                          <label className="block text-sm font-medium text-gray-900">
                             Apartment, suite, etc. (optional)
                           </label>
                           <input
                             type="text"
-                            id="apartment"
                             name="apartment"
-                            value={billingAddress.apartment}
-                            onChange={handleBillingChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                            value={shippingAddress.apartment}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
                             placeholder="Apt 101"
                           />
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
+                        {/* City, State, PIN */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <div className="mb-2 flex items-center gap-2">
-                              <label
-                                htmlFor="city"
-                                className="block text-sm font-medium text-gray-900"
-                              >
-                                City
-                              </label>
-                            </div>
+                            <label className="block text-sm font-medium text-gray-900">
+                              City
+                            </label>
                             <select
-                              id="city"
                               name="city"
-                              value={billingAddress.city}
-                              onChange={handleBillingChange}
-                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                              value={shippingAddress.city}
+                              onChange={handleChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
                             >
+                              <option value="">Select a city</option>
                               <option value="San Francisco">
                                 San Francisco
                               </option>
@@ -999,21 +612,16 @@ function Checkout() {
                           </div>
 
                           <div>
-                            <div className="mb-2 flex items-center gap-2">
-                              <label
-                                htmlFor="state"
-                                className="block text-sm font-medium text-gray-900"
-                              >
-                                State
-                              </label>
-                            </div>
+                            <label className="block text-sm font-medium text-gray-900">
+                              State
+                            </label>
                             <select
-                              id="state"
                               name="state"
-                              value={billingAddress.state}
-                              onChange={handleBillingChange}
-                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                              value={shippingAddress.state}
+                              onChange={handleChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
                             >
+                              <option value="">Select a state</option>
                               <option value="CA">California</option>
                               <option value="NY">New York</option>
                               <option value="TX">Texas</option>
@@ -1022,109 +630,671 @@ function Checkout() {
                           </div>
 
                           <div>
-                            <label
-                              htmlFor="pincode"
-                              className="mb-2 block text-sm font-medium text-gray-900 "
-                            >
+                            <label className="block text-sm font-medium text-gray-900">
                               PIN code
                             </label>
                             <input
                               type="text"
-                              id="pincode"
                               name="pincode"
-                              value={billingAddress.pincode}
-                              onChange={handleBillingChange}
-                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                              placeholder="94110"
+                              value={shippingAddress.pincode}
+                              onChange={handleChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                              placeholder="400001"
                               required
                             />
                           </div>
                         </div>
 
+                        {/* Phone Number */}
                         <div>
-                          <label
-                            htmlFor="phone"
-                            className="mb-2 block text-sm font-medium text-gray-900 "
-                          >
+                          <label className="block text-sm font-medium text-gray-900">
                             Phone
                           </label>
                           <input
                             type="text"
-                            id="phone"
                             name="phone"
-                            value={billingAddress.phone}
-                            onChange={handleBillingChange}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                            placeholder="+1 234 567 890"
+                            value={shippingAddress.phone}
+                            onChange={handleChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                            placeholder="+91 1234567890"
                             required
                           />
                         </div>
                       </div>
-                    )}
-                  </div>
-                </AccordionItem>
-              </Accordion>
-              <div className="space-y-3">
-                <button
-                  className="hidden lg:visible lg:flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
-                  onClick={handleSubmitOrder}
-                >
-                  Proceed to Payment
-                </button>
-              </div>
-            </div>
+                    </AccordionItem>
+                  ) : (
+                    <AccordionItem
+                      key="2"
+                      aria-label="Shipping Details"
+                      title={
+                        <span className="font-bold text-xl">
+                          Shipping Details
+                        </span>
+                      }
+                    >
+                      <ul className="text-sm font-medium text-gray-900 bg-white space-y-2">
+                        {addresses.length > 0 ? (
+                          <>
+                            {addresses.map((address, index) => (
+                              <li
+                                key={index}
+                                className="w-full rounded-lg border border-gray-300 p-3 hover:bg-gray-100 transition"
+                              >
+                                <div className="flex items-center gap-3">
+                                  {/* Radio Button */}
+                                  <input
+                                    id={`Address-${index}`}
+                                    type="radio"
+                                    value={index}
+                                    name="Address"
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                                    onChange={() =>
+                                      handleAddressChange(address)
+                                    }
+                                    checked={selectedAddress === address}
+                                  />
+                                  {/* Label for the entire list item */}
+                                  <label
+                                    htmlFor={`Address-${index}`}
+                                    className="text-sm font-medium text-gray-900 cursor-pointer w-full"
+                                  >
+                                    <span className="block font-semibold">
+                                      {address.firstName} {address.lastName}
+                                    </span>
+                                    <span className="block text-gray-700">
+                                      {address.apartment}-{address.address},{" "}
+                                      {address.city}, {address.state},{" "}
+                                      {address.country} - {address.pincode}
+                                    </span>
+                                  </label>
+                                </div>
+                              </li>
+                            ))}
+                            <span
+                              className="text-sm text-blue-600 cursor-pointer mt-2 block"
+                              onClick={() => setOpenModal("addAddress")}
+                            >
+                              + Use a different address
+                            </span>
+                          </>
+                        ) : (
+                          <li className="text-gray-500 p-3">
+                            <div className="space-y-4">
+                              {/* Country Selection */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  Country
+                                </label>
+                                <select
+                                  name="country"
+                                  value={shippingAddress.country}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                >
+                                  <option value="">Select a country</option>
+                                  <option value="US">United States</option>
+                                  <option value="AU">Australia</option>
+                                  <option value="FR">France</option>
+                                  <option value="ES">Spain</option>
+                                  <option value="UK">United Kingdom</option>
+                                </select>
+                              </div>
 
-            <div className="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
-              <p className="lg:hidden text-xl font-semibold text-gray-900 ">
-                Order summary
-              </p>
-              <div>
-                {product ? (
-                  <CartProduct item={product} />
-                ) : products.length > 0 ? (
-                  products.map((item) => (
-                    <div key={item._id}>
-                      <CartProduct item={item} />
-                    </div>
-                  ))
-                ) : (
-                  <p>No products available</p>
-                )}
-              </div>
-              <div>
-                <div className="flex max-w-md items-center gap-4">
-                  <input
-                    type="text"
-                    id="voucher"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
-                    placeholder="Enter a gift card, voucher or promotional code"
-                  />
-                  <button
-                    type="button"
-                    className="flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 "
+                              {/* First & Last Name */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-900">
+                                    First Name
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="firstName"
+                                    value={shippingAddress.firstName}
+                                    onChange={handleChange}
+                                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                    placeholder="John"
+                                    required
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-900">
+                                    Last Name
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="lastName"
+                                    value={shippingAddress.lastName}
+                                    onChange={handleChange}
+                                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                    placeholder="Doe"
+                                    required
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Address & Apartment */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  Address
+                                </label>
+                                <input
+                                  type="text"
+                                  name="address"
+                                  value={shippingAddress.address}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  placeholder="123 Street Name"
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  Apartment, suite, etc. (optional)
+                                </label>
+                                <input
+                                  type="text"
+                                  name="apartment"
+                                  value={shippingAddress.apartment}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  placeholder="Apt 101"
+                                />
+                              </div>
+
+                              {/* City, State, PIN */}
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-900">
+                                    City
+                                  </label>
+                                  <select
+                                    name="city"
+                                    value={shippingAddress.city}
+                                    onChange={handleChange}
+                                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  >
+                                    <option value="">Select a city</option>
+                                    <option value="San Francisco">
+                                      San Francisco
+                                    </option>
+                                    <option value="New York">New York</option>
+                                    <option value="Los Angeles">
+                                      Los Angeles
+                                    </option>
+                                    <option value="Chicago">Chicago</option>
+                                    <option value="Houston">Houston</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-900">
+                                    State
+                                  </label>
+                                  <select
+                                    name="state"
+                                    value={shippingAddress.state}
+                                    onChange={handleChange}
+                                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  >
+                                    <option value="">Select a state</option>
+                                    <option value="CA">California</option>
+                                    <option value="NY">New York</option>
+                                    <option value="TX">Texas</option>
+                                    <option value="FL">Florida</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-900">
+                                    PIN code
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="pincode"
+                                    value={shippingAddress.pincode}
+                                    onChange={handleChange}
+                                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                    placeholder="400001"
+                                    required
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Phone Number */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-900">
+                                  Phone
+                                </label>
+                                <input
+                                  type="text"
+                                  name="phone"
+                                  value={shippingAddress.phone}
+                                  onChange={handleChange}
+                                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                                  placeholder="+91 1234567890"
+                                  required
+                                />
+                              </div>
+                            </div>
+                          </li>
+                        )}
+                      </ul>
+                    </AccordionItem>
+                  )}
+                  <AccordionItem
+                    key="3"
+                    aria-label="Shipping Methods"
+                    title={
+                      <span className="font-bold text-xl">
+                        Shipping Methods
+                      </span>
+                    }
                   >
-                    Apply
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
+                          <div className="flex items-start">
+                            <div className="flex h-5 items-center">
+                              <input
+                                id="dhl"
+                                aria-describedby="dhl-text"
+                                type="radio"
+                                name="delivery-method"
+                                value="Fast Delivery"
+                                className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
+                              />
+                            </div>
+
+                            <div className="ms-4 text-sm">
+                              <label
+                                htmlFor="dhl"
+                                className="font-medium leading-none text-gray-900 "
+                              >
+                                {" "}
+                                $15 - DHL Fast Delivery{" "}
+                              </label>
+                              <p
+                                id="dhl-text"
+                                className="mt-1 text-xs font-normal text-gray-500 "
+                              >
+                                Get it by Tommorow
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
+                          <div className="flex items-start">
+                            <div className="flex h-5 items-center">
+                              <input
+                                id="fedex"
+                                aria-describedby="fedex-text"
+                                type="radio"
+                                name="delivery-method"
+                                value="Free Delivery"
+                                className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
+                              />
+                            </div>
+
+                            <div className="ms-4 text-sm">
+                              <label
+                                htmlFor="fedex"
+                                className="font-medium leading-none text-gray-900"
+                              >
+                                {" "}
+                                Free Delivery - FedEx{" "}
+                              </label>
+                              <p
+                                id="fedex-text"
+                                className="mt-1 text-xs font-normal text-gray-500 "
+                              >
+                                Get it by Friday, 13 Dec 2023
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
+                          <div className="flex items-start">
+                            <div className="flex h-5 items-center">
+                              <input
+                                id="express"
+                                aria-describedby="express-text"
+                                type="radio"
+                                name="delivery-method"
+                                value="Express Delivery"
+                                className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 "
+                              />
+                            </div>
+
+                            <div className="ms-4 text-sm">
+                              <label
+                                htmlFor="express"
+                                className="font-medium leading-none text-gray-900 "
+                              >
+                                {" "}
+                                $49 - Express Delivery{" "}
+                              </label>
+                              <p
+                                id="express-text"
+                                className="mt-1 text-xs font-normal text-gray-500"
+                              >
+                                Get it today
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionItem>
+                  <AccordionItem
+                    key="4"
+                    aria-label="Billing Details"
+                    title={
+                      <span className="font-bold text-xl">Billing Details</span>
+                    }
+                  >
+                    <div className="space-y-0">
+                      <div>
+                        <ul className="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg ">
+                          <li className="w-full border-b border-gray-200 rounded-t-lg ">
+                            <div className="flex items-center ps-3">
+                              <input
+                                id="list-radio-license"
+                                type="radio"
+                                value=""
+                                name="list-radio"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                                checked={!isDifferentBilling}
+                                onChange={() => setIsDifferentBilling(false)}
+                              />
+                              <label
+                                htmlFor="list-radio-license"
+                                className="w-full py-3 ms-2 text-sm font-medium text-gray-900 "
+                              >
+                                Same as shipping address
+                              </label>
+                            </div>
+                          </li>
+                          <li className="w-full border-b border-gray-200 rounded-t-lg ">
+                            <div className="flex items-center ps-3">
+                              <input
+                                id="list-radio-id"
+                                type="radio"
+                                value=""
+                                name="list-radio"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                                checked={isDifferentBilling}
+                                onChange={() => setIsDifferentBilling(true)}
+                              />
+                              <label
+                                htmlFor="list-radio-id"
+                                className="w-full py-3 ms-2 text-sm font-medium text-gray-900 "
+                              >
+                                Use a different billing address
+                              </label>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {isDifferentBilling && (
+                        <div className="space-y-3 p-5 bg-[#0000000a] rounded-b-lg">
+                          <div className="mb-2 flex items-center gap-2">
+                            <label
+                              htmlFor="select-country-input-3"
+                              className="block text-sm font-medium text-gray-900 "
+                            >
+                              Country
+                            </label>
+                          </div>
+                          <select
+                            id="select-country-input-3"
+                            name="country"
+                            value={billingAddress.country}
+                            onChange={handleBillingChange}
+                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                          >
+                            <option value="IN">India</option>
+                            <option value="US">United States</option>
+                            <option value="AU">Australia</option>
+                            <option value="FR">France</option>
+                            <option value="ES">Spain</option>
+                          </select>
+
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                              <label
+                                htmlFor="firstName"
+                                className="mb-2 block text-sm font-medium text-gray-900 "
+                              >
+                                First Name
+                              </label>
+                              <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                value={billingAddress.firstName}
+                                onChange={handleBillingChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                                placeholder="Bonnie"
+                                required
+                              />
+                            </div>
+
+                            <div>
+                              <label
+                                htmlFor="lastName"
+                                className="mb-2 block text-sm font-medium text-gray-900 "
+                              >
+                                Last Name
+                              </label>
+                              <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                value={billingAddress.lastName}
+                                onChange={handleBillingChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                                placeholder="Green"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label
+                              htmlFor="address"
+                              className="mb-2 block text-sm font-medium text-gray-900 "
+                            >
+                              Address
+                            </label>
+                            <input
+                              type="text"
+                              id="address"
+                              name="address"
+                              value={billingAddress.address}
+                              onChange={handleBillingChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                              placeholder="123 Street"
+                              required
+                            />
+                          </div>
+
+                          <div>
+                            <label
+                              htmlFor="apartment"
+                              className="mb-2 block text-sm font-medium text-gray-900 "
+                            >
+                              Apartment, suite, etc. (optional)
+                            </label>
+                            <input
+                              type="text"
+                              id="apartment"
+                              name="apartment"
+                              value={billingAddress.apartment}
+                              onChange={handleBillingChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                              placeholder="Apt 101"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
+                            <div>
+                              <div className="mb-2 flex items-center gap-2">
+                                <label
+                                  htmlFor="city"
+                                  className="block text-sm font-medium text-gray-900"
+                                >
+                                  City
+                                </label>
+                              </div>
+                              <select
+                                id="city"
+                                name="city"
+                                value={billingAddress.city}
+                                onChange={handleBillingChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                              >
+                                <option value="San Francisco">
+                                  San Francisco
+                                </option>
+                                <option value="New York">New York</option>
+                                <option value="Los Angeles">Los Angeles</option>
+                                <option value="Chicago">Chicago</option>
+                                <option value="Houston">Houston</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <div className="mb-2 flex items-center gap-2">
+                                <label
+                                  htmlFor="state"
+                                  className="block text-sm font-medium text-gray-900"
+                                >
+                                  State
+                                </label>
+                              </div>
+                              <select
+                                id="state"
+                                name="state"
+                                value={billingAddress.state}
+                                onChange={handleBillingChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                              >
+                                <option value="CA">California</option>
+                                <option value="NY">New York</option>
+                                <option value="TX">Texas</option>
+                                <option value="FL">Florida</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label
+                                htmlFor="pincode"
+                                className="mb-2 block text-sm font-medium text-gray-900 "
+                              >
+                                PIN code
+                              </label>
+                              <input
+                                type="text"
+                                id="pincode"
+                                name="pincode"
+                                value={billingAddress.pincode}
+                                onChange={handleBillingChange}
+                                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                                placeholder="94110"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label
+                              htmlFor="phone"
+                              className="mb-2 block text-sm font-medium text-gray-900 "
+                            >
+                              Phone
+                            </label>
+                            <input
+                              type="text"
+                              id="phone"
+                              name="phone"
+                              value={billingAddress.phone}
+                              onChange={handleBillingChange}
+                              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                              placeholder="+1 234 567 890"
+                              required
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </AccordionItem>
+                </Accordion>
+                <div className="space-y-3">
+                  <button
+                    className="hidden lg:visible lg:flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
+                    onClick={handleSubmitOrder}
+                  >
+                    Proceed to Payment
                   </button>
                 </div>
               </div>
-              <div className="flow-root">
-                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 sm:pt-0 lg:pt-6">
-                  <p className="hidden lg:flex text-xl font-semibold text-gray-900 ">
-                    Order summary
-                  </p>
 
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <dl className="flex items-center justify-between gap-4">
-                        <dt className="text-base font-normal text-gray-500 ">
-                          Original price
-                        </dt>
-                        <dd className="text-base font-medium text-gray-900 ">
-                          {product ? `₹${product.totalPrice}` : `₹${totalAmt}`}
-                        </dd>
-                      </dl>
+              <div className="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
+                <p className="lg:hidden text-xl font-semibold text-gray-900 ">
+                  Order summary
+                </p>
+                <div>
+                  {product ? (
+                    <CartProduct item={product} />
+                  ) : products.length > 0 ? (
+                    products.map((item) => (
+                      <div key={item._id}>
+                        <CartProduct item={item} />
+                      </div>
+                    ))
+                  ) : (
+                    <p>No products available</p>
+                  )}
+                </div>
+                <div>
+                  <div className="flex max-w-md items-center gap-4">
+                    <input
+                      type="text"
+                      id="voucher"
+                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
+                      placeholder="Enter a gift card, voucher or promotional code"
+                    />
+                    <button
+                      type="button"
+                      className="flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 "
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+                <div className="flow-root">
+                  <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 sm:pt-0 lg:pt-6">
+                    <p className="hidden lg:flex text-xl font-semibold text-gray-900 ">
+                      Order summary
+                    </p>
 
-                      {/* <dl className="flex items-center justify-between gap-4">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <dl className="flex items-center justify-between gap-4">
+                          <dt className="text-base font-normal text-gray-500 ">
+                            Original price
+                          </dt>
+                          <dd className="text-base font-medium text-gray-900 ">
+                            {product
+                              ? `₹${product.totalPrice}`
+                              : `₹${totalAmt}`}
+                          </dd>
+                        </dl>
+
+                        {/* <dl className="flex items-center justify-between gap-4">
                           <dt className="text-base font-normal text-gray-500">
                             Savings
                           </dt>
@@ -1133,16 +1303,16 @@ function Checkout() {
                           </dd>
                         </dl> */}
 
-                      <dl className="flex items-center justify-between gap-4">
-                        <dt className="text-base font-normal text-gray-500 ">
-                          Shipping Charge
-                        </dt>
-                        <dd className="text-base font-medium text-gray-900">
-                          ₹ {shippingCharge}
-                        </dd>
-                      </dl>
+                        <dl className="flex items-center justify-between gap-4">
+                          <dt className="text-base font-normal text-gray-500 ">
+                            Shipping Charge
+                          </dt>
+                          <dd className="text-base font-medium text-gray-900">
+                            ₹ {shippingCharge}
+                          </dd>
+                        </dl>
 
-                      {/* <dl className="flex items-center justify-between gap-4">
+                        {/* <dl className="flex items-center justify-between gap-4">
                           <dt className="text-base font-normal text-gray-500 ">
                             Tax
                           </dt>
@@ -1150,35 +1320,194 @@ function Checkout() {
                             $799
                           </dd>
                         </dl> */}
-                    </div>
+                      </div>
 
-                    <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 ">
-                      <dt className="text-base font-bold text-gray-900 ">
-                        Total
-                      </dt>
-                      <dd className="text-base font-bold text-gray-900 ">
-                        {product
-                          ? `₹${product.totalPrice + shippingCharge}`
-                          : `₹${totalAmt + shippingCharge}`}
-                      </dd>
-                    </dl>
+                      <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 ">
+                        <dt className="text-base font-bold text-gray-900 ">
+                          Total
+                        </dt>
+                        <dd className="text-base font-bold text-gray-900 ">
+                          {product
+                            ? `₹${product.totalPrice + shippingCharge}`
+                            : `₹${totalAmt + shippingCharge}`}
+                        </dd>
+                      </dl>
 
-                    <div className="space-y-3">
-                      <button
-                        className="lg:hidden flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
-                        onClick={handleSubmitOrder}
-                      >
-                        Proceed to Payment
-                      </button>
+                      <div className="space-y-3">
+                        <button
+                          className="lg:hidden flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
+                          onClick={handleSubmitOrder}
+                        >
+                          Proceed to Payment
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+
+      <Modal
+        isOpen={openModal === "addAddress"}
+        placement="center"
+        onOpenChange={() => setOpenModal(null)}
+        size="2xl"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Add Address
+              </ModalHeader>
+              <ModalBody>
+                <Checkbox
+                  defaultSelected={isDefault}
+                  onChange={(e) => setIsDefault(e.target.checked)}
+                >
+                  This is my default address
+                </Checkbox>
+
+                <Autocomplete
+                  label="Country"
+                  value={selectedCountry}
+                  onSelectionChange={(value) => {
+                    setSelectedCountry(value);
+                    setSelectedState(""); // Reset state when country changes
+                    setCities([]); // Reset cities
+                  }}
+                  variant="bordered"
+                  className="flex-1"
+                  defaultInputValue="IN"
+                >
+                  {countries.map((country) => (
+                    <AutocompleteItem
+                      key={country.isoCode}
+                      value={country.isoCode}
+                    >
+                      {country.name}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+
+                <div className="flex justify-between flex-wrap">
+                  <Input
+                    placeholder="First Name"
+                    className="lg:w-[49%] sm:w-[100%] mb-3"
+                    variant="bordered"
+                    size="lg"
+                    value={locFirstName}
+                    onChange={(e) => setLocFirstName(e.target.value)}
+                  />
+
+                  <Input
+                    placeholder="Last Name"
+                    className="lg:w-[49%] sm:w-[100%]"
+                    variant="bordered"
+                    size="lg"
+                    value={locLastName}
+                    onChange={(e) => setLocLastName(e.target.value)}
+                  />
+                </div>
+                <Input
+                  placeholder="Address"
+                  variant="bordered"
+                  size="lg"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                />
+                <Input
+                  placeholder="Apartment, suite, etc (optional)"
+                  variant="bordered"
+                  size="lg"
+                  value={apartment}
+                  onChange={(e) => setApartment(e.target.value)}
+                />
+                <div className="flex flex-wrap gap-4 flex-col lg:flex-row">
+                  <Autocomplete
+                    label="State"
+                    value={selectedState}
+                    onSelectionChange={(value) => {
+                      setSelectedState(value);
+                      setSelectedCity(""); // Reset city when state changes
+                    }}
+                    variant="bordered"
+                    className="flex-1"
+                    disabled={!states.length}
+                  >
+                    {states.map((state) => (
+                      <AutocompleteItem
+                        key={state.isoCode}
+                        value={state.isoCode}
+                      >
+                        {state.name}
+                      </AutocompleteItem>
+                    ))}
+                  </Autocomplete>
+
+                  <Autocomplete
+                    label="City"
+                    value={selectedCity}
+                    onSelectionChange={(value) => setSelectedCity(value)}
+                    variant="bordered"
+                    className="flex-1"
+                    disabled={!cities.length}
+                  >
+                    {cities.map((city) => (
+                      <AutocompleteItem key={city.name} value={city.name}>
+                        {city.name}
+                      </AutocompleteItem>
+                    ))}
+                  </Autocomplete>
+
+                  <Input
+                    placeholder="PIN code"
+                    variant="bordered"
+                    size="lg"
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center">
+                  <Input
+                    value={`${flag} +${phoneCode}`}
+                    className="w-[15%] text-center mr-3"
+                    variant="bordered"
+                    disabled
+                    size="lg"
+                  />
+                  <Input
+                    placeholder="Phone"
+                    variant="bordered"
+                    size="lg"
+                    className="w-[85%]"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() => {
+                    handleAddAddress();
+                    onClose();
+                  }}
+                  isLoading={isLoading}
+                >
+                  Save
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 
