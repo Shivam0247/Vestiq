@@ -146,6 +146,16 @@ const ProductDetails = () => {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // **Detect if Safari is being used**
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    // **Fix for Safari** → Force recalculation of heights
+    if (isSafari) {
+      images.style.willChange = "transform"; // ✅ Optimizes Safari rendering
+      images.style.backfaceVisibility = "hidden"; // ✅ Prevents flickering in Safari
+      images.style.transform = "translateZ(0)"; // ✅ Forces hardware acceleration
+    }
+
     let tl = gsap.timeline({
       scrollTrigger: {
         trigger: info,
@@ -153,10 +163,11 @@ const ProductDetails = () => {
         end: () =>
           `+=${
             images.scrollHeight - window.innerHeight - sizechart.scrollHeight
-          }`, // Dynamically adjust height
+          }`,
         pin: info,
-        pinSpacing: true, // Prevent extra spacing issues
+        pinSpacing: true,
         scrub: 1,
+        // invalidateOnRefresh: true, // ✅ Helps with Safari's inconsistent height calculations
       },
     });
 
@@ -164,14 +175,19 @@ const ProductDetails = () => {
       y: () =>
         -(images.scrollHeight - window.innerHeight - sizechart.scrollHeight),
       ease: "none",
-
       scrollTrigger: {
         trigger: images,
         start: "top top",
         end: "bottom top",
         scrub: 1,
+        // invalidateOnRefresh: true,
       },
     });
+
+    // **Fix Safari Scroll Rendering**
+    if (isSafari) {
+      ScrollTrigger.refresh();
+    }
   }, []);
 
   const [newArrivals, setNewArrivals] = useState([]);
