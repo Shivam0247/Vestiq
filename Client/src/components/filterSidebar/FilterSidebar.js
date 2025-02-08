@@ -209,9 +209,10 @@ export default function FilterSidebar({
                       }))
                     }
                   />
-                  <span>To</span>
+                  <span className="mx-3">To</span>
                   <Input
-                    labelPlacement="outside"
+                    labelPlac
+                    ement="outside"
                     placeholder="Max Price"
                     value={selectedFilters.price?.max || ""}
                     onChange={(e) =>

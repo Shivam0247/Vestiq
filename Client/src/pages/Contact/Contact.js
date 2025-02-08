@@ -28,7 +28,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    <div className="contact max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
       <div className="max-w-2xl lg:max-w-5xl mx-auto">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">
@@ -114,7 +114,7 @@ const Contact = () => {
                     id="message"
                     name="message"
                     rows="4"
-                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="py-3 px-4 block w-full border-1 border-gray-200 rounded-lg text-sm "
                     placeholder="How can we help you?"
                     required
                   ></textarea>
