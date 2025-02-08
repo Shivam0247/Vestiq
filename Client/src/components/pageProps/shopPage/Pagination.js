@@ -113,7 +113,7 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
             onChange={handlePageChange}
             loop
             showControls
-            color="primary"
+            color="default"
           />
         </div>
       )}
