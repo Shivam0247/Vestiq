@@ -167,7 +167,7 @@ const ProductDetails = () => {
         pin: info,
         pinSpacing: true,
         scrub: 1,
-        // invalidateOnRefresh: true, // ✅ Helps with Safari's inconsistent height calculations
+        invalidateOnRefresh: true, // ✅ Helps with Safari's inconsistent height calculations
       },
     });
 
@@ -180,7 +180,7 @@ const ProductDetails = () => {
         start: "top top",
         end: "bottom top",
         scrub: 1,
-        // invalidateOnRefresh: true,
+        invalidateOnRefresh: true,
       },
     });
 
