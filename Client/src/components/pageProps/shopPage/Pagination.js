@@ -13,6 +13,7 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
     types: [],
     price: null,
   });
+  const [totalProducts, setTotalProducts] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -83,11 +84,16 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
       default:
         break;
     }
+
     setFilteredItems(updatedItems);
     setCurrentPage(1);
+    console.log("totalProducts", totalProducts);
   }, [selectedFilters, items, sortBy]);
 
-  console.log("sortBy", sortBy);
+  useEffect(() => {
+    setTotalProducts(filteredItems.length);
+  }, [filteredItems]);
+
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = filteredItems.slice(
@@ -115,6 +121,7 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         setSelectedFilters={setSelectedFilters}
+        totalProducts={totalProducts}
         selectedFilters={selectedFilters}
         setSortBy={setSortBy}
         Category={Category}

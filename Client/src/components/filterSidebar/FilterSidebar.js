@@ -18,8 +18,8 @@ export default function FilterSidebar({
   selectedFilters,
   Category,
   setSortBy,
+  totalProducts,
 }) {
-  const [totalProducts, setTotalProducts] = useState(0);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
   const [selectedSort, setSelectedSort] = useState("default");
   useEffect(() => {
@@ -31,7 +31,6 @@ export default function FilterSidebar({
             Category === "ALL"
               ? data
               : data.filter((item) => item.Category?.[0] === Category);
-          setTotalProducts(filteredItems.length);
         })
         .catch((error) => console.error("Error fetching products:", error));
     }
@@ -99,7 +98,7 @@ export default function FilterSidebar({
         </DrawerHeader>
 
         <DrawerBody className="py-0 px-0">
-          <div className="totalProducts border-b-1 px-6 h-14 flex items-center">
+          <div className="totalProducts border-b-1 px-6 py-4 w-full flex items-center">
             <span className="text-gray-500">{totalProducts} Products</span>
           </div>
 
