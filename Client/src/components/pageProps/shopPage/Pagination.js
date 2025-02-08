@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import Product from "../../home/Products/Product";
 import AddToCart from "../../home/Products/AddToCart";
 import FilterSidebar from "../../filterSidebar/FilterSidebar";
-import { Pagination } from "@heroui/pagination"; // ✅ Using Hero UI Pagination
+import { Pagination } from "@heroui/pagination";
 
 const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
-  const [items, setItems] = useState([]); // ✅ Store all products
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1); // ✅ Track current page
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -37,9 +37,8 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
     fetchItems();
   }, [Category]);
 
-  const totalPages = Math.ceil(items.length / itemsPerPage); // ✅ Dynamic total pages
+  const totalPages = Math.ceil(items.length / itemsPerPage);
   console.log("totalPages", totalPages);
-  // ✅ Get products for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = items.slice(startIndex, startIndex + itemsPerPage);
 
@@ -104,7 +103,6 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
         ))}
       </div>
 
-      {/* ✅ Pagination - Shows only if there's more than 1 page */}
       {totalPages >= 1 && (
         <div className="mt-10 flex justify-center">
           <Pagination
