@@ -1,76 +1,75 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerBody } from "@heroui/react";
 import { Input } from "@heroui/react";
+import { Checkbox } from "@heroui/checkbox";
+import { IoClose } from "react-icons/io5";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Chip, Button } from "@heroui/react";
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Button,
 } from "@heroui/react";
-import "./FilterSidebar.css";
-import { Checkbox } from "@heroui/checkbox";
-import { IoClose } from "react-icons/io5";
-import { Accordion, AccordionItem } from "@heroui/accordion";
-import { Chip } from "@heroui/react";
-
-export default function FilterSidebar({ isOpen, onClose, Category }) {
-  const [selectedKeys, setSelectedKeys] = useState(new Set(["XS"]));
+export default function FilterSidebar({
+  isOpen,
+  onClose,
+  setSelectedFilters,
+  selectedFilters,
+  Category,
+  setSortBy,
+}) {
   const [totalProducts, setTotalProducts] = useState(0);
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 0 }); // State for price range
-
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
-    [selectedKeys]
-  );
-
-  // Function to allow only numeric input
-  const handleNumericInput = (event) => {
-    const value = event.target.value;
-    if (!/^\d*\.?\d*$/.test(value)) {
-      event.target.value = value.slice(0, -1);
-    }
-  };
-
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+  const [selectedSort, setSelectedSort] = useState("default");
   useEffect(() => {
     if (isOpen) {
       fetch("https://upstrides-server.vercel.app/api/Product/ProductDisplay")
         .then((response) => response.json())
         .then((data) => {
-          if (Category === "ALL") {
-            setTotalProducts(data.length);
-          } else {
-            const filteredItems = data.filter(
-              (item) => item.Category && item.Category[0] === Category
-            );
-            setTotalProducts(filteredItems.length);
-          }
+          const filteredItems =
+            Category === "ALL"
+              ? data
+              : data.filter((item) => item.Category?.[0] === Category);
+          setTotalProducts(filteredItems.length);
         })
         .catch((error) => console.error("Error fetching products:", error));
     }
   }, [isOpen, Category]);
 
-  // Handle filter selection
-  const handleFilterChange = (filter, isChecked) => {
-    if (isChecked) {
-      setSelectedFilters((prevFilters) => [...prevFilters, filter]);
-    } else {
-      setSelectedFilters((prevFilters) =>
-        prevFilters.filter((item) => item !== filter)
-      );
-    }
+  const handleSortChange = (key) => {
+    setSelectedSort(key);
+    setSortBy(key);
   };
 
-  // Handle filter removal via Chip close button
-  const handleClose = (filterToRemove) => {
-    if (filterToRemove === "price") {
-      setPriceRange({ min: 0, max: 0 }); // Reset price range
-    } else {
-      setSelectedFilters((prevFilters) =>
-        prevFilters.filter((filter) => filter !== filterToRemove)
-      );
-    }
+  const handleClose = (filterToRemove, type) => {
+    setSelectedFilters((prevFilters) => {
+      if (type === "price") {
+        return { ...prevFilters, price: null }; // Reset price
+      } else if (type === "availability") {
+        return {
+          ...prevFilters,
+          availability: prevFilters.availability.filter(
+            (item) => item !== filterToRemove
+          ),
+        };
+      } else if (type === "types") {
+        return {
+          ...prevFilters,
+          types: prevFilters.types.filter((item) => item !== filterToRemove),
+        };
+      }
+      return prevFilters;
+    });
+  };
+
+  const handleFilterChange = (filter, isChecked) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      types: isChecked
+        ? [...prev.types, filter]
+        : prev.types.filter((item) => item !== filter),
+    }));
   };
 
   return (
@@ -78,21 +77,11 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
       isOpen={isOpen}
       motionProps={{
         variants: {
-          enter: {
-            opacity: 1,
-            x: 0,
-            duration: 0.3,
-          },
-          exit: {
-            x: 100,
-            opacity: 0,
-            duration: 0.3,
-          },
+          enter: { opacity: 1, x: 0, duration: 0.3 },
+          exit: { x: 100, opacity: 0, duration: 0.3 },
         },
       }}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
+      onOpenChange={(open) => !open && onClose()}
       hideCloseButton={true}
     >
       <DrawerContent>
@@ -113,31 +102,43 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
           <div className="totalProducts border-b-1 px-6 h-14 flex items-center">
             <span className="text-gray-500">{totalProducts} Products</span>
           </div>
-          {selectedFilters.length > 0 && (
-            <div className="px-6 mt-3">
-              {selectedFilters.map((filter, index) => (
+
+          {selectedFilters.availability.length > 0 ||
+          selectedFilters.types.length > 0 ||
+          selectedFilters.price ? (
+            <div className="px-6 mt-3 flex flex-wrap gap-2">
+              {selectedFilters.availability.map((filter, index) => (
                 <Chip
                   key={index}
                   variant="flat"
-                  onClose={() => handleClose(filter)}
-                  className="my-1 mx-1"
+                  onClose={() => handleClose(filter, "availability")}
                 >
                   {filter}
                 </Chip>
               ))}
 
-              {(priceRange.min > 0 || priceRange.max > 0) && (
+              {selectedFilters.types.map((filter, index) => (
+                <Chip
+                  key={index}
+                  variant="flat"
+                  onClose={() => handleClose(filter, "types")}
+                >
+                  {filter}
+                </Chip>
+              ))}
+
+              {selectedFilters.price && (
                 <Chip
                   key="price"
                   variant="flat"
-                  onClose={() => handleClose("price")}
-                  className="my-1 mx-1"
+                  onClose={() => handleClose("price", "price")}
                 >
-                  INR {priceRange.min} - INR {priceRange.max}
+                  INR {selectedFilters.price.min} - INR{" "}
+                  {selectedFilters.price.max}
                 </Chip>
               )}
             </div>
-          )}
+          ) : null}
 
           {/* Filters */}
           <div className="px-6 mt-4">
@@ -152,21 +153,42 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                 <div className="flex flex-col gap-2">
                   <Checkbox
                     value="In stock"
-                    isSelected={selectedFilters.includes("In stock")}
+                    isSelected={selectedFilters.availability.includes(
+                      "In stock"
+                    )}
                     onChange={(e) =>
-                      handleFilterChange("In stock", e.target.checked)
+                      setSelectedFilters((prev) => ({
+                        ...prev,
+                        availability: e.target.checked
+                          ? [...prev.availability, "In stock"]
+                          : prev.availability.filter(
+                              (item) => item !== "In stock"
+                            ),
+                      }))
                     }
                   >
-                    In stock (115)
+                    {" "}
+                    In stock{" "}
                   </Checkbox>
+
                   <Checkbox
                     value="Out of stock"
-                    isSelected={selectedFilters.includes("Out of stock")}
+                    isSelected={selectedFilters.availability.includes(
+                      "Out of stock"
+                    )}
                     onChange={(e) =>
-                      handleFilterChange("Out of stock", e.target.checked)
+                      setSelectedFilters((prev) => ({
+                        ...prev,
+                        availability: e.target.checked
+                          ? [...prev.availability, "Out of stock"]
+                          : prev.availability.filter(
+                              (item) => item !== "Out of stock"
+                            ),
+                      }))
                     }
                   >
-                    Out of stock (87)
+                    {" "}
+                    Out of stock{" "}
                   </Checkbox>
                 </div>
               </AccordionItem>
@@ -176,47 +198,36 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                 <div className="flex justify-between items-center">
                   <Input
                     labelPlacement="outside"
-                    placeholder="0.00"
-                    value={priceRange.min} // Bind to state
-                    startContent={
-                      <div className="pointer-events-none flex items-center">
-                        <span className="text-default-400 text-small">₹</span>
-                      </div>
-                    }
-                    type="text"
+                    placeholder="Min Price"
+                    value={selectedFilters.price?.min || ""}
                     onChange={(e) =>
-                      setPriceRange((prev) => ({
+                      setSelectedFilters((prev) => ({
                         ...prev,
-                        min: e.target.value,
+                        price: {
+                          ...prev.price,
+                          min: Number(e.target.value),
+                        },
                       }))
                     }
-                    onInput={handleNumericInput} // Restrict input to numeric
-                    className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
                   />
                   <span>To</span>
                   <Input
                     labelPlacement="outside"
-                    placeholder="0.00"
-                    value={priceRange.max} // Bind to state
-                    startContent={
-                      <div className="pointer-events-none flex items-center">
-                        <span className="text-default-400 text-small">₹</span>
-                      </div>
-                    }
-                    type="text"
+                    placeholder="Max Price"
+                    value={selectedFilters.price?.max || ""}
                     onChange={(e) =>
-                      setPriceRange((prev) => ({
+                      setSelectedFilters((prev) => ({
                         ...prev,
-                        max: e.target.value,
+                        price: {
+                          ...prev.price,
+                          max: Number(e.target.value),
+                        },
                       }))
                     }
-                    onInput={handleNumericInput} // Restrict input to numeric
-                    className="focus:outline-none focus:ring-0 focus:border-gray-300 w-[40%]"
                   />
                 </div>
               </AccordionItem>
 
-              {/* Product Type */}
               <AccordionItem
                 key="3"
                 aria-label="Product Type"
@@ -225,45 +236,47 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
                 <div className="flex flex-col gap-2">
                   <Checkbox
                     value="T-Shirt"
-                    isSelected={selectedFilters.includes("T-Shirt")}
+                    isSelected={selectedFilters.types.includes("T-Shirt")}
                     onChange={(e) =>
-                      handleFilterChange("T-Shirt", e.target.checked)
+                      handleFilterChange(e.target.value, e.target.checked)
                     }
                   >
                     T-Shirt
                   </Checkbox>
                   <Checkbox
                     value="Tie dye shirts"
-                    isSelected={selectedFilters.includes("Tie dye shirts")}
+                    isSelected={selectedFilters.types.includes(
+                      "Tie dye shirts"
+                    )}
                     onChange={(e) =>
-                      handleFilterChange("Tie dye shirts", e.target.checked)
+                      handleFilterChange(e.target.value, e.target.checked)
                     }
                   >
                     Tie dye shirts
                   </Checkbox>
                   <Checkbox
                     value="Sweatshirt"
-                    isSelected={selectedFilters.includes("Sweatshirt")}
+                    isSelected={selectedFilters.types.includes("Sweatshirt")}
                     onChange={(e) =>
-                      handleFilterChange("Sweatshirt", e.target.checked)
+                      handleFilterChange(e.target.value, e.target.checked)
                     }
                   >
                     Sweatshirt
                   </Checkbox>
                   <Checkbox
                     value="Shirt"
-                    isSelected={selectedFilters.includes("Shirt")}
+                    isSelected={selectedFilters.types.includes("Shirt")}
                     onChange={(e) =>
-                      handleFilterChange("Shirt", e.target.checked)
+                      handleFilterChange(e.target.value, e.target.checked)
                     }
                   >
                     Shirt
                   </Checkbox>
                   <Checkbox
                     value="Pants"
-                    isSelected={selectedFilters.includes("Pants")}
+                    isSelected={selectedFilters.types.includes("Pants")}
                     onChange={(e) =>
-                      handleFilterChange("Pants", e.target.checked)
+                      handleFilterChange(e.target.value, e.target.checked)
                     }
                   >
                     Pants
@@ -275,30 +288,31 @@ export default function FilterSidebar({ isOpen, onClose, Category }) {
 
           <div className="px-6 mt-4">
             <span className="font-bold">SORT BY</span>
-            <div className="mt-3">
-              <div className="flex flex-col">
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button className="capitalize" variant="bordered">
-                      {selectedValue}
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    disallowEmptySelection
-                    aria-label="Single selection example"
-                    selectedKeys={selectedKeys}
-                    selectionMode="single"
-                    variant="flat"
-                    onSelectionChange={setSelectedKeys}
-                  >
-                    <DropdownItem key="XS">XS</DropdownItem>
-                    <DropdownItem key="S">S</DropdownItem>
-                    <DropdownItem key="M">M</DropdownItem>
-                    <DropdownItem key="L">L</DropdownItem>
-                    <DropdownItem key="XL">XL</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
+            <div className="mt-3 w-full">
+              <Dropdown className="w-full">
+                <DropdownTrigger>
+                  <Button className="capitalize w-full" variant="bordered">
+                    {selectedSort === "default" ? "Sort By" : selectedSort}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  disallowEmptySelection
+                  aria-label="Sorting Options"
+                  selectionMode="single"
+                  selectedKeys={selectedSort}
+                  onSelectionChange={(keys) => handleSortChange(keys.anchorKey)}
+                >
+                  <DropdownItem key="default">Default</DropdownItem>
+                  <DropdownItem key="price-low-high">
+                    Price: Low to High
+                  </DropdownItem>
+                  <DropdownItem key="price-high-low">
+                    Price: High to Low
+                  </DropdownItem>
+                  <DropdownItem key="name-a-z">Name: A to Z</DropdownItem>
+                  <DropdownItem key="name-z-a">Name: Z to A</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
           </div>
         </DrawerBody>

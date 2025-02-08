@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Product from "../../home/Products/Product";
-import AddToCart from "../../home/Products/AddToCart";
 import FilterSidebar from "../../filterSidebar/FilterSidebar";
 import { Pagination } from "@heroui/pagination";
 
 const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
   const [items, setItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState({
+    availability: [],
+    types: [],
+    price: null,
+  });
+  const [sortBy, setSortBy] = useState("default");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -20,13 +24,13 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
         );
         const data = await response.json();
 
-        setItems(
+        const filteredData =
           Category === "ALL"
             ? data
-            : data.filter(
-                (item) => item.Category && item.Category[0] === Category
-              )
-        );
+            : data.filter((item) => item.Category?.[0] === Category);
+
+        setItems(filteredData);
+        setFilteredItems(filteredData);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -37,10 +41,61 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
     fetchItems();
   }, [Category]);
 
-  const totalPages = Math.ceil(items.length / itemsPerPage);
-  console.log("totalPages", totalPages);
+  useEffect(() => {
+    if (!items.length) return;
+
+    let updatedItems = [...items];
+
+    if (selectedFilters.availability.length > 0) {
+      updatedItems = updatedItems.filter((item) => {
+        const status = item.InStock === true ? "In stock" : "Out of stock";
+        return selectedFilters.availability.includes(status);
+      });
+    }
+
+    if (selectedFilters.types.length > 0) {
+      updatedItems = updatedItems.filter((item) =>
+        selectedFilters.types.includes(item.ProductType)
+      );
+    }
+
+    // ✅ Filter by Price
+    if (selectedFilters.price) {
+      const { min, max } = selectedFilters.price;
+      updatedItems = updatedItems.filter(
+        (item) => item.Price >= min && item.Price <= max
+      );
+    }
+
+    switch (sortBy) {
+      case "price-low-high":
+        updatedItems.sort((a, b) => a.Price - b.Price);
+        break;
+      case "price-high-low":
+        updatedItems.sort((a, b) => b.Price - a.Price);
+        break;
+      case "name-a-z":
+        updatedItems.sort((a, b) => a.ProductName.localeCompare(b.ProductName));
+        break;
+      case "name-z-a":
+        updatedItems.sort((a, b) => b.ProductName.localeCompare(a.ProductName));
+        break;
+      default:
+        break;
+    }
+    setFilteredItems(updatedItems);
+    setCurrentPage(1);
+  }, [selectedFilters, items, sortBy]);
+
+  console.log("sortBy", sortBy);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = items.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = filteredItems.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  console.log("currentItems:", currentItems);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -59,17 +114,12 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
       <FilterSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        setSelectedFilters={setSelectedFilters}
+        selectedFilters={selectedFilters}
+        setSortBy={setSortBy}
         Category={Category}
       />
 
-      {isModalOpen && (
-        <AddToCart
-          product={selectedProduct}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
-
-      {/* Filter Button */}
       <div
         className="icon-container group flex items-center rounded-full bg-black w-14 h-14 pt-1 z-10 cursor-pointer hover:w-48 transition-all duration-300 sticky top-5 left-[94%]"
         onClick={() => setIsSidebarOpen(true)}
@@ -97,13 +147,12 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
               CompositionAndCare={product.CompositionAndCare}
               SizeChart={product.SizeChart}
               Status={product.Status}
-              onCartClick={() => setSelectedProduct(product)}
             />
           </div>
         ))}
       </div>
 
-      {totalPages >= 1 && (
+      {totalPages > 1 && (
         <div className="mt-10 flex justify-center">
           <Pagination
             total={totalPages}
@@ -111,7 +160,6 @@ const PaginationProduct = ({ itemsPerPage = 3, Category }) => {
             onChange={handlePageChange}
             loop
             showControls
-            color="default"
           />
         </div>
       )}
