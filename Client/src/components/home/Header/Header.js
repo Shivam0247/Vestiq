@@ -38,7 +38,7 @@ const Header = ({ onSidebarOpen }) => {
           <Link to="/">
             <div>
               <Image
-                className="lg:w-[10rem] sm:w-[7rem] md:w-[8rem] w-[6rem] object-cover"
+                className="lg:w-[14rem] sm:w-[9rem] md:w-[12rem] w-[7rem] object-cover"
                 imgSrc="/UPSTRIDES.png"
               />
             </div>
