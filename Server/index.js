@@ -12,6 +12,7 @@ const corsConfig = {
 app.use(cors(corsConfig));
 app.use(express.json());
 
+
 // Import the routes
 app.use("/api/auth", require("./routes/User"));
 app.use("/api/Product", require("./routes/Products"));
