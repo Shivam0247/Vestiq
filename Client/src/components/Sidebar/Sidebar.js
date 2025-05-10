@@ -139,7 +139,7 @@ export default function Sidebar({ isOpen, onClose }) {
           <div className="w-full group">
             <ul className="flex items-center gap-2">
               <a
-                href="https://www.youtube.com/@reactjsBD"
+                href="#"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -148,7 +148,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 </li>
               </a>
               <a
-                href="https://www.instagram.com/"
+                href="#"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -157,7 +157,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 </li>
               </a>
               <a
-                href="https://www.facebook.com/"
+                href="#"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -166,7 +166,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 </li>
               </a>
               <a
-                href="https://www.linkedin.com/"
+                href="#"
                 target="_blank"
                 rel="noreferrer"
               >
