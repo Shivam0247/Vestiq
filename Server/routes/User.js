@@ -77,4 +77,38 @@ router.post("/Login", async (req, res) => {
   }
 });
 
+
+router.post('/verifyAccessToken', async (req, res) => {
+  try {
+      console.log('calling:');
+
+    const { accessToken } = req.body;
+
+    const url = 'https://control.msg91.com/api/v5/widget/verifyAccessToken';
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    const body = {
+      authkey: '456348AhVX6Kos684fea51P1', // Replace with your actual authkey
+      'access-token': accessToken, // coming from frontend
+    };
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error verifying access token:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;
