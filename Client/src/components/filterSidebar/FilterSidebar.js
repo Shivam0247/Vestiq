@@ -25,7 +25,12 @@ export default function FilterSidebar({
   useEffect(() => {
     if (isOpen) {
       fetch("https://upstrides-server.vercel.app/api/Product/ProductDisplay")
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
         .then((data) => {
           const filteredItems =
             Category === "ALL"

@@ -32,6 +32,9 @@ const SpecialOffers = () => {
         const response = await fetch(
           "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         ); // Adjust the URL as per your API endpoint
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         const filteredProducts = data.filter(
           (product) => product.ProductCategory === "Offer"

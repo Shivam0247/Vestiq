@@ -119,6 +119,10 @@ function Checkout() {
         }
       );
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (response.status === 200) {
@@ -147,6 +151,9 @@ function Checkout() {
       const response = await fetch(
         `https://upstrides-server.vercel.app/api/userDetails/get-addresses/${userEmail}`
       );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       if (response.status === 200) {
         const updatedAddresses = data.addresses.map((addr) => {
@@ -204,6 +211,9 @@ function Checkout() {
         const response = await fetch(
           `https://upstrides-server.vercel.app/api/userDetails/get-addresses/${userEmail}`
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
 
         if (response.ok) {
@@ -284,6 +294,10 @@ function Checkout() {
         }
       );
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const orderDataResponse = await response.json();
 
       if (!orderDataResponse.order_id) {
@@ -304,6 +318,10 @@ function Checkout() {
             const paymentDetailsResponse = await fetch(
               `https://upstrides-server.vercel.app/api/payments/payment/${response.razorpay_payment_id}`
             );
+
+            if (!paymentDetailsResponse.ok) {
+              throw new Error(`HTTP error! status: ${paymentDetailsResponse.status}`);
+            }
 
             const paymentDetails = await paymentDetailsResponse.json();
 
@@ -346,6 +364,10 @@ function Checkout() {
                   body: JSON.stringify(paymentData),
                 }
               );
+
+              if (!addOrderResponse.ok) {
+                throw new Error(`HTTP error! status: ${addOrderResponse.status}`);
+              }
 
               const data = await addOrderResponse.json();
 

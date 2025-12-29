@@ -56,6 +56,9 @@ const Cart = () => {
         const response = await fetch(
           "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setNewArrivals(data);
       } catch (error) {
@@ -72,15 +75,15 @@ const Cart = () => {
     <>
       <div className="max-w-container mx-auto px-4">
         {products.length > 0 ? (
-          <section class="bg-white py-8 antialiased md:py-16">
-            <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-              <h2 class="title font-manrope font-bold text-4xl leading-10 mb-8 text-center text-black">
+          <section className="bg-white py-8 antialiased md:py-16">
+            <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+              <h2 className="title font-manrope font-bold text-4xl leading-10 mb-8 text-center text-black">
                 Shopping Cart
               </h2>
 
-              <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
-                <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-                  <div class="space-y-6">
+              <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
+                <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+                  <div className="space-y-6">
                     {products.map((item) => (
                       <div key={item._id}>
                         <ItemCard item={item} />
@@ -90,7 +93,7 @@ const Cart = () => {
 
                   <button
                     onClick={() => dispatch(resetCart())}
-                    class="flex items-center justify-center rounded-lg
+                    className="flex items-center justify-center rounded-lg
                         bg-red-600 px-5 py-2.5 text-sm font-medium text-white
                         hover:red-600 focus:outline-none focus:ring-4
                         focus:ring-primary-300 mt-5"
@@ -99,35 +102,35 @@ const Cart = () => {
                   </button>
                 </div>
               </div>
-              <div class="bg-gray-50 rounded-xl p-6 w-full mb-8 max-lg:max-w-xl max-lg:mx-auto mt-10">
-                <div class="flex items-center justify-between w-full mb-6">
-                  <p class="font-normal text-xl leading-8 text-gray-400">
+              <div className="bg-gray-50 rounded-xl p-6 w-full mb-8 max-lg:max-w-xl max-lg:mx-auto mt-10">
+                <div className="flex items-center justify-between w-full mb-6">
+                  <p className="font-normal text-xl leading-8 text-gray-400">
                     Sub Total
                   </p>
-                  <h6 class="font-semibold text-xl leading-8 text-gray-900">
+                  <h6 className="font-semibold text-xl leading-8 text-gray-900">
                     ₹ {totalAmt}
                   </h6>
                 </div>
-                <div class="flex items-center justify-between w-full pb-6 border-b border-gray-200">
-                  <p class="font-normal text-xl leading-8 text-gray-400">
+                <div className="flex items-center justify-between w-full pb-6 border-b border-gray-200">
+                  <p className="font-normal text-xl leading-8 text-gray-400">
                     Delivery Charge
                   </p>
-                  <h6 class="font-semibold text-xl leading-8 text-gray-900">
+                  <h6 className="font-semibold text-xl leading-8 text-gray-900">
                     ₹ {shippingCharge}
                   </h6>
                 </div>
-                <div class="flex items-center justify-between w-full py-6">
-                  <p class="font-manrope font-medium text-2xl leading-9 text-gray-900">
+                <div className="flex items-center justify-between w-full py-6">
+                  <p className="font-manrope font-medium text-2xl leading-9 text-gray-900">
                     Total
                   </p>
-                  <h6 class="font-manrope font-medium text-2xl leading-9 text-indigo-500">
+                  <h6 className="font-manrope font-medium text-2xl leading-9 text-indigo-500">
                     ₹ {totalAmt + shippingCharge}
                   </h6>
                 </div>
               </div>
               <Link
                 to="/Checkout"
-                class="flex w-full items-center justify-center rounded-lg
+                className="flex w-full items-center justify-center rounded-lg
                         bg-primary-700 px-5 py-2.5 text-sm font-medium text-white
                         hover:bg-primary-800 focus:outline-none focus:ring-4
                         focus:ring-primary-300 "
@@ -136,7 +139,7 @@ const Cart = () => {
               </Link>
               <div className="hidden xl:mt-8 xl:block">
                 <div>
-                  <h2 class="title font-manrope font-bold text-4xl leading-10 mb-8 text-black">
+                  <h2 className="title font-manrope font-bold text-4xl leading-10 mb-8 text-black">
                     You may also like
                   </h2>
                 </div>

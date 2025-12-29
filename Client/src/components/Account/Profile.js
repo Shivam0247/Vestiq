@@ -46,6 +46,9 @@ function Profile(props) {
       const response = await fetch(
         `https://upstrides-server.vercel.app/api/userDetails/get-name/${props.userEmail}`
       );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       if (response.status === 200) {
         setfetchFirstName(data.firstName);
@@ -82,6 +85,10 @@ function Profile(props) {
         }
       );
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (response.status === 200) {
@@ -108,6 +115,10 @@ function Profile(props) {
           method: "DELETE",
         }
       );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
 
@@ -166,6 +177,10 @@ function Profile(props) {
         }
       );
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (response.status === 200) {
@@ -190,6 +205,9 @@ function Profile(props) {
       const response = await fetch(
         `https://upstrides-server.vercel.app/api/userDetails/get-addresses/${props.userEmail}`
       );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       if (response.status === 200) {
         const updatedAddresses = data.addresses.map((addr) => {

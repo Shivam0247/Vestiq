@@ -44,6 +44,9 @@ function OrderDetail() {
             const response = await fetch(
               `https://upstrides-server.vercel.app/api/Product/ProductDetail/${product.id}`
             );
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = await response.json();
             if (response.ok) {
               productData[product._id] = data.product;
@@ -74,27 +77,27 @@ function OrderDetail() {
 
   return (
     <div>
-      <section class="py-24 relative">
-        <div class="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
-          <h2 class="font-manrope font-bold text-4xl leading-10 text-black text-center mb-10">
+      <section className="py-24 relative">
+        <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
+          <h2 className="font-manrope font-bold text-4xl leading-10 text-black text-center mb-10">
             Order Summary
           </h2>
-          <div class="w-full flex-col justify-start items-start gap-3 flex mb-10">
-            <h3 class="text-gray-900 text-xl font-semibold font-manrope leading-9 md:text-2xl">
+          <div className="w-full flex-col justify-start items-start gap-3 flex mb-10">
+            <h3 className="text-gray-900 text-xl font-semibold font-manrope leading-9 md:text-2xl">
               Order Id:{" "}
-              <span class="text-primary-700 font-medium">#{order.orderNo}</span>
+              <span className="text-primary-700 font-medium">#{order.orderNo}</span>
             </h3>
-            <h4 class="text-gray-900 text-xl font-semibold font-manrope leading-9 md:text-2xl">
+            <h4 className="text-gray-900 text-xl font-semibold font-manrope leading-9 md:text-2xl">
               Order Date:{" "}
-              <span class=" text-gray-400 font-medium">10 Jan 2025</span>
+              <span className=" text-gray-400 font-medium">10 Jan 2025</span>
             </h4>
-            <p class="font-semibold text-base leading-7 text-black mt-4">
+            <p className="font-semibold text-base leading-7 text-black mt-4">
               Address :{" "}
-              <span class="text-gray-400 font-bold">
+              <span className="text-gray-400 font-bold">
                 {order.shippingAddress.firstName}{" "}
                 {order.shippingAddress.lastName},
               </span>
-              <span class="text-gray-400 font-medium">
+              <span className="text-gray-400 font-medium">
                 {" "}
                 {order.shippingAddress.apartment} -{" "}
                 {order.shippingAddress.address}, {order.shippingAddress.city},{" "}
@@ -103,9 +106,9 @@ function OrderDetail() {
               </span>
             </p>
           </div>
-          <div class="hidden md:flex w-full py-9 rounded-xl border border-gray-200 flex-col justify-start items-start mb-5">
-            <div class="w-full flex-col justify-center sm:items-center items-start gap-8 flex">
-              <ol class="flex sm:items-center items-start w-full sm:gap-0 gap-5">
+          <div className="hidden md:flex w-full py-9 rounded-xl border border-gray-200 flex-col justify-start items-start mb-5">
+            <div className="w-full flex-col justify-center sm:items-center items-start gap-8 flex">
+              <ol className="flex sm:items-center items-start w-full sm:gap-0 gap-5">
                 <li
                   className={`flex w-full relative justify-center text-primary-700 text-base font-semibold 
     after:content-[''] after:w-full after:h-0.5 after:inline-block after:absolute
@@ -118,7 +121,7 @@ function OrderDetail() {
         : "after:bg-gray-300"
     }`}
                 >
-                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                  <div className="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
     ${
@@ -131,10 +134,10 @@ function OrderDetail() {
     }`}
                     >
                       {" "}
-                      <i class="fi fi-rs-order-history text-black mt-1"></i>
+                      <i className="fi fi-rs-order-history text-black mt-1"></i>
                     </span>{" "}
                     Order Placed
-                    <span class="text-primary-700 text-base font-normal text-center">
+                    <span className="text-primary-700 text-base font-normal text-center">
                       Feb 20th, 2024
                     </span>
                   </div>
@@ -149,7 +152,7 @@ function OrderDetail() {
         : "after:bg-gray-300"
     }`}
                 >
-                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                  <div className="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
     ${
@@ -161,10 +164,10 @@ function OrderDetail() {
     }`}
                     >
                       {" "}
-                      <i class="fi fi-rr-box-open text-black mt-1"></i>
+                      <i className="fi fi-rr-box-open text-black mt-1"></i>
                     </span>{" "}
                     Order Packed
-                    <span class="text-primary-7000 text-base font-normal text-center">
+                    <span className="text-primary-7000 text-base font-normal text-center">
                       Feb 20th, 2024
                     </span>
                   </div>
@@ -179,7 +182,7 @@ function OrderDetail() {
         : "after:bg-gray-300"
     }`}
                 >
-                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                  <div className="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
     ${
@@ -189,7 +192,7 @@ function OrderDetail() {
     }`}
                     >
                       <svg
-                        class="h-4 w-4 text-black "
+                        className="h-4 w-4 text-black "
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -207,19 +210,19 @@ function OrderDetail() {
                       </svg>
                     </span>{" "}
                     In Translt
-                    <span class="text-primary-700 text-base font-normal text-center">
+                    <span className="text-primary-700 text-base font-normal text-center">
                       Feb 20th, 2024
                     </span>
                   </div>
                 </li>
-                <li class="flex w-full relative justify-center text-primary-700 text-base font-semibold">
-                  <div class="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
+                <li className="flex w-full relative justify-center text-primary-700 text-base font-semibold">
+                  <div className="block sm:whitespace-nowrap z-10 flex flex-col items-center text-center">
                     <span
                       className={`w-6 h-6 border-2 border-primary-700 rounded-full flex justify-center items-center mx-auto mb-1 text-primary-700 text-base font-bold lg:w-8 lg:h-8 
     ${order.orderStatus === "delivered" ? "bg-[#badaff]" : "bg-white"}`}
                     >
                       <svg
-                        class="h-4 w-4 text-black "
+                        className="h-4 w-4 text-black "
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -237,7 +240,7 @@ function OrderDetail() {
                       </svg>
                     </span>{" "}
                     Out for Delivery
-                    <span class="text-primary-700 text-base font-normal text-center">
+                    <span className="text-primary-700 text-base font-normal text-center">
                       Feb 20th, 2024{" "}
                     </span>
                   </div>
@@ -247,14 +250,14 @@ function OrderDetail() {
           </div>
 
           {/* --------------------------- */}
-          <div class="block md:hidden mt-6 grow sm:mt-8 lg:mt-0 mb-5">
-            <div class="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
-              <h3 class="text-xl font-semibold text-gray-900 ">
+          <div className="block md:hidden mt-6 grow sm:mt-8 lg:mt-0 mb-5">
+            <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
+              <h3 className="text-xl font-semibold text-gray-900 ">
                 Order history
               </h3>
 
-              <ol class="relative ms-3 border-s border-gray-200 ">
-                <li class="mb-10 ms-6">
+              <ol className="relative ms-3 border-s border-gray-200 ">
+                <li className="mb-10 ms-6">
                   <span
                     class={`absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full  ring-8 ring-white ${
                       order.orderStatus === "delivered"
@@ -264,7 +267,7 @@ function OrderDetail() {
                   >
                     {" "}
                     <svg
-                      class="h-4 w-4 text-gray-500 "
+                      className="h-4 w-4 text-gray-500 "
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -291,12 +294,12 @@ function OrderDetail() {
                     {" "}
                     Out for Delivery
                   </h4>
-                  <p class="text-sm font-normal text-gray-500 ">
+                  <p className="text-sm font-normal text-gray-500 ">
                     Feb 20th, 2024
                   </p>
                 </li>
 
-                <li class="mb-10 ms-6">
+                <li className="mb-10 ms-6">
                   <span
                     class={`absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full  ring-8 ring-white ${
                       order.orderStatus === "delivered" ||
@@ -306,7 +309,7 @@ function OrderDetail() {
                     }`}
                   >
                     <svg
-                      class="h-4 w-4 text-gray-500 "
+                      className="h-4 w-4 text-gray-500 "
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -333,12 +336,12 @@ function OrderDetail() {
                   >
                     In Translt
                   </h4>
-                  <p class="text-sm font-normal text-gray-500 ">
+                  <p className="text-sm font-normal text-gray-500 ">
                     Feb 20th, 2024
                   </p>
                 </li>
 
-                <li class="mb-10 ms-6 text-primary-700 ">
+                <li className="mb-10 ms-6 text-primary-700 ">
                   <span
                     class={`absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full  ring-8 ring-white ${
                       order.orderStatus === "delivered" ||
@@ -349,7 +352,7 @@ function OrderDetail() {
                     }`}
                   >
                     {" "}
-                    <i class="fi fi-rr-box-open text-gray-500 mt-1 text-sm"></i>
+                    <i className="fi fi-rr-box-open text-gray-500 mt-1 text-sm"></i>
                   </span>
                   <h4
                     class={`mb-0.5 text-base font-semibold ${
@@ -375,20 +378,20 @@ function OrderDetail() {
                   </p>
                 </li>
 
-                <li class="mb-10 ms-6 text-primary-700 ">
-                  <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white">
-                    <i class="fi fi-rs-order-history text-gray-500 mt-1 text-xs"></i>
+                <li className="mb-10 ms-6 text-primary-700 ">
+                  <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white">
+                    <i className="fi fi-rs-order-history text-gray-500 mt-1 text-xs"></i>
                   </span>
-                  <h4 class="mb-0.5 text-base font-semibold">Order Placed</h4>
-                  <p class="text-sm">Feb 20th, 2024</p>
+                  <h4 className="mb-0.5 text-base font-semibold">Order Placed</h4>
+                  <p className="text-sm">Feb 20th, 2024</p>
                 </li>
               </ol>
             </div>
           </div>
 
           {/* --------------------------- */}
-          <div class="main-box border border-gray-200 rounded-xl pt-6 max-w-xl max-lg:mx-auto lg:max-w-full">
-            <div class="w-full px-3 min-[400px]:px-6">
+          <div className="main-box border border-gray-200 rounded-xl pt-6 max-w-xl max-lg:mx-auto lg:max-w-full">
+            <div className="w-full px-3 min-[400px]:px-6">
               {order.products.map((product, index) => {
                 const productInfo = productDetails[product._id] || {};
                 return (
@@ -469,31 +472,31 @@ function OrderDetail() {
               })}
             </div>
           </div>
-          <div class="p-6 mt-10 border border-gray-200 rounded-3xl w-full group transition-all duration-500 hover:border-gray-400 ">
-            <h2 class="font-manrope font-bold text-3xl leading-10 text-black pb-6 border-b border-gray-200 ">
+          <div className="p-6 mt-10 border border-gray-200 rounded-3xl w-full group transition-all duration-500 hover:border-gray-400 ">
+            <h2 className="font-manrope font-bold text-3xl leading-10 text-black pb-6 border-b border-gray-200 ">
               Order Summary
             </h2>
-            <div class="data py-6 border-b border-gray-200">
-              <div class="flex items-center justify-between gap-4 mb-5">
-                <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
+            <div className="data py-6 border-b border-gray-200">
+              <div className="flex items-center justify-between gap-4 mb-5">
+                <p className="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
                   Sub Total
                 </p>
-                <p class="font-medium text-lg leading-8 text-gray-900">
+                <p className="font-medium text-lg leading-8 text-gray-900">
                   ₹{order.subtotal}
                 </p>
               </div>
-              <div class="flex items-center justify-between gap-4 mb-5">
-                <p class="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
+              <div className="flex items-center justify-between gap-4 mb-5">
+                <p className="font-normal text-lg leading-8 text-gray-400 transition-all duration-500 group-hover:text-gray-700">
                   Shipping Cost
                 </p>
-                <p class="font-medium text-lg leading-8 text-gray-600">
+                <p className="font-medium text-lg leading-8 text-gray-600">
                   ₹{order.shippingCost}
                 </p>
               </div>
             </div>
-            <div class="total flex items-center justify-between pt-6">
-              <p class="font-normal text-xl leading-8 text-black ">Total</p>
-              <h5 class="font-manrope font-bold text-2xl leading-9 text-primary-700">
+            <div className="total flex items-center justify-between pt-6">
+              <p className="font-normal text-xl leading-8 text-black ">Total</p>
+              <h5 className="font-manrope font-bold text-2xl leading-9 text-primary-700">
                 ₹{order.total}
               </h5>
             </div>

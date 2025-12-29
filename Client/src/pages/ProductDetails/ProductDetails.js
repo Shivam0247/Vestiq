@@ -192,6 +192,9 @@ const ProductDetails = () => {
         const response = await fetch(
           "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
 
         // Filter out the product with the same _id as the one to exclude
@@ -288,7 +291,7 @@ const ProductDetails = () => {
           </div>
 
           <div className="mt-7">
-            <div class="relative flex items-center">
+            <div className="relative flex items-center">
               <button
                 type="button"
                 className="bg-white hover:bg-gray-50 border rounded-s-lg p-3 h-11 focus:outline-none"
@@ -540,7 +543,7 @@ const ProductDetails = () => {
         </div>
 
         <div className="mt-4 mx-5">
-          <div class="relative flex items-center">
+          <div className="relative flex items-center">
             <button
               type="button"
               className="bg-white hover:bg-gray-50 border rounded-s-lg p-3 h-11 focus:outline-none"
@@ -698,7 +701,7 @@ const ProductDetails = () => {
       </div>
       <div className="xl:mt-8 lg:px-10">
         <div>
-          <h2 class="title text-center font-manrope font-bold text-2xl md:text-4xl leading-10 mb-4 md:mb-8 text-black  lg:text-left">
+          <h2 className="title text-center font-manrope font-bold text-2xl md:text-4xl leading-10 mb-4 md:mb-8 text-black  lg:text-left">
             You may also like
           </h2>
         </div>

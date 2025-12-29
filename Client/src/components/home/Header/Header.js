@@ -47,8 +47,8 @@ const Header = ({ onSidebarOpen }) => {
             <Link to="/cart" className="flex md:hidden">
               <div className="w-16 h-[70px] flex flex-col gap-1 justify-center items-center overflow-x-hidden group cursor-pointer relative mr-1">
                 <div className="flex justify-center items-center mt-2">
-                  <i class="fi fi-rr-shopping-cart-add text-2xl -translate-x-12 group-hover:translate-x-3 transition-transform duration-200 "></i>
-                  <i class="fi fi-rr-shopping-cart-add text-2xl -translate-x-3 group-hover:translate-x-12 transition-transform duration-200"></i>
+                  <i className="fi fi-rr-shopping-cart-add text-2xl -translate-x-12 group-hover:translate-x-3 transition-transform duration-200 "></i>
+                  <i className="fi fi-rr-shopping-cart-add text-2xl -translate-x-3 group-hover:translate-x-12 transition-transform duration-200"></i>
                 </div>
                 {products.length > 0 && (
                   <p className="absolute top-4 right-3 bg-primeColor text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-semibold">

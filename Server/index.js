@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 
 const corsConfig = {
-  origin: "https://upstrides.vercel.app",
+  origin: ["https://upstrides.vercel.app", "http://localhost:3000"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };

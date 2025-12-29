@@ -22,6 +22,10 @@ const OTP = () => {
         `https://upstrides-server.vercel.app/api/OTP/fetch/${email}`
       );
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (response.status === 200) {

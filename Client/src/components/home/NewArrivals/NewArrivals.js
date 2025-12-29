@@ -24,6 +24,9 @@ const NewArrivals = () => {
         const response = await fetch(
           "https://upstrides-server.vercel.app/api/Product/ProductDisplay"
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setNewArrivals(data);
       } catch (error) {
